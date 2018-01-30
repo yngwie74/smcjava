@@ -46,21 +46,32 @@
 
         private void AddConcreteStates(SMCSharpGenerator gen, StringBuilder buff)
         {
+            buff.AppendLine("    #region Static Properties For Each State")
+                .AppendLine();
             foreach (var cs in gen.ConcreteStates)
             {
                 buff.Append($"    public static State {CreateMethodName(cs)} ")
                     .AppendLine($"{{ get; }} = new {ClassNameFor(cs)}();");
             }
 
-            buff.AppendLine();
+            buff.AppendLine()
+                .AppendLine("    #endregion")
+                .AppendLine();
         }
 
         private static void AddPublicProperties(StringBuilder buff) => buff
+            .AppendLine("    #region Public Properties")
+            .AppendLine()
             .AppendLine("    public abstract string Name { get; }")
+            .AppendLine()
+            .AppendLine("    #endregion")
             .AppendLine();
 
         private void AddEventMethods(SMCSharpGenerator gen, StringBuilder buff)
         {
+            buff.AppendLine("    #region Default Event Functions")
+                .AppendLine();
+
             var events = gen.StateMap.Events;
             foreach (var evName in events)
             {
@@ -69,6 +80,9 @@
                 AddEventBody(gen, evName, buff);
                 AddCloseEventDeclaration(buff);
             }
+
+            buff.AppendLine("    #endregion")
+                .AppendLine();
         }
 
         private static void AddEventHeader(string evName, StringBuilder buff) => buff
@@ -80,7 +94,7 @@
         {
             var stateMachineClass = gen.StateMap.Name;
             var methodName = this.CreateMethodName(evName);
-            buff.AppendLine($"    public void {methodName}({stateMachineClass} {ArgName})")
+            buff.AppendLine($"    public virtual void {methodName}({stateMachineClass} {ArgName})")
                 .AppendLine("    {");
         }
 

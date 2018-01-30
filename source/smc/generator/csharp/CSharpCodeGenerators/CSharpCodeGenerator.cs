@@ -23,7 +23,7 @@
             var buff = new StringBuilder(length);
             if (length > 0)
             {
-                buff.Append(char.ToLowerInvariant(_event[0]));
+                buff.Append(char.ToUpperInvariant(_event[0]));
                 if (length > 1)
                 {
                     buff.Append(_event.Substring(1));

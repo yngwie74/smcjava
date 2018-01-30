@@ -1,3 +1,7 @@
 .svn
 build
 *.bak
+obj
+bin
+*.user
+.vs

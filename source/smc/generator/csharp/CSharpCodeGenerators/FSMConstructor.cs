@@ -19,7 +19,7 @@
 
             var iName = CreateMethodName(gen.StateMap.InitialState);
 
-            buff.Append($"        currentState = State.{iName};");
+            buff.AppendLine($"        this.currentState = State.{iName};");
 
             var initialHierarchy = new List<State>();
             gen.GetStateHierarchy(initialHierarchy, gen.StateMap.InitialState);

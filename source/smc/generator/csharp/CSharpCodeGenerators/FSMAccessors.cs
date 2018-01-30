@@ -9,6 +9,7 @@
         public override string GenerateCode(SMCSharpGenerator smcsg)
         {
             return new StringBuilder()
+                .AppendLine("    #region Public Properties")
                 .AppendLine()
                 .AppendLine("    public string Version => version;")
                 .AppendLine()
@@ -19,6 +20,8 @@
                 .AppendLine("        get { return this.currentState; }")
                 .AppendLine("        set { this.currentState = value; }")
                 .AppendLine("    }")
+                .AppendLine()
+                .AppendLine("    #endregion")
                 .AppendLine()
                 .ToString();
         }

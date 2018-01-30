@@ -25,11 +25,7 @@
 
         public string FilePrefix { get; private set; }
 
-        public string Directory { get; private set; }
-
         public StateMap StateMap { get; private set; }
-
-        public abstract IEnumerable<string> GeneratedFileNames { get; }
 
         public IEnumerable<ConcreteState> ConcreteStates => this.StateMap.OrderedStates.OfType<ConcreteState>();
 
@@ -37,17 +33,16 @@
 
         #region Public Methods
 
-        public void FSMInit(StateMap map, string fileName, string directory)
+        public void FSMInit(StateMap map, string fileName)
         {
             this.StateMap = map;
             this.InputFileName = fileName;
-            this.Directory = directory;
             this.FilePrefix = GetFilePrefix(this.InputFileName);
         }
 
         public abstract void Initialize();
 
-        public abstract void Generate();
+        public abstract string Generate();
 
         /// <summary>
         /// generate a hierarchy for the given state

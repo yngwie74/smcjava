@@ -14,85 +14,85 @@ namespace SMC.parser
 
         public FSMParser(FSMBuilder theBuilder, string theFileName)
         {
-            itsBuilder = theBuilder;
-            itsFileName = theFileName;
-            itsFSMGeneratorName = "";
-            itsBuilder.ErrorManager = itsErrorManager;
+            this.itsBuilder = theBuilder;
+            this.itsFileName = theFileName;
+            this.itsFSMGeneratorName = "";
+            this.itsBuilder.ErrorManager = this.itsErrorManager;
         }
 
         public void setFSMGenerator(string s)
-        { itsFSMGeneratorName = s; }
+        { this.itsFSMGeneratorName = s; }
 
         public string getFSMGeneratorName()
-        { return itsFSMGeneratorName; }
+        { return this.itsFSMGeneratorName; }
 
         public void setFSMName(string s)
-        { itsBuilder.SetName(s); }
+        { this.itsBuilder.SetName(s); }
 
         public void setContextName(string s)
-        { itsBuilder.SetContextName(s); }
+        { this.itsBuilder.SetContextName(s); }
 
         public void setException(string s)
-        { itsBuilder.SetException(s); }
+        { this.itsBuilder.SetException(s); }
 
         public void setInitialState(string s)
-        { itsBuilder.SetInitialState(s); }
+        { this.itsBuilder.SetInitialState(s); }
 
         public void setVersion(string s)
-        { itsBuilder.SetVersion(s); }
+        { this.itsBuilder.SetVersion(s); }
 
         public void addPragma(string s)
-        { itsBuilder.AddPragma(s); }
+        { this.itsBuilder.AddPragma(s); }
 
         public void addSuperSubState(string theName, string theSuperState, int theLineNumber)
         {
-            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.AddSuperSubState(theName, theSuperState, l);
+            var l = new ParserSyntaxLocation(this.itsFileName, theLineNumber);
+            this.itsBuilder.AddSuperSubState(theName, theSuperState, l);
         }
 
         public void addSuperState(string theName, int theLineNumber)
         {
-            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.AddSuperState(theName, l);
+            var l = new ParserSyntaxLocation(this.itsFileName, theLineNumber);
+            this.itsBuilder.AddSuperState(theName, l);
         }
 
         public void addSubState(string theName, string theSuperState, int theLineNumber)
         {
-            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.AddSubState(theName, theSuperState, l);
+            var l = new ParserSyntaxLocation(this.itsFileName, theLineNumber);
+            this.itsBuilder.AddSubState(theName, theSuperState, l);
         }
 
         public void addState(string theName, int theLineNumber)
         {
-            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.AddState(theName, l);
+            var l = new ParserSyntaxLocation(this.itsFileName, theLineNumber);
+            this.itsBuilder.AddState(theName, l);
         }
 
         public void addTransition(string theEvent, string theNextState, int theLineNumber)
         {
-            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.AddTransition(theEvent, theNextState, l);
+            var l = new ParserSyntaxLocation(this.itsFileName, theLineNumber);
+            this.itsBuilder.AddTransition(theEvent, theNextState, l);
         }
 
         public void addInternalTransition(string theEvent, int theLineNumber)
         {
-            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.AddInternalTransition(theEvent, l);
+            var l = new ParserSyntaxLocation(this.itsFileName, theLineNumber);
+            this.itsBuilder.AddInternalTransition(theEvent, l);
         }
 
         public void addAction(string theAction, int theLineNumber)
-        { itsBuilder.AddAction(theAction); }
+        { this.itsBuilder.AddAction(theAction); }
 
         public void addEntryAction(string theAction, int theLineNumber)
-        { itsBuilder.AddEntryAction(theAction); }
+        { this.itsBuilder.AddEntryAction(theAction); }
 
         public void addExitAction(string theAction, int theLineNumber)
-        { itsBuilder.AddExitAction(theAction); }
+        { this.itsBuilder.AddExitAction(theAction); }
 
         public void syntaxError(int theLineNumber, string theMessage)
         {
-            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsErrorManager.Error(l, theMessage);
+            var l = new ParserSyntaxLocation(this.itsFileName, theLineNumber);
+            this.itsErrorManager.Error(l, theMessage);
         }
 
         public void processFSM()
@@ -100,42 +100,41 @@ namespace SMC.parser
 
         public bool parse()
         {
-            bool status = false;
+            var status = false;
+            var ifile = new FileStream(this.itsFileName, FileMode.Open, FileAccess.Read);
+            var parser = new SMParser(ifile);
             try
             {
-                FileStream ifile = new FileStream(itsFileName, FileMode.Open);
-                SMParser parser = new SMParser(ifile);
-                try
-                {
-                    parser.parseFSM(this);
-                    status = itsBuilder.Build();
-                }
-                catch (ParseException pe)
-                {
-                    printSyntaxError(pe);
-                    System.Console.WriteLine("Aborting due to syntax errors.");
-                }
+                parser.parseFSM(this);
+                status = this.itsBuilder.Build();
             }
-            catch (FileNotFoundException)
+            catch (ParseException pe)
             {
-                System.Console.WriteLine("Could not open input file: " + itsFileName);
+                throw new System.InvalidOperationException(printSyntaxError(pe));
             }
             return status;
         }
 
-        private void printSyntaxError(ParseException pe)
+        private string printSyntaxError(ParseException pe)
         {
-            int prevLine = pe.currentToken.beginLine;
-            int errLine = pe.currentToken.next.beginLine;
+            var result = new System.Text.StringBuilder();
+            var prevLine = pe.currentToken.beginLine;
+            var errLine = pe.currentToken.next.beginLine;
 
-            System.Console.WriteLine("Syntax Error: " + itsFileName + " line " + errLine);
+            result.AppendLine("Syntax Error: " + this.itsFileName + " line " + errLine);
 
             if (prevLine != errLine)
-                System.Console.WriteLine("   Unknown field \"" +
+            {
+                result.AppendLine("   Unknown field \"" +
                                 pe.currentToken.next.image + "\" in header");
+            }
             else
-                System.Console.WriteLine("   Field \"" + pe.currentToken.image +
+            {
+                result.AppendLine("   Field \"" + pe.currentToken.image +
                   "\" has invalid value \"" + pe.currentToken.next.image + "\"");
+            }
+
+            return result.ToString();
         }
     }
 }

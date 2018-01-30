@@ -34,14 +34,13 @@
 
         public bool HasUsing => this.itsUsing.Count > 0;
 
-        public override IEnumerable<string> GeneratedFileNames
-            => Enumerable.Repeat(CreateOutputFileName(), 1);
-
         public ConcreteState SourceState { get; set; }
 
         public string Namespace { get; private set; }
 
         public IEnumerable<string> Usings => this.itsUsing;
+
+        public string OutputFileName => $"{this.StateMap.Name}.cs";
 
         #endregion
 
@@ -49,20 +48,9 @@
 
         public override void Initialize() => InitNamespaceAndUsingStatementes();
 
-        public override void Generate()
+        public override string Generate()
         {
-            try
-            {
-                File.WriteAllText(
-                    path: CreateOutputFileName(),
-                    contents: GenerateStringForCode(),
-                    encoding: Encoding.UTF8);
-            }
-            catch (IOException)
-            {
-                Console.WriteLine("Error: could not create output file");
-                throw;
-            }
+            return GenerateStringForCode();
         }
 
         public string GenerateStringForCode()
@@ -127,8 +115,6 @@
                 { }
             }
         }
-
-        private string CreateOutputFileName() => $"{this.Directory}{this.StateMap.Name}.cs";
 
         #endregion
     }

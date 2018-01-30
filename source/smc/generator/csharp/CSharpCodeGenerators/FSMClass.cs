@@ -46,9 +46,13 @@
 
         private static void AddFields(StringBuilder buff, StateMap stateMap)
         {
-            buff.AppendLine($"    private static string version = \"{stateMap.Version}\";")
+            buff.AppendLine("    #region Fields")
+                .AppendLine()
+                .AppendLine($"    private static string version = \"{stateMap.Version}\";")
                 .AppendLine()
                 .AppendLine("    private State currentState;")
+                .AppendLine()
+                .AppendLine("    #endregion")
                 .AppendLine();
         }
 

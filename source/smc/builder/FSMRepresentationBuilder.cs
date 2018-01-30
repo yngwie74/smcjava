@@ -128,18 +128,18 @@
             AddBuiltState(s);
         }
 
-        public StateRep GetStateRep(string theName) => this.itsStateReps[theName];
+        public StateRep GetStateRep(string theName) => GetOrDefault(itsStateReps, theName);
 
         public bool IsStateBuilt(string stateName)
             => this.itsStateDictionary.ContainsKey(stateName);
 
-        public State GetBuiltState(string theName) => this.itsStateDictionary[theName];
+        public State GetBuiltState(string theName) => GetOrDefault(itsStateDictionary, theName);
 
         public SuperState GetBuiltSuperState(string stateName)
-            => this.itsSuperStateDictionary[stateName];
+            => GetOrDefault(itsSuperStateDictionary, stateName);
 
         public ConcreteState GetBuiltConcreteState(string stateName)
-            => this.itsConcreteStateDictionary[stateName];
+            => GetOrDefault(itsConcreteStateDictionary, stateName);
 
         public override bool Build()
         {
@@ -290,6 +290,11 @@
                     }
                 }
             }
+        }
+
+        private static TVal GetOrDefault<TVal>(IDictionary<string, TVal> source, string key)
+        {
+            return (source.TryGetValue(key, out TVal value)) ? value : default(TVal);
         }
 
         #endregion
