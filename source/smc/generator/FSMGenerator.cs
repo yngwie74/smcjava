@@ -1,27 +1,37 @@
-﻿namespace smc.generator
+﻿namespace SMC.Generator
 {
     using System.Collections.Generic;
+    using System.Linq;
 
-    using smc.fsmrep;
+    using SMC.FsmRep;
+
+    using static System.IO.Path;
 
     public abstract class FSMGenerator
     {
-        #region Fields
-
-        private StateMap itsStateMap;
-        private string itsFilePrefix;
-        private string itsFileName;
-        private string itsDirectory;
-
-        #endregion
-
         #region Constructors & Destructors
 
         public FSMGenerator()
         {
-            itsFilePrefix = "";
-            itsFileName = "";
+            this.FilePrefix = "";
+            this.InputFileName = "";
         }
+
+        #endregion
+
+        #region Public Properties
+
+        public string InputFileName { get; private set; }
+
+        public string FilePrefix { get; private set; }
+
+        public string Directory { get; private set; }
+
+        public StateMap StateMap { get; private set; }
+
+        public abstract IEnumerable<string> GeneratedFileNames { get; }
+
+        public IEnumerable<ConcreteState> ConcreteStates => this.StateMap.OrderedStates.OfType<ConcreteState>();
 
         #endregion
 
@@ -29,64 +39,27 @@
 
         public void FSMInit(StateMap map, string fileName, string directory)
         {
-            itsStateMap = map;
-            itsFileName = fileName;
-            itsDirectory = directory;
-            itsFilePrefix = getFilePrefix(itsFileName);
+            this.StateMap = map;
+            this.InputFileName = fileName;
+            this.Directory = directory;
+            this.FilePrefix = GetFilePrefix(this.InputFileName);
         }
 
-        public abstract void initialize();
+        public abstract void Initialize();
 
-        public abstract void generate();
-
-        public abstract IEnumerable<string> getGeneratedFileNames();
-
-        public string getInputFileName()
-        {
-            return itsFileName;
-        }
-
-        public string getFilePrefix()
-        {
-            return itsFilePrefix;
-        }
-
-        public string getDirectory()
-        {
-            return itsDirectory;
-        }
-
-        public StateMap getStateMap()
-        {
-            return itsStateMap;
-        }
-
-        public IList<ConcreteState> getConcreteStates()
-        {
-            var concreteStates = new List<ConcreteState>();
-            var states = getStateMap().getOrderedStates();
-            foreach (var s in states)
-            {
-                if (s is ConcreteState)
-                {
-                    ConcreteState cs = (ConcreteState)s;
-                    concreteStates.Add(cs);
-                }
-            }
-            return concreteStates;
-        }
+        public abstract void Generate();
 
         /// <summary>
         /// generate a hierarchy for the given state
         /// the order of states in the hierarchy is from the super state
         /// to the substate with the last element being the state s.
         /// </summary>
-        public void getStateHierarchy(IList<State> hierarchy, State s)
+        public void GetStateHierarchy(IList<State> hierarchy, State s)
         {
             if (s is SubState)
             {
                 var ss = (SubState)s;
-                getStateHierarchy(hierarchy, ss.getSuperState());
+                GetStateHierarchy(hierarchy, ss.SuperState);
             }
             hierarchy.Add(s);
         }
@@ -98,10 +71,10 @@
         /// unshared ancestors of s1 are in the vector h1, and the unshared ancestors
         /// of s2 are in the vector h2
         /// </summary>
-        public void getUnsharedHierarchy(IList<State> h1, IList<State> h2, State s1, State s2)
+        public void GetUnsharedHierarchy(IList<State> h1, IList<State> h2, State s1, State s2)
         {
-            getStateHierarchy(h1, s1);
-            getStateHierarchy(h2, s2);
+            GetStateHierarchy(h1, s1);
+            GetStateHierarchy(h2, s2);
 
             // Now prune the hierarchy from the top down, eliminating the
             // super states which are common to the hierarchy
@@ -120,38 +93,12 @@
 
         /// <summary>
         /// Strips the path and the file extension from the file name
-        /// and returns just the prefix. eg: c:/smc/draw.sm would return
-        /// draw.
+        /// and returns just the prefix.
         /// </summary>
-        private string getFilePrefix(string theFileName)
-        {
-            string retval = string.Copy(theFileName);
-            int pos;
-            // strip off leading directory path if any
-            while ((pos = retval.IndexOf('/')) >= 0)
-            {
-                retval = retval.Substring(pos + 1);
-            }
-
-            while ((pos = retval.IndexOf('\\')) >= 0)
-            {
-                retval = retval.Substring(pos + 1);
-            }
-
-            while ((pos = retval.IndexOf(':')) >= 0)
-            {
-                retval = retval.Substring(pos + 1);
-            }
-
-            // Strip off the suffix.
-            var dotPos = retval.IndexOf(".");
-            if (dotPos >= 0)
-            {
-                retval = retval.Substring(0, dotPos);
-            }
-
-            return retval;
-        }
+        /// <example>
+        /// GetFilePrefix("c:/smc/draw.sm") => "draw"
+        /// </example>
+        private string GetFilePrefix(string theFileName) => GetFileNameWithoutExtension(theFileName);
 
         #endregion
     }

@@ -1,10 +1,10 @@
-﻿namespace smc.generator.csharp
+﻿namespace SMC.Generator.CSharp
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using smc.generator.csharp.CSharpCodeGenerators;
+    using SMC.Generator.CSharp.CSharpCodeGenerators;
 
     public class CSharpCodeGeneratorBuilder
     {

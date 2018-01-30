@@ -1,9 +1,9 @@
-﻿namespace smc.generator.csharp.CSharpCodeGenerators
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
-    using smc.generator.csharp;
+    using SMC.Generator.CSharp;
 
     public class FSMMutators : CSharpCodeGenerator
     {
-        public override string generateCode(SMCSharpGenerator smcsg) => string.Empty;
+        public override string GenerateCode(SMCSharpGenerator smcsg) => string.Empty;
     }
 }

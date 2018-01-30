@@ -1,13 +1,13 @@
-﻿namespace smc.generator.csharp.CSharpCodeGenerators
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
-    using smc.generator.csharp;
+    using SMC.Generator.CSharp;
 
     public class NamespaceStatement : CSharpCodeGenerator
     {
-        public override string generateCode(SMCSharpGenerator smcsg)
+        public override string GenerateCode(SMCSharpGenerator gen)
         {
-            return smcsg.hasNamespace()
-                ? "namespace {smcsg.getNamespace()}\n{\n"
+            return gen.HasNamespace
+                ? $"namespace {gen.Namespace}\n{{\n"
                 : string.Empty;
         }
     }

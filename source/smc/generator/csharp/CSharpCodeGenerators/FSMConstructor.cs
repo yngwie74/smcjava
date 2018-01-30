@@ -1,36 +1,36 @@
-﻿namespace smc.generator.csharp.CSharpCodeGenerators
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
 
-    using smc.fsmrep;
-    using smc.generator.csharp;
+    using SMC.FsmRep;
+    using SMC.Generator.CSharp;
 
     public class FSMConstructor : CSharpCodeGenerator
     {
-        public override string generateCode(SMCSharpGenerator gen)
+        public override string GenerateCode(SMCSharpGenerator gen)
         {
             var buff = new StringBuilder()
                 .AppendLine("    #region Constructors & Destructors")
                 .AppendLine()
-                .AppendLine($"    public {gen.getStateMap().getName()}()")
+                .AppendLine($"    public {gen.StateMap.Name}()")
                 .AppendLine("    {");
 
-            var iName = createMethodName(gen.getStateMap().getInitialState());
+            var iName = CreateMethodName(gen.StateMap.InitialState);
 
             buff.Append($"        currentState = State.{iName};");
 
             var initialHierarchy = new List<State>();
-            gen.getStateHierarchy(initialHierarchy, gen.getStateMap().getInitialState());
+            gen.GetStateHierarchy(initialHierarchy, gen.StateMap.InitialState);
 
             foreach (var newState in initialHierarchy)
             {
-                var eactions = newState.getEntryActions();
+                var eactions = newState.EntryActions;
                 if (eactions.Any())
                 {
                     buff.AppendLine()
-                        .AppendLine($"        // Entry functions for: {newState.getName()}");
+                        .AppendLine($"        // Entry functions for: {newState.Name}");
                 }
 
                 foreach (var action in eactions)

@@ -1,16 +1,14 @@
-﻿namespace smc.builder.stateRep
+﻿namespace SMC.Builder.DataModel
 {
-    using java.lang;
-
-    using smc.builder;
-    using smc.fsmrep;
+    using SMC.Builder;
+    using SMC.FsmRep;
 
     public class SuperStateRep : StateRep
     {
         #region Constructors & Destructors
 
-        public SuperStateRep(string str, SyntaxLocation sl)
-            : base(str, sl)
+        public SuperStateRep(string theName, SyntaxLocation loc)
+            : base(theName, loc)
         {
         }
 
@@ -18,51 +16,33 @@
 
         #region Public Methods
 
-        public override State build(FSMRepresentationBuilder fsmrb)
+        public override State Build(FSMRepresentationBuilder fb)
         {
-            object obj;
-            if (!fsmrb.isStateBuilt(this.getStateName()))
+            // Many other states may depend upon super states.  Thus there may
+            // be many requests for them to be built.  Thus we have to check to
+            // see if its has already been built, and ignore any subsequent
+            // requests.
+            //
+            // Also, since super states do not depend upon anyone, they can be
+            // built as soon as they are seen.
+
+            SuperState retval;
+            if (!fb.IsStateBuilt(this.StateName))
             {
-            SuperStateImpl superStateImpl = new SuperStateImpl(this.getStateName());
-            fsmrb.addBuiltSuperState(superStateImpl);
-            obj = superStateImpl;
+                var ss = new SuperStateImpl(this.StateName);
+                fb.AddBuiltSuperState(ss);
+                retval = ss;
             }
             else
             {
-            obj = fsmrb.getBuiltSuperState(this.getStateName());
+                retval = fb.GetBuiltSuperState(this.StateName);
             }
-            object obj2 = obj;
-            object obj3 = obj2;
-            object obj4;
-            if (obj3 != null)
-            {
-            obj4 = (obj3 as State);
-            if (obj4 == null)
-            {
-                throw new java.lang.IncompatibleClassChangeError();
-            }
-            }
-            else
-            {
-            obj4 = null;
-            }
-            return (State)obj4;
+            return retval;
         }
 
-        public override bool equals(StateRep sr)
-        {
-            if ((object)sr.getStateName() == this.getStateName() && sr is SuperStateRep)
-            {
-            return true;
-            }
-            return false;
-        }
+        public override bool Equals(StateRep s) => base.Equals(s) && (s is SuperStateRep);
 
-        public override string ToString()
-        {
-            return new StringBuffer().append("(").append(this.getStateName()).append(")")
-            .ToString();
-        }
+        public override string ToString() => $"({this.StateName})";
 
         #endregion
     }

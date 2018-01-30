@@ -1,26 +1,25 @@
-﻿namespace smc.fsmrep
+﻿namespace SMC.FsmRep
 {
-//----------------------------------
-// Name
-//  ConcreteSubStateImpl
-//
-// Description
-//  This class represents a substate which is concrete, i.e. is not
-//  also a super state.  Thus it can be the target of a transition.
-//
+    /// <summary>
+    /// This class represents a substate which is concrete, i.e. is not
+    /// also a super state.  Thus it can be the target of a transition.
+    /// </summary>
     public class ConcreteSubStateImpl : StateImpl, ConcreteState, State, SubState
     {
-        private SuperState itsSuperState;
+        #region Constructors & Destructors
 
         public ConcreteSubStateImpl(string theName, SuperState ss)
-          : base( theName )
+            : base(theName)
         {
-            itsSuperState = ss;
+            this.SuperState = ss;
         }
 
-        public SuperState getSuperState()
-        {
-            return itsSuperState;
-        }
+        #endregion
+
+        #region Public Properties
+
+        public SuperState SuperState { get; private set; }
+
+        #endregion
     }
 }

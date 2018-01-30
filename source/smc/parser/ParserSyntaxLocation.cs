@@ -1,4 +1,4 @@
-namespace smc.parser
+namespace SMC.parser
 {
 
     //--------------------------------------------
@@ -7,7 +7,7 @@ namespace smc.parser
     //  of the state machine being built.
     //
 
-    using smc.builder;
+    using SMC.Builder;
 
     public class ParserSyntaxLocation : SyntaxLocation
     {

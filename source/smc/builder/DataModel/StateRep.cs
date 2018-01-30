@@ -1,79 +1,75 @@
-﻿namespace smc.builder.stateRep
+﻿namespace SMC.Builder.DataModel
 {
     using System.Collections.Generic;
-    using java.lang;
-    using java.util;
 
-    using smc.builder;
-    using smc.fsmrep;
+    using SMC.Builder;
+    using SMC.FsmRep;
 
     public abstract class StateRep
     {
         #region Fields
 
-        private string itsName;
-        private SyntaxLocation itsSyntaxLocation;
-        private HashSet itsBuiltEvents;
-        private IList<string> itsEntryActions;
-        private IList<string> itsExitActions;
+        private string name;
+        private SyntaxLocation syntaxLocation;
+        private ISet<string> builtEvents;
+        private IList<string> entryActions;
+        private IList<string> exitActions;
 
         #endregion
 
         #region Constructors & Destructors
 
-        public StateRep(string str, SyntaxLocation sl)
+        public StateRep(string theName, SyntaxLocation loc)
         {
-            this.itsName = str;
-            this.itsSyntaxLocation = sl;
-            this.itsBuiltEvents = new HashSet();
-            this.itsEntryActions = new List<string>();
-            this.itsExitActions = new List<string>();
+            this.name = theName;
+            this.syntaxLocation = loc;
+            this.builtEvents = new HashSet<string>();
+            this.entryActions = new List<string>();
+            this.exitActions = new List<string>();
         }
+
+        #endregion
+
+        #region Public Properties
+
+        public string StateName => this.name;
+
+        public SyntaxLocation SyntaxLocation => this.syntaxLocation;
+
+        public IEnumerable<string> EntryActions => this.entryActions;
+
+        public IEnumerable<string> ExitActions => this.exitActions;
 
         #endregion
 
         #region Public Methods
 
-        public virtual void addEntryAction(string str)
+        public void AddBuiltEvent(string theEvent) => this.builtEvents.Add(theEvent);
+
+        public void AddEntryAction(string a) => this.entryActions.Add(a);
+
+        public void AddExitAction(string a) => this.exitActions.Add(a);
+
+        public bool IsEventBuilt(string e) => this.builtEvents.Contains(e);
+
+        public abstract State Build(FSMRepresentationBuilder fb);
+
+        public virtual bool Equals(StateRep s) => (s != null) && (s.StateName == this.StateName);
+
+        public override bool Equals(object obj) => ReferenceEquals(obj, this) || Equals(obj as StateRep);
+
+        public override int GetHashCode()
         {
-            this.itsEntryActions.Add(str);
+            var comp = EqualityComparer<string>.Default;
+            return -305392441 *
+                (-1521134295 + comp.GetHashCode(this.GetType().Name)) *
+                (-1521134295 + comp.GetHashCode(this.name));
         }
 
-        public virtual void addExitAction(string str)
-        {
-            this.itsExitActions.Add(str);
-        }
+        public static bool operator ==(StateRep rep1, StateRep rep2)
+            => EqualityComparer<StateRep>.Default.Equals(rep1, rep2);
 
-        public virtual string getStateName()
-        {
-            return this.itsName;
-        }
-
-        public virtual SyntaxLocation getSyntaxLocation()
-        {
-            return this.itsSyntaxLocation;
-        }
-
-        public virtual bool isEventBuilt(string str)
-        {
-            return this.itsBuiltEvents.contains(str);
-        }
-
-        public virtual void addBuiltEvent(string str)
-        {
-            this.itsBuiltEvents.add(str);
-        }
-
-        public abstract State build(FSMRepresentationBuilder fsmrb);
-
-        public virtual IList<string> getEntryActions() => this.itsEntryActions;
-
-        public virtual IList<string> getExitActions()
-        {
-            return this.itsExitActions;
-        }
-
-        public abstract bool equals(StateRep sr);
+        public static bool operator !=(StateRep rep1, StateRep rep2) => !(rep1 == rep2);
 
         #endregion
     }

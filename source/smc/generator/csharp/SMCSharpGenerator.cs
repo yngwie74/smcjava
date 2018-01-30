@@ -1,23 +1,20 @@
-﻿namespace smc.generator.csharp
+﻿namespace SMC.Generator.CSharp
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Text;
 
-    using smc.fsmrep;
-    using smc.generator.csharp.CSharpCodeGenerators;
+    using SMC.FsmRep;
+    using SMC.Generator.CSharp.CSharpCodeGenerators;
 
     public class SMCSharpGenerator : FSMGenerator
     {
         #region Fields
 
-        private bool itHasNamespace;
-        private bool itHasUsing;
-        private string itsNamespace;
-        private List<string> itsUsing;
-        private ConcreteState itsSourceState;
-        private ISet<string> itsOverriddenEvents;
+        private IList<string> itsUsing;
+        private ISet<string> overriddenEvents;
 
         #endregion
 
@@ -25,32 +22,40 @@
 
         public SMCSharpGenerator()
         {
-            itsOverriddenEvents = new HashSet<string>();
-            itHasNamespace = itHasUsing = false;
-            itsUsing = new List<string>();
+            this.overriddenEvents = new HashSet<string>();
+            this.itsUsing = new List<string>();
         }
+
+        #endregion
+
+        #region Public Properties
+
+        public bool HasNamespace => !string.IsNullOrEmpty(this.Namespace);
+
+        public bool HasUsing => this.itsUsing.Count > 0;
+
+        public override IEnumerable<string> GeneratedFileNames
+            => Enumerable.Repeat(CreateOutputFileName(), 1);
+
+        public ConcreteState SourceState { get; set; }
+
+        public string Namespace { get; private set; }
+
+        public IEnumerable<string> Usings => this.itsUsing;
 
         #endregion
 
         #region Public Methods
 
-        public override void initialize()
-        {
-            initNamespaceAndUsingStatementes();
-        }
+        public override void Initialize() => InitNamespaceAndUsingStatementes();
 
-        public bool usesExceptions(StateMap sm)
-        {
-            return (sm.getExceptionName().Length > 0);
-        }
-
-        public override void generate()
+        public override void Generate()
         {
             try
             {
                 File.WriteAllText(
-                    path: createOutputFileName(),
-                    contents: generateStringForCode(),
+                    path: CreateOutputFileName(),
+                    contents: GenerateStringForCode(),
                     encoding: Encoding.UTF8);
             }
             catch (IOException)
@@ -60,7 +65,7 @@
             }
         }
 
-        public string generateStringForCode()
+        public string GenerateStringForCode()
         {
             var buff = new StringBuilder();
 
@@ -80,56 +85,17 @@
             return buff.ToString();
         }
 
-        public bool hasNamespace()
-        {
-            return itHasNamespace;
-        }
+        public void ClearOverRiddenEvents() => this.overriddenEvents.Clear();
 
-        public bool hasUsing()
-        {
-            return itHasUsing;
-        }
+        public void AddOverRiddenEvent(string theEvent) => this.overriddenEvents.Add(theEvent);
 
-        public override IEnumerable<string> getGeneratedFileNames()
-        {
-            return new string[] { createOutputFileName() };
-        }
-
-        public ConcreteState getItsSourceState()
-        {
-            return itsSourceState;
-        }
-
-        public void clearItsOverRiddenEvents()
-        {
-            itsOverriddenEvents.Clear();
-        }
-
-        public void setItsSourceState(ConcreteState value)
-        {
-            itsSourceState = value;
-        }
-
-        public ISet<string> getItsOverriddenEvents()
-        {
-            return itsOverriddenEvents;
-        }
-
-        public string getNamespace()
-        {
-            return itsNamespace;
-        }
-
-        public List<string> getItsUsing()
-        {
-            return itsUsing;
-        }
+        public bool IsOverRiddenEvent(string theEvent) => this.overriddenEvents.Contains(theEvent);
 
         #endregion
 
         #region Methods
 
-        private void initNamespaceAndUsingStatementes()
+        private void InitNamespaceAndUsingStatementes()
         {
             const string usingString = "Using";
             const string nspString = "Namespace";
@@ -137,7 +103,7 @@
             var useLen = usingString.Length;
             var nspLen = nspString.Length;
 
-            var pragmas = getStateMap().getPragma();
+            var pragmas = this.StateMap.Pragma;
             foreach (var p in pragmas)
             {
                 try
@@ -145,14 +111,12 @@
                     if (p.StartsWith(usingString, StringComparison.OrdinalIgnoreCase))
                     {
                         var value = p.Substring(useLen);
-                        itsUsing.Add(value.Trim());
-                        itHasUsing = true;
+                        this.itsUsing.Add(value.Trim());
                     }
                     else if (p.StartsWith(nspString, StringComparison.OrdinalIgnoreCase))
                     {
                         var value = p.Substring(nspLen);
-                        itsNamespace = value.Trim();
-                        itHasNamespace = true;
+                        this.Namespace = value.Trim();
                     }
                     else
                     {
@@ -164,10 +128,7 @@
             }
         }
 
-        private string createOutputFileName()
-        {
-            return $"{getDirectory()}{getStateMap().getName()}.cs";
-        }
+        private string CreateOutputFileName() => $"{this.Directory}{this.StateMap.Name}.cs";
 
         #endregion
     }

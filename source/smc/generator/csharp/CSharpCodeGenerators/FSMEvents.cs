@@ -1,21 +1,21 @@
-﻿namespace smc.generator.csharp.CSharpCodeGenerators
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
     using System.Text;
 
-    using smc.generator.csharp;
+    using SMC.Generator.CSharp;
 
     public class FSMEvents : CSharpCodeGenerator
     {
-        public override string generateCode(SMCSharpGenerator smcsg)
+        public override string GenerateCode(SMCSharpGenerator smcsg)
         {
             var buff = new StringBuilder()
                 .AppendLine("    #region Event Methods - forward to the current State")
                 .AppendLine();
 
-            var events = smcsg.getStateMap().getEvents();
+            var events = smcsg.StateMap.Events;
             foreach (var evi in events)
             {
-                var evName = createMethodName(evi);
+                var evName = CreateMethodName(evi);
                 buff.Append($"    public void {evName}() ")
                     .AppendLine($"=> this.currentState.{evName}(this);")
                     .AppendLine();

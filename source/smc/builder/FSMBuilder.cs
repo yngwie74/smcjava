@@ -1,72 +1,76 @@
-﻿namespace smc.builder
+﻿namespace SMC.Builder
 {
-    using java.lang;
-
-    public abstract class FSMBuilder : Object
+    /// <summary>
+    /// This class provides the interface that the FSMParser uses
+    /// to declare errors.  The parsing agent is expected to derive its own
+    /// implementation of this class.
+    /// </summary>
+    public abstract class FSMBuilder
     {
-
-        private FSMBuilderErrorManager itsErrorManager;
-
-
+        #region Constructors & Destructors
 
         public FSMBuilder()
         {
         }
 
+        #endregion
 
+        #region Public Properties
 
-        public abstract void setName(string str);
+        public FSMBuilderErrorManager ErrorManager { private get; set; }
 
-        public abstract void setContextName(string str);
+        #endregion
 
-        public abstract void setException(string str);
+        #region Public Methods
 
-        public abstract void setInitialState(string str);
+        public abstract void SetName(string theName);
 
-        public abstract void setVersion(string str);
+        public abstract void SetContextName(string theName);
 
-        public abstract void addPragma(string str);
+        public abstract void SetException(string e);
 
-        public abstract void addSuperSubState(string str1, string str2, SyntaxLocation sl);
+        public abstract void SetInitialState(string theName);
 
-        public abstract void addSuperState(string str, SyntaxLocation sl);
+        public abstract void SetVersion(string theVersion);
 
-        public abstract void addSubState(string str1, string str2, SyntaxLocation sl);
+        public abstract void AddPragma(string theHeader);
 
-        public abstract void addState(string str, SyntaxLocation sl);
+        public abstract void AddSuperSubState(string theName, string theSuperState, SyntaxLocation loc);
 
-        public abstract void addTransition(string str1, string str2, SyntaxLocation sl);
+        public abstract void AddSuperState(string theName, SyntaxLocation loc);
 
-        public abstract void addInternalTransition(string str, SyntaxLocation sl);
+        public abstract void AddSubState(string theName, string theSuperState, SyntaxLocation loc);
 
-        public abstract void addAction(string str);
+        public abstract void AddState(string theName, SyntaxLocation loc);
 
-        public abstract void addEntryAction(string str);
+        public abstract void AddTransition(string theEvent, string theNextState, SyntaxLocation loc);
 
-        public abstract void addExitAction(string str);
+        public abstract void AddInternalTransition(string theEvent, SyntaxLocation loc);
 
-        public abstract bool build();
+        public abstract void AddAction(string theAction);
 
-        public virtual void setErrorManager(FSMBuilderErrorManager fsmbem)
+        public abstract void AddEntryAction(string theAction);
+
+        public abstract void AddExitAction(string theAction);
+
+        public abstract bool Build();
+
+        public void Error(string theString)
         {
-            this.itsErrorManager = fsmbem;
-        }
-
-        public virtual void error(string str)
-        {
-            if (this.itsErrorManager != null)
+            if (this.ErrorManager != null)
             {
-                this.itsErrorManager.error(str);
+                this.ErrorManager.Error(theString);
             }
         }
 
-        public virtual void error(SyntaxLocation sl, string str)
+        public void Error(SyntaxLocation loc, string theString)
         {
-            if (this.itsErrorManager != null)
+            if (this.ErrorManager != null)
             {
-                this.itsErrorManager.error(sl, str);
+                this.ErrorManager.Error(loc, theString);
             }
         }
 
+        #endregion
     }
 }

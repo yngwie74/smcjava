@@ -1,12 +1,12 @@
-﻿namespace smc.generator.csharp.CSharpCodeGenerators
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
     using System.Text;
 
-    using smc.generator.csharp;
+    using SMC.Generator.CSharp;
 
     public class FSMAccessors : CSharpCodeGenerator
     {
-        public override string generateCode(SMCSharpGenerator smcsg)
+        public override string GenerateCode(SMCSharpGenerator smcsg)
         {
             return new StringBuilder()
                 .AppendLine()

@@ -1,11 +1,8 @@
-﻿namespace smc.builder
+﻿namespace SMC.Builder
 {
     public interface FSMBuilderErrorManager
     {
-
-        void error(string str);
-
-        void error(SyntaxLocation sl, string str);
-
+        void Error(SyntaxLocation loc, string s);
+        void Error(string s);
     }
 }

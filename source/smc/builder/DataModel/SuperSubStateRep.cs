@@ -1,109 +1,77 @@
-﻿namespace smc.builder.stateRep
+﻿namespace SMC.Builder.DataModel
 {
-    using java.lang;
-
-    using smc.builder;
-    using smc.fsmrep;
+    using SMC.Builder;
+    using SMC.FsmRep;
 
     public class SuperSubStateRep : StateRep
     {
-        #region Fields
+        #region Constructors & Destructors
 
-        private string itsSuperStateName;
+        public SuperSubStateRep(string theName, string theSuper, SyntaxLocation loc)
+            : base(theName, loc)
+        {
+            this.SuperStateName = theSuper;
+        }
 
         #endregion
 
-        #region Constructors & Destructors
+        #region Public Properties
 
-        public SuperSubStateRep(string str1, string str2, SyntaxLocation sl)
-            : base(str1, sl)
-        {
-            this.itsSuperStateName = str2;
-        }
+        public virtual string SuperStateName { get; private set; }
 
         #endregion
 
         #region Public Methods
 
-        public virtual string getSuperStateName()
+        public override State Build(FSMRepresentationBuilder fb)
         {
-            return this.itsSuperStateName;
-        }
+            // SuperSub states depend upon other states, and so must request
+            // that they be built first.  Also, they are depended upon by other
+            // states, so they must ignore duplicate requests for being built.
 
-        public override State build(FSMRepresentationBuilder fsmrb)
-        {
-            object obj = null;
-            if (!fsmrb.isStateBuilt(this.getStateName()))
+            State retval = null;
+            if (!fb.IsStateBuilt(this.StateName))
             {
-            StateRep stateRep = fsmrb.getStateRep(this.getSuperStateName());
-            if (stateRep != null)
-            {
-                stateRep.build(fsmrb);
-                SuperState builtSuperState = fsmrb.getBuiltSuperState(this.getSuperStateName());
-                if (builtSuperState != null)
+                var sr = fb.GetStateRep(this.SuperStateName);
+                if (sr != null)
                 {
-                    SuperSubStateImpl superSubStateImpl = new SuperSubStateImpl(this.getStateName(), builtSuperState);
-                    obj = superSubStateImpl;
-                    fsmrb.addBuiltSuperState(superSubStateImpl);
+                    sr.Build(fb);
+                    var superState = fb.GetBuiltSuperState(this.SuperStateName);
+                    if (superState != null)
+                    {
+                        var s = new SuperSubStateImpl(this.StateName, superState);
+                        retval = s;
+                        fb.AddBuiltSuperState(s);
+                    }
+                    else
+                    {
+                        var e = "Could not build super sub state (" + this.StateName + ") because super state (" + this.SuperStateName + ") had an error.";
+                        fb.SetError();
+                        fb.Error(sr.SyntaxLocation, e);
+                    }
                 }
                 else
                 {
-                    string str = new StringBuffer().append("Could not build super sub state (").append(this.getStateName()).append(") because super state (")
-                        .append(this.getSuperStateName())
-                        .append(") had an error.")
-                        .ToString();
-                    fsmrb.setError();
-                    fsmrb.error(stateRep.getSyntaxLocation(), str);
+                    var e = $"Super state ({this.SuperStateName}) was not declared.";
+                    fb.SetError();
+                    fb.Error(sr.SyntaxLocation, e);
                 }
             }
             else
             {
-                string str2 = new StringBuffer().append("Super state (").append(this.getSuperStateName()).append(") was not declared.")
-                    .ToString();
-                fsmrb.setError();
-                fsmrb.error(stateRep.getSyntaxLocation(), str2);
+                retval = fb.GetBuiltState(this.StateName);
             }
-            }
-            else
-            {
-            obj = fsmrb.getBuiltState(this.getStateName());
-            }
-            object obj2 = obj;
-            object obj3;
-            if (obj2 != null)
-            {
-            obj3 = (obj2 as State);
-            if (obj3 == null)
-            {
-                throw new java.lang.IncompatibleClassChangeError();
-            }
-            }
-            else
-            {
-            obj3 = null;
-            }
-            return (State)obj3;
+            return retval;
         }
 
-        public override bool equals(StateRep sr)
+        public override bool Equals(StateRep s)
         {
-            if ((object)sr.getStateName() == this.getStateName() && sr is SuperSubStateRep)
-            {
-            SuperSubStateRep superSubStateRep = (SuperSubStateRep)sr;
-            if ((object)superSubStateRep.getSuperStateName() == this.getSuperStateName())
-            {
-                return true;
-            }
-            }
-            return false;
+            var other = s as SuperSubStateRep;
+            return base.Equals(s) &&
+                (other != null) && (other.SuperStateName == this.SuperStateName);
         }
 
-        public override string ToString()
-        {
-            return new StringBuffer().append("(").append(this.getStateName()).append(") : ")
-            .append(this.getSuperStateName())
-            .ToString();
-        }
+        public override string ToString() => $"({this.StateName}) : {this.SuperStateName}";
 
         #endregion
     }

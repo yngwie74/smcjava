@@ -1,80 +1,83 @@
-﻿namespace smc.fsmrep
+﻿namespace SMC.FsmRep
 {
     using System.Collections.Generic;
-    //-----------------------------------------------------
-    // Name
-    //  MutableStateMap
-    //
-    // Description
-    //  This class represents the structure which holds the
-    //  representation of states and transitions.  
-    //
+
+    /// <summary>
+    /// This class represents the structure which holds the
+    /// representation of states and transitions.
+    /// </summary>
     public class MutableStateMap : StateMap
     {
-        private ConcreteState itsInitialState;
-        private List<State> itsOrderedStates;
-        private ISet<string> itsEvents;
-        private ISet<string> itsActions;
-        private string itsName;
-        private string itsContextName;
-        private string itsExceptionName;
-        private string itsErrorFunctionName;
-        private string itsVersion;
-        private List<string> itsPragma;
+        #region Fields
+
+        private IList<State> orderedStates;
+        private ISet<string> events;
+        private ISet<string> actions;
+        private List<string> pragma;
+
+        #endregion
+
+        #region Constructors & Destructors
+
         public MutableStateMap()
         {
-            itsOrderedStates = new List<State>();
-            itsEvents = new HashSet<string>();
-            itsActions = new HashSet<string>();
-            itsPragma = new List<string>();
+            this.orderedStates = new List<State>();
+            this.events = new HashSet<string>();
+            this.actions = new HashSet<string>();
+            this.pragma = new List<string>();
         }
-        public void setInitialState(ConcreteState s)
-        { itsInitialState = s; }
-        public void setName(string theName)
-        { itsName = theName; }
-        public void setContextName(string theName)
-        { itsContextName = theName; }
-        public void setExceptionName(string theName)
-        { itsExceptionName = theName; }
-        public void setErrorFunctionName(string theName)
-        { itsErrorFunctionName = theName; }
-        public void addPragma(string theName)
-            { itsPragma.Add(theName); }
-        public void setVersion(string theVersion)
-        { itsVersion = theVersion; }
 
-        public void addOrderedState(State s)
+        #endregion
+
+        #region Public Properties
+
+        public IEnumerable<string> Actions => this.actions;
+
+        public ConcreteState InitialState { get; set; }
+
+        public IEnumerable<State> OrderedStates => this.orderedStates;
+
+        public IEnumerable<string> Events => this.events;
+
+        public string Name { get; set; }
+
+        public string ContextName { get; set; }
+
+        public IEnumerable<string> Pragma => this.pragma;
+
+        public string Version { get; set; }
+
+        public string ExceptionName { get; set; }
+
+        public string ErrorFunctionName { get; set; }
+
+        public bool UsesExceptions => !string.IsNullOrEmpty(this.ExceptionName);
+
+        #endregion
+
+        #region Public Methods
+
+        public void AddPragma(string theName) => this.pragma.Add(theName);
+
+        public void AddOrderedState(State s)
         {
             // if the state isn't already in itsOrderedStates, add it at the end
-            if (!itsOrderedStates.Contains(s) == false)
-                itsOrderedStates.Add(s);
-        }
-        public void addTransition(State s, Transition t)
-        {
-            s.addTransition(t);
-            itsEvents.Add(t.getEvent());
-            foreach (var action in t.getActions())
-                itsActions.Add(action);
+            if (!this.orderedStates.Contains(s))
+            {
+                this.orderedStates.Add(s);
+            }
         }
 
-        public ConcreteState getInitialState()
-            { return itsInitialState; }
-        public IList<State> getOrderedStates()
-            { return itsOrderedStates; }
-        public ISet<string> getEvents()
-            { return itsEvents; }
-        public ISet<string> Actions => itsActions;
-        public string getName()
-            { return itsName; }
-        public string getContextName()
-            { return itsContextName; }
-        public IList<string> getPragma()
-            { return itsPragma; }
-        public string getVersion()
-            { return itsVersion; }
-        public string getExceptionName()
-            { return itsExceptionName; }
-        public string getErrorFunctionName()
-            { return itsErrorFunctionName; }
+        public void AddTransition(State s, Transition t)
+        {
+            s.AddTransition(t);
+            this.events.Add(t.Event);
+            foreach (var action in t.Actions)
+            {
+                this.actions.Add(action);
+            }
+        }
+
+        #endregion
     }
 }

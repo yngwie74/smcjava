@@ -1,23 +1,29 @@
-﻿namespace smc.fsmrep
+﻿namespace SMC.FsmRep
 {
     using System.Collections.Generic;
 
-//----------------------------------
-// Name
-//  State
-//
-// Description
-//  This is the interface which represents
-//  a state in the finite state machine.
-//
+    /// <summary>
+    /// This is the interface which represents
+    /// a state in the finite state machine.
+    /// </summary>
     public interface State
     {
-        string getName();
-        ISet<Transition> getTransitions();
-        IList<string> getEntryActions();
-        IList<string> getExitActions();
-        void addTransition(Transition t);
-        void setEntryActions(IList<string> v);
-        void setExitActions(IList<string> v);
+        #region Properties
+
+        string Name { get; }
+
+        IEnumerable<Transition> Transitions { get; }
+
+        IEnumerable<string> EntryActions { get; set; }
+
+        IEnumerable<string> ExitActions { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        void AddTransition(Transition t);
+
+        #endregion
     }
 }

@@ -1,16 +1,12 @@
-﻿namespace smc.parser
+﻿namespace SMC.parser
 {
     using System.Collections.Generic;
 
-    using smc.builder;
+    using SMC.Builder;
 
-    //----------------------------------------------
-    // Name
-    //  ParserErrorManager
-    //
-    // Description
-    //  Error manager for the parser
-    //
+    /// <summary>
+    /// Error manager for the parser
+    /// </summary>
     public class ParserErrorManager : FSMBuilderErrorManager
     {
         private IList<string> errors;
@@ -25,7 +21,7 @@
             this.isOutputing=isOutputing;
             errors = new List<string>();
         }
-        public void error(SyntaxLocation loc, string s)
+        public void Error(SyntaxLocation loc, string s)
         {
             if( loc is ParserSyntaxLocation )
             {
@@ -35,7 +31,7 @@
                 errors.Add(s);
             }
         }
-        public void error(string s)
+        public void Error(string s)
         {
             if(isOutputing)
                 System.Console.WriteLine( s );

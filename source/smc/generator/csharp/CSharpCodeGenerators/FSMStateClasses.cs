@@ -1,11 +1,11 @@
-﻿namespace smc.generator.csharp.CSharpCodeGenerators
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
 
-    using smc.fsmrep;
-    using smc.generator.csharp;
+    using SMC.FsmRep;
+    using SMC.Generator.CSharp;
 
     public class FSMStateClasses : CSharpCodeGenerator
     {
@@ -23,23 +23,23 @@
 
         #region Public Methods
 
-        public override string generateCode(SMCSharpGenerator gen)
+        public override string GenerateCode(SMCSharpGenerator gen)
         {
             this.gen = gen;
             var buff = new StringBuilder();
-            var concreteStates = gen.getConcreteStates();
+            var concreteStates = gen.ConcreteStates;
 
             foreach (var cs in concreteStates)
             {
                 buff.AppendLine("/// <summary>")
-                    .AppendLine($"/// Handles the {cs.getName()} State and its events")
+                    .AppendLine($"/// Handles the {cs.Name} State and its events")
                     .AppendLine("/// </summary>")
-                    .AppendLine($"public class {classNameFor(cs)} : State")
+                    .AppendLine($"public class {ClassNameFor(cs)} : State")
                     .AppendLine("{")
-                    .AppendLine($"    public override string Name => \"{cs.getName()}\";");
+                    .AppendLine($"    public override string Name => \"{cs.Name}\";");
 
-                gen.setItsSourceState(cs);
-                gen.clearItsOverRiddenEvents();
+                gen.SourceState = cs;
+                gen.ClearOverRiddenEvents();
 
                 buff.Append(generateTransitions(cs))
                     .AppendLine("}")
@@ -56,21 +56,21 @@
         private string generateTransitions(State s)
         {
             var buff = new StringBuilder();
-            var transitions = s.getTransitions();
+            var transitions = s.Transitions;
             foreach (var t in transitions)
             {
-                var _event = t.getEvent();
-                if (this.gen.getItsOverriddenEvents().Contains(_event) == false)
+                var _event = t.Event;
+                if (!this.gen.IsOverRiddenEvent(_event))
                 {
-                    this.gen.getItsOverriddenEvents().Add(_event);
+                    this.gen.AddOverRiddenEvent(_event);
                     var noResponse = true;
 
                     buff.AppendLine();
-                    buff.AppendLine($"    public override void {createMethodName(_event)}({this.gen.getStateMap().getName()} {ArgName})");
+                    buff.AppendLine($"    public override void {CreateMethodName(_event)}({this.gen.StateMap.Name} {ArgName})");
                     buff.AppendLine("    {");
 
-                    var actions = t.getActions();
-                    if (actions.Count > 0)
+                    var actions = t.Actions;
+                    if (actions.Any())
                     {
                         noResponse = false;
                     }
@@ -102,7 +102,7 @@
             if (s is SubState)
             {
                 var ss = (SubState)s;
-                buff.Append(generateTransitions(ss.getSuperState()));
+                buff.Append(generateTransitions(ss.SuperState));
             }
 
             return buff.ToString();
@@ -112,12 +112,12 @@
         {
             var buff = new StringBuilder()
                 .AppendLine("        // change the state")
-                .AppendLine($"        {ArgName}.CurrentState = State.{createMethodName(et.getNextState())};");
+                .AppendLine($"        {ArgName}.CurrentState = State.{CreateMethodName(et.NextState)};");
 
             var oldHierarchy = new List<State>();
             var newHierarchy = new List<State>();
 
-            this.gen.getUnsharedHierarchy(oldHierarchy, newHierarchy, this.gen.getItsSourceState(), et.getNextState());
+            this.gen.GetUnsharedHierarchy(oldHierarchy, newHierarchy, this.gen.SourceState, et.NextState);
 
             var n = oldHierarchy.Count;
             for (n--; n >= 0; n--)
@@ -135,14 +135,14 @@
 
         private static void AddStateActions(string qualifier, State state, StringBuilder buff)
         {
-            var actions = state.getExitActions();
+            var actions = state.ExitActions;
             if (actions.Any() == false)
             {
                 return;
             }
 
             buff.AppendLine()
-                .AppendLine($"  // {qualifier} functions for: {state.getName()}");
+                .AppendLine($"  // {qualifier} functions for: {state.Name}");
 
             foreach (var action in actions)
             {

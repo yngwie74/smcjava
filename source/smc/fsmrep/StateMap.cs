@@ -1,27 +1,71 @@
-﻿namespace smc.fsmrep
+﻿namespace SMC.FsmRep
 {
     using System.Collections.Generic;
 
+    /// <summary>
+    /// This interface class represents the structure which holds the
+    /// representation of states and transitions.  The parser specifies the
+    /// implementation of this class.
+    /// </summary>
     public interface StateMap
     {
-        ISet<string> Actions { get; }
+        /// <summary>
+        /// Returns a Set containing Strings representing all the action names.
+        /// </summary>
+        IEnumerable<string> Actions { get; }
 
-        string getContextName();
+        /// <summary>
+        /// Returns the name of the FSM Context.
+        /// </summary>
+        string ContextName { get; }
 
-        string getErrorFunctionName();
+        /// <summary>
+        /// Returns the name of the Error function to be used by the FSM.
+        /// </summary>
+        string ErrorFunctionName { get; }
 
-        ISet<string> getEvents();
+        /// <summary>
+        /// Returns a Set containing Strings representing all the event names.
+        /// </summary>
+        IEnumerable<string> Events { get; }
 
-        string getExceptionName();
+        /// <summary>
+        /// Returns the name of the Exception to be used by the FSM.
+        /// </summary>
+        string ExceptionName { get; }
 
-        ConcreteState getInitialState();
+        /// <summary>
+        /// Returns the State that the FSM starts up in.
+        /// </summary>
+        ConcreteState InitialState { get; }
 
-        string getName();
+        /// <summary>
+        /// Returns the name of the FSM.
+        /// </summary>
+        string Name { get; }
 
-        IList<State> getOrderedStates();
+        /// <summary>
+        /// Returns a sequence of States. The sequence
+        /// is ordered by state dependencies.  i.e.
+        /// the order guarantees that all substates come
+        /// after their super states.
+        /// </summary>
+        IEnumerable<State> OrderedStates { get; }
 
-        IList<string> getPragma();
+        /// <summary>
+        /// Returns a sequence of Strings representing all the 
+        /// pragma fields that any generated code will be dependent upon.
+        /// </summary>
+        IEnumerable<string> Pragma { get; }
 
-        string getVersion();
+        /// <summary>
+        /// Returns the name of the Version.
+        /// </summary>
+        string Version { get; }
+
+        /// <summary>
+        /// Determines if an exception class name has been set for this StateMap.
+        /// </summary>
+        bool UsesExceptions { get; }
     }
 }

@@ -1,8 +1,8 @@
-namespace smc.parser
+namespace SMC.parser
 {
     using System.IO;
-    using smc.builder;
-    using smc.parser.iface;
+    using SMC.Builder;
+    using SMC.parser.iface;
 
 
     public class FSMParser : SMParserInterface
@@ -17,7 +17,7 @@ namespace smc.parser
             itsBuilder = theBuilder;
             itsFileName = theFileName;
             itsFSMGeneratorName = "";
-            itsBuilder.setErrorManager(itsErrorManager);
+            itsBuilder.ErrorManager = itsErrorManager;
         }
 
         public void setFSMGenerator(string s)
@@ -27,72 +27,72 @@ namespace smc.parser
         { return itsFSMGeneratorName; }
 
         public void setFSMName(string s)
-        { itsBuilder.setName(s); }
+        { itsBuilder.SetName(s); }
 
         public void setContextName(string s)
-        { itsBuilder.setContextName(s); }
+        { itsBuilder.SetContextName(s); }
 
         public void setException(string s)
-        { itsBuilder.setException(s); }
+        { itsBuilder.SetException(s); }
 
         public void setInitialState(string s)
-        { itsBuilder.setInitialState(s); }
+        { itsBuilder.SetInitialState(s); }
 
         public void setVersion(string s)
-        { itsBuilder.setVersion(s); }
+        { itsBuilder.SetVersion(s); }
 
         public void addPragma(string s)
-        { itsBuilder.addPragma(s); }
+        { itsBuilder.AddPragma(s); }
 
         public void addSuperSubState(string theName, string theSuperState, int theLineNumber)
         {
             ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.addSuperSubState(theName, theSuperState, l);
+            itsBuilder.AddSuperSubState(theName, theSuperState, l);
         }
 
         public void addSuperState(string theName, int theLineNumber)
         {
             ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.addSuperState(theName, l);
+            itsBuilder.AddSuperState(theName, l);
         }
 
         public void addSubState(string theName, string theSuperState, int theLineNumber)
         {
             ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.addSubState(theName, theSuperState, l);
+            itsBuilder.AddSubState(theName, theSuperState, l);
         }
 
         public void addState(string theName, int theLineNumber)
         {
             ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.addState(theName, l);
+            itsBuilder.AddState(theName, l);
         }
 
         public void addTransition(string theEvent, string theNextState, int theLineNumber)
         {
             ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.addTransition(theEvent, theNextState, l);
+            itsBuilder.AddTransition(theEvent, theNextState, l);
         }
 
         public void addInternalTransition(string theEvent, int theLineNumber)
         {
             ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsBuilder.addInternalTransition(theEvent, l);
+            itsBuilder.AddInternalTransition(theEvent, l);
         }
 
         public void addAction(string theAction, int theLineNumber)
-        { itsBuilder.addAction(theAction); }
+        { itsBuilder.AddAction(theAction); }
 
         public void addEntryAction(string theAction, int theLineNumber)
-        { itsBuilder.addEntryAction(theAction); }
+        { itsBuilder.AddEntryAction(theAction); }
 
         public void addExitAction(string theAction, int theLineNumber)
-        { itsBuilder.addExitAction(theAction); }
+        { itsBuilder.AddExitAction(theAction); }
 
         public void syntaxError(int theLineNumber, string theMessage)
         {
             ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-            itsErrorManager.error(l, theMessage);
+            itsErrorManager.Error(l, theMessage);
         }
 
         public void processFSM()
@@ -108,7 +108,7 @@ namespace smc.parser
                 try
                 {
                     parser.parseFSM(this);
-                    status = itsBuilder.build();
+                    status = itsBuilder.Build();
                 }
                 catch (ParseException pe)
                 {
@@ -116,7 +116,7 @@ namespace smc.parser
                     System.Console.WriteLine("Aborting due to syntax errors.");
                 }
             }
-            catch (FileNotFoundException fe)
+            catch (FileNotFoundException)
             {
                 System.Console.WriteLine("Could not open input file: " + itsFileName);
             }

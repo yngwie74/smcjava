@@ -1,86 +1,65 @@
-﻿namespace smc.builder.stateRep
+﻿namespace SMC.Builder.DataModel
 {
-    using java.lang;
-
-    using smc.builder;
-    using smc.fsmrep;
+    using SMC.Builder;
+    using SMC.FsmRep;
 
     public class SubStateRep : StateRep
     {
-        #region Fields
+        #region Constructors & Destructors
 
-        private string itsSuperStateName;
+        public SubStateRep(string theName, string theSuper, SyntaxLocation loc)
+            : base(theName, loc)
+        {
+            this.SuperStateName = theSuper;
+        }
 
         #endregion
 
-        #region Constructors & Destructors
+        #region Public Properties
 
-        public SubStateRep(string str1, string str2, SyntaxLocation sl)
-            : base(str1, sl)
-        {
-            this.itsSuperStateName = str2;
-        }
+        public string SuperStateName { get; private set; }
 
         #endregion
 
         #region Public Methods
 
-        public virtual string getSuperStateName()
+        public override State Build(FSMRepresentationBuilder fb)
         {
-            return this.itsSuperStateName;
-        }
-
-        public override State build(FSMRepresentationBuilder fsmrb)
-        {
-            ConcreteSubStateImpl concreteSubStateImpl = null;
-            StateRep stateRep = fsmrb.getStateRep(this.getSuperStateName());
-            if (stateRep != null)
+            ConcreteSubStateImpl retval = null;
+            var sr = fb.GetStateRep(this.SuperStateName);
+            if (sr != null)
             {
-            stateRep.build(fsmrb);
-            SuperState builtSuperState = fsmrb.getBuiltSuperState(this.getSuperStateName());
-            if (builtSuperState != null)
-            {
-                concreteSubStateImpl = new ConcreteSubStateImpl(this.getStateName(), builtSuperState);
-                fsmrb.addBuiltConcreteState(concreteSubStateImpl);
+                sr.Build(fb);
+                SuperState superState = fb.GetBuiltSuperState(this.SuperStateName);
+                if (superState != null)
+                {
+                    retval = new ConcreteSubStateImpl(this.StateName, superState);
+                    fb.AddBuiltConcreteState(retval);
+                }
+                else
+                {
+                    var e = $"Could not build sub state ({this.StateName}) because super state ({this.SuperStateName}) had an error.";
+                    fb.SetError();
+                    fb.Error(sr.SyntaxLocation, e);
+                }
             }
             else
             {
-                string str = new StringBuffer().append("Could not build sub state (").append(this.getStateName()).append(") because super state (")
-                    .append(this.getSuperStateName())
-                    .append(") had an error.")
-                    .ToString();
-                fsmrb.setError();
-                fsmrb.error(stateRep.getSyntaxLocation(), str);
+                var e = $"Super state ({this.SuperStateName}) was not declared.";
+                fb.SetError();
+                fb.Error(null, e);
             }
-            }
-            else
-            {
-            string str2 = new StringBuffer().append("Super state (").append(this.getSuperStateName()).append(") was not declared.")
-                .ToString();
-            fsmrb.setError();
-            fsmrb.error(null, str2);
-            }
-            return concreteSubStateImpl;
+            return retval;
         }
 
-        public override bool equals(StateRep sr)
+        public override bool Equals(StateRep s)
         {
-            if ((object)sr.getStateName() == this.getStateName() && sr is SubStateRep)
-            {
-            SubStateRep subStateRep = (SubStateRep)sr;
-            if ((object)subStateRep.getSuperStateName() == this.getSuperStateName())
-            {
-                return true;
-            }
-            }
-            return false;
+            var other = s as SubStateRep;
+            return base.Equals(s) &&
+                (other != null) && (other.SuperStateName == this.SuperStateName);
         }
 
-        public override string ToString()
-        {
-            return new StringBuffer().append(this.getStateName()).append(":").append(this.getSuperStateName())
-            .ToString();
-        }
+        public override string ToString() => $"{this.StateName}:{this.SuperStateName}";
 
         #endregion
     }

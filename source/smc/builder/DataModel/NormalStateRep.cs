@@ -1,34 +1,32 @@
-﻿namespace smc.builder.stateRep
+﻿namespace SMC.Builder.DataModel
 {
-
-    using smc.builder;
-    using smc.fsmrep;
+    using SMC.Builder;
+    using SMC.FsmRep;
 
     public class NormalStateRep : StateRep
     {
+        #region Constructors & Destructors
+
         public NormalStateRep(string theName, SyntaxLocation loc)
-          : base(theName, loc)
+            : base(theName, loc)
         {
         }
 
-        public override State build(FSMRepresentationBuilder fb)
+        #endregion
+
+        #region Public Methods
+
+        public override State Build(FSMRepresentationBuilder fb)
         {
-            ConcreteStateImpl retval = new ConcreteStateImpl(getStateName());
-            fb.addBuiltConcreteState(retval);
+            var retval = new ConcreteStateImpl(this.StateName);
+            fb.AddBuiltConcreteState(retval);
             return retval;
         }
 
-        public override bool equals(StateRep s)
-        {
-            if (s.getStateName() == getStateName() && s is NormalStateRep)
-                return true;
-            else
-                return false;
-        }
+        public override bool Equals(StateRep s) => base.Equals(s) && (s is NormalStateRep);
 
-        public override string ToString()
-        {
-            return getStateName();
-        }
+        public override string ToString() => this.StateName;
+
+        #endregion
     }
 }

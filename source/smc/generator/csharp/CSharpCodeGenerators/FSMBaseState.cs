@@ -1,8 +1,8 @@
-﻿namespace smc.generator.csharp.CSharpCodeGenerators
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
     using System.Text;
 
-    using smc.generator.csharp;
+    using SMC.Generator.CSharp;
 
     public class FSMBaseState : CSharpCodeGenerator
     {
@@ -14,7 +14,7 @@
 
         #region Public Methods
 
-        public override string generateCode(SMCSharpGenerator gen)
+        public override string GenerateCode(SMCSharpGenerator gen)
         {
             var buff = new StringBuilder();
 
@@ -46,10 +46,10 @@
 
         private void AddConcreteStates(SMCSharpGenerator gen, StringBuilder buff)
         {
-            foreach (var cs in gen.getConcreteStates())
+            foreach (var cs in gen.ConcreteStates)
             {
-                buff.Append($"    public static State {createMethodName(cs)} ")
-                    .AppendLine($"{{ get; }} = new {classNameFor(cs)}();");
+                buff.Append($"    public static State {CreateMethodName(cs)} ")
+                    .AppendLine($"{{ get; }} = new {ClassNameFor(cs)}();");
             }
 
             buff.AppendLine();
@@ -61,7 +61,7 @@
 
         private void AddEventMethods(SMCSharpGenerator gen, StringBuilder buff)
         {
-            var events = gen.getStateMap().getEvents();
+            var events = gen.StateMap.Events;
             foreach (var evName in events)
             {
                 AddEventHeader(evName, buff);
@@ -78,15 +78,15 @@
 
         private void AddOpenEventDeclaration(SMCSharpGenerator gen, string evName, StringBuilder buff)
         {
-            var stateMachineClass = gen.getStateMap().getName();
-            var methodName = this.createMethodName(evName);
-            buff.AppendLine($"    public virtual void {methodName}({stateMachineClass} {ArgName})")
+            var stateMachineClass = gen.StateMap.Name;
+            var methodName = this.CreateMethodName(evName);
+            buff.AppendLine($"    public void {methodName}({stateMachineClass} {ArgName})")
                 .AppendLine("    {");
         }
 
         private static void AddEventBody(SMCSharpGenerator gen, string evName, StringBuilder buff)
         {
-            if (gen.usesExceptions(gen.getStateMap()))
+            if (gen.StateMap.UsesExceptions)
             {
                 AddThrowException(gen, evName, buff);
             }
@@ -98,14 +98,14 @@
 
         private static void AddThrowException(SMCSharpGenerator gen, string evName, StringBuilder buff)
         {
-            var exceptionName = gen.getStateMap().getExceptionName();
+            var exceptionName = gen.StateMap.ExceptionName;
             buff.Append($"        throw new {exceptionName}")
                 .AppendLine($"(\"{evName}\", {ArgName}.CurrentStateName);");
         }
 
         private static void AddErrorFuncCall(SMCSharpGenerator gen, string evName, StringBuilder buff)
         {
-            var errorFunctionName = gen.getStateMap().getErrorFunctionName();
+            var errorFunctionName = gen.StateMap.ErrorFunctionName;
             buff.Append($"        {ArgName}.{errorFunctionName}")
                 .AppendLine($"(\"{evName}\", {ArgName}.CurrentState);");
         }
@@ -114,7 +114,7 @@
             => buff.AppendLine("    }").AppendLine();
 
         private static void AddNestedStateClasses(SMCSharpGenerator gen, StringBuilder buff)
-            => buff.Append(new FSMStateClasses().generateCode(gen));
+            => buff.Append(new FSMStateClasses().GenerateCode(gen));
 
         private static void AddClosingClassDeclaration(StringBuilder buff)
             => buff.AppendLine("}");

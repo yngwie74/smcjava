@@ -1,41 +1,32 @@
-﻿namespace smc.generator.csharp.CSharpCodeGenerators
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
 
-    using smc.fsmrep;
-    using smc.generator.csharp;
+    using SMC.FsmRep;
+    using SMC.Generator.CSharp;
 
     public abstract class CSharpCodeGenerator
     {
-        public abstract string generateCode(SMCSharpGenerator gen);
+        public abstract string GenerateCode(SMCSharpGenerator gen);
 
-        public virtual string printSeparator(int i)
-        {
-            return string.Empty;
-        }
+        public string PrintSeparator(int level) => string.Empty;
 
-        public string classNameFor(State s)
-        {
-            return $"{createMethodName(s)}State";
-        }
+        public string ClassNameFor(State s) => $"{CreateMethodName(s)}State";
 
-        public string createMethodName(State s)
-        {
-            return createMethodName(s.getName());
-        }
+        public string CreateMethodName(State s) => CreateMethodName(s.Name);
 
-        public string createMethodName(string @event)
+        public string CreateMethodName(string _event)
         {
-            var length = @event.Length;
+            var length = _event.Length;
             var buff = new StringBuilder(length);
             if (length > 0)
             {
-                buff.Append(char.ToLowerInvariant(@event[0]));
+                buff.Append(char.ToLowerInvariant(_event[0]));
                 if (length > 1)
                 {
-                    buff.Append(@event.Substring(1));
+                    buff.Append(_event.Substring(1));
                 }
             }
 
@@ -47,7 +38,7 @@
             var generators = generatorFactory.Invoke();
             foreach (var code in generators)
             {
-                buff.Append(code.generateCode(gen));
+                buff.Append(code.GenerateCode(gen));
             }
             return buff;
         }

@@ -1,16 +1,16 @@
-﻿namespace smc.generator.csharp.CSharpCodeGenerators
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
     using System.Text;
-
-    using smc.generator.csharp;
+    using SMC.FsmRep;
+    using SMC.Generator.CSharp;
 
     public class FSMClass : CSharpCodeGenerator
     {
         #region Public Methods
 
-        public override string generateCode(SMCSharpGenerator gen)
+        public override string GenerateCode(SMCSharpGenerator gen)
         {
-            var stateMap = gen.getStateMap();
+            var stateMap = gen.StateMap;
             var buff = new StringBuilder();
 
             AddClassHeader(buff);
@@ -35,18 +35,18 @@
                 .AppendLine("/// <summary>");
         }
 
-        private static void BeginClassDeclaration(StringBuilder buff, fsmrep.StateMap stateMap)
+        private static void BeginClassDeclaration(StringBuilder buff, StateMap stateMap)
         {
-            var className = stateMap.getName();
-            var superClassName = stateMap.getContextName();
+            var className = stateMap.Name;
+            var superClassName = stateMap.ContextName;
 
             buff.AppendLine($"public class {className} : {superClassName}")
                 .AppendLine("{");
         }
 
-        private static void AddFields(StringBuilder buff, fsmrep.StateMap stateMap)
+        private static void AddFields(StringBuilder buff, StateMap stateMap)
         {
-            buff.AppendLine($"    private static string version = \"{stateMap.getVersion()}\";")
+            buff.AppendLine($"    private static string version = \"{stateMap.Version}\";")
                 .AppendLine()
                 .AppendLine("    private State currentState;")
                 .AppendLine();

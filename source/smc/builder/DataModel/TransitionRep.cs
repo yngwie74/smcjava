@@ -1,66 +1,51 @@
-﻿namespace smc.builder.stateRep
+﻿namespace SMC.Builder.DataModel
 {
-    using java.lang;
-    using java.util;
+    using System.Collections.Generic;
 
-    using smc.builder;
+    using SMC.Builder;
 
-    public class TransitionRep : Object
+    public class TransitionRep
     {
         #region Fields
 
-        private string itsStartingState;
-        private string itsEvent;
-        private string itsEndingState;
-        private Vector itsActions;
-        private SyntaxLocation itsSyntaxLocation;
+        private string startingState;
+        private string eventName;
+        private string endingState;
+        private IList<string> actions;
+        private SyntaxLocation syntaxLocation;
 
         #endregion
 
         #region Constructors & Destructors
 
-        public TransitionRep(string str1, string str2, string str3, SyntaxLocation sl)
+        public TransitionRep(string startState, string eventName, string endState, SyntaxLocation loc)
         {
-            this.itsStartingState = str1;
-            this.itsEvent = str2;
-            this.itsEndingState = str3;
-            this.itsSyntaxLocation = sl;
-            this.itsActions = new Vector();
+            this.startingState = startState;
+            this.eventName = eventName;
+            this.endingState = endState;
+            this.syntaxLocation = loc;
+            this.actions = new List<string>();
         }
+
+        #endregion
+
+        #region Public Properties
+
+        public string StartingState => this.startingState;
+
+        public string EventName => this.eventName;
+
+        public string EndingState => this.endingState;
+
+        public IEnumerable<string> Actions => this.actions;
+
+        public SyntaxLocation SyntaxLocation => this.syntaxLocation;
 
         #endregion
 
         #region Public Methods
 
-        public virtual void addAction(string str)
-        {
-            this.itsActions.Add(str);
-        }
-
-        public virtual string getStartingState()
-        {
-            return this.itsStartingState;
-        }
-
-        public virtual string getEvent()
-        {
-            return this.itsEvent;
-        }
-
-        public virtual string getEndingState()
-        {
-            return this.itsEndingState;
-        }
-
-        public virtual Vector getActions()
-        {
-            return this.itsActions;
-        }
-
-        public virtual SyntaxLocation getSyntaxLocation()
-        {
-            return this.itsSyntaxLocation;
-        }
+        public void AddAction(string a) => this.actions.Add(a);
 
         #endregion
     }

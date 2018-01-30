@@ -1,347 +1,297 @@
-﻿namespace smc.builder
+﻿namespace SMC.Builder
 {
-    using java.lang;
-    using java.util;
+    using System.Collections.Generic;
 
-    using smc.builder.stateRep;
-    using smc.fsmrep;
+    using SMC.Builder.DataModel;
+    using SMC.FsmRep;
 
+    /// <summary>
+    /// This is the class derived from FSMBuilder which stores the
+    /// parsed FSM into the intermediate representation and builds
+    /// the final State machine representation
+    /// </summary>
     public class FSMRepresentationBuilder : FSMBuilder
     {
+        #region Fields
 
-        private bool itsError;
+        private bool error;
         private MutableStateMap itsStateMap;
         private string itsInitialState;
-        private List itsTransitions;
+        private IList<TransitionRep> itsTransitions;
         private TransitionRep itsCurrentTransition;
         private string itsCurrentState;
-        private HashSet itsStates;
-        private HashMap itsStateReps;
-        private HashMap itsSuperStateDictionary;
-        private HashMap itsConcreteStateDictionary;
-        private HashMap itsStateDictionary;
+        private ISet<string> itsStates;
+        private IDictionary<string, StateRep> itsStateReps;
+        private IDictionary<string, SuperState> itsSuperStateDictionary;
+        private IDictionary<string, ConcreteState> itsConcreteStateDictionary;
+        private IDictionary<string, State> itsStateDictionary;
 
+        #endregion
 
+        #region Constructors & Destructors
 
         public FSMRepresentationBuilder()
         {
-            this.itsStateMap = new MutableStateMap();
-            this.itsTransitions = new ArrayList();
-            this.itsStates = new HashSet();
-            this.itsStateReps = new HashMap();
-            this.itsSuperStateDictionary = new HashMap();
-            this.itsConcreteStateDictionary = new HashMap();
-            this.itsStateDictionary = new HashMap();
-            this.itsError = false;
-            this.itsStateMap.setName("FSMName");
-            this.itsStateMap.setContextName("FSMContext");
-            this.itsStateMap.setExceptionName("");
-            this.itsStateMap.setErrorFunctionName("FSMError");
-            this.itsStateMap.setVersion("");
-        }
-
-
-
-        public virtual StateMap getStateMap()
-        {
-            return this.itsStateMap;
-        }
-
-        public override void addTransition(string str1, string str2, SyntaxLocation sl)
-        {
-            this.itsCurrentTransition = new TransitionRep(this.itsCurrentState, str1, str2, sl);
-            this.itsTransitions.add(this.itsCurrentTransition);
-        }
-
-        public virtual StateRep getStateRep(string str)
-        {
-            return (StateRep)this.itsStateReps.get(str);
-        }
-
-        public virtual void setError()
-        {
-            this.itsError = true;
-        }
-
-        public virtual ConcreteState getBuiltConcreteState(string str)
-        {
-            return (ConcreteState)this.itsConcreteStateDictionary.get(str);
-        }
-
-        public virtual State getBuiltState(string str)
-        {
-            return (State)this.itsStateDictionary.get(str);
-        }
-
-        public virtual List getTransitions()
-        {
-            return this.itsTransitions;
-        }
-
-        public virtual HashSet getStates()
-        {
-            return this.itsStates;
-        }
-
-        public override void setInitialState(string str)
-        {
-            this.itsInitialState = str;
-        }
-
-        public override void setName(string str)
-        {
-            this.itsStateMap.setName(str);
-        }
-
-        public override void setContextName(string str)
-        {
-            this.itsStateMap.setContextName(str);
-        }
-
-        public override void setException(string str)
-        {
-            this.itsStateMap.setExceptionName(str);
-        }
-
-        public override void setVersion(string str)
-        {
-            this.itsStateMap.setVersion(str);
-        }
-
-        public override void addPragma(string str)
-        {
-            this.itsStateMap.addPragma(str);
-        }
-
-        public override void addSuperSubState(string str1, string str2, SyntaxLocation sl)
-        {
-            this.addStateRep(new SuperSubStateRep(str1, str2, sl));
-        }
-
-        public override void addSubState(string str1, string str2, SyntaxLocation sl)
-        {
-            this.addStateRep(new SubStateRep(str1, str2, sl));
-        }
-
-        public override void addSuperState(string str, SyntaxLocation sl)
-        {
-            this.addStateRep(new SuperStateRep(str, sl));
-        }
-
-        public override void addState(string str, SyntaxLocation sl)
-        {
-            this.addStateRep(new NormalStateRep(str, sl));
-        }
-
-        public override void addInternalTransition(string str, SyntaxLocation sl)
-        {
-            this.addTransition(str, "", sl);
-        }
-
-        public override void addAction(string str)
-        {
-            this.itsCurrentTransition.addAction(str);
-        }
-
-        public override void addEntryAction(string str)
-        {
-            StateRep stateRep = this.getStateRep(this.itsCurrentState);
-            stateRep.addEntryAction(str);
-        }
-
-        public override void addExitAction(string str)
-        {
-            StateRep stateRep = this.getStateRep(this.itsCurrentState);
-            stateRep.addExitAction(str);
-        }
-
-        public virtual void addBuiltSuperState(SuperState ss)
-        {
-            this.itsSuperStateDictionary.put(ss.getName(), ss);
-            this.addBuiltState(ss);
-        }
-
-        public virtual void addBuiltConcreteState(ConcreteState cs)
-        {
-            this.itsConcreteStateDictionary.put(cs.getName(), cs);
-            this.addBuiltState(cs);
-        }
-
-        public virtual bool isStateBuilt(string str)
-        {
-            return this.itsStateDictionary.containsKey(str);
-        }
-
-        public virtual SuperState getBuiltSuperState(string str)
-        {
-            return (SuperState)this.itsSuperStateDictionary.get(str);
-        }
-
-        public override bool build()
-        {
-            if (!this.itsError)
+            this.itsTransitions = new List<TransitionRep>();
+            this.itsStates = new HashSet<string>();
+            this.itsStateReps = new Dictionary<string, StateRep>();
+            this.itsSuperStateDictionary = new Dictionary<string, SuperState>();
+            this.itsConcreteStateDictionary = new Dictionary<string, ConcreteState>();
+            this.itsStateDictionary = new Dictionary<string, State>();
+            this.error = false;
+            this.itsStateMap = new MutableStateMap
             {
-                this.buildStateMap();
-                if (this.itsError)
+                Name = "FSMName",
+                ContextName = "FSMContext",
+                ExceptionName = "",
+                ErrorFunctionName = "FSMError",
+                Version = ""
+            };
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        public StateMap StateMap => this.itsStateMap;
+
+        public IEnumerable<TransitionRep> Transitions => this.itsTransitions;
+
+        public IEnumerable<string> States => this.itsStates;
+
+        #endregion
+
+        #region Public Methods
+
+        public override void SetInitialState(string theName) => this.itsInitialState = theName;
+
+        public override void SetName(string theName) => this.itsStateMap.Name = theName;
+
+        public override void SetContextName(string theName) => this.itsStateMap.ContextName = theName;
+
+        public override void SetException(string theName) => this.itsStateMap.ExceptionName = theName;
+
+        public override void SetVersion(string theVersion) => this.itsStateMap.Version = theVersion;
+
+        public override void AddPragma(string theName) => this.itsStateMap.AddPragma(theName);
+
+        public override void AddSuperSubState(string theName, string theSuperState, SyntaxLocation loc)
+            => AddStateRep(new SuperSubStateRep(theName, theSuperState, loc));
+
+        public override void AddSubState(string theName, string theSuperState, SyntaxLocation loc)
+            => AddStateRep(new SubStateRep(theName, theSuperState, loc));
+
+        public override void AddSuperState(string theName, SyntaxLocation loc)
+            => AddStateRep(new SuperStateRep(theName, loc));
+
+        public override void AddState(string theName, SyntaxLocation loc)
+            => AddStateRep(new NormalStateRep(theName, loc));
+
+        public override void AddTransition(string theEvent, string theNextState, SyntaxLocation loc)
+        {
+            this.itsCurrentTransition = new TransitionRep(this.itsCurrentState, theEvent, theNextState, loc);
+            this.itsTransitions.Add(this.itsCurrentTransition);
+        }
+
+        public override void AddInternalTransition(string theEvent, SyntaxLocation loc)
+        {
+            // An internal transition is simply a transition which stays inside
+            // its current state.  We are modeling it here as a regular transition
+            // whose "theNextState" field is blank.
+            AddTransition(theEvent, "", loc);
+        }
+
+        public override void AddAction(string theAction)
+            => this.itsCurrentTransition.AddAction(theAction);
+
+        public override void AddEntryAction(string theAction)
+        {
+            var sr = GetStateRep(this.itsCurrentState);
+            sr.AddEntryAction(theAction);
+        }
+
+        public override void AddExitAction(string theAction)
+        {
+            var sr = GetStateRep(this.itsCurrentState);
+            sr.AddExitAction(theAction);
+        }
+
+        public void AddBuiltSuperState(SuperState s)
+        {
+            this.itsSuperStateDictionary.Add(s.Name, s);
+            AddBuiltState(s);
+        }
+
+        public void AddBuiltConcreteState(ConcreteState s)
+        {
+            this.itsConcreteStateDictionary.Add(s.Name, s);
+            AddBuiltState(s);
+        }
+
+        public StateRep GetStateRep(string theName) => this.itsStateReps[theName];
+
+        public bool IsStateBuilt(string stateName)
+            => this.itsStateDictionary.ContainsKey(stateName);
+
+        public State GetBuiltState(string theName) => this.itsStateDictionary[theName];
+
+        public SuperState GetBuiltSuperState(string stateName)
+            => this.itsSuperStateDictionary[stateName];
+
+        public ConcreteState GetBuiltConcreteState(string stateName)
+            => this.itsConcreteStateDictionary[stateName];
+
+        public override bool Build()
+        {
+            if (!this.error)
+            {
+                BuildStateMap();
+                if (this.error)
                 {
-                    this.error("Aborting due to inconsistent input.");
+                    Error("Aborting due to inconsistent input.");
                     return false;
                 }
                 return true;
             }
-            this.error("Aborting due to semantic errors");
+            Error("Aborting due to semantic errors");
             return false;
         }
 
+        public void SetError() => this.error = true;
 
+        #endregion
 
-        private void addStateRep(StateRep P_0)
+        #region Methods
+
+        private void AddStateRep(StateRep theStateRep)
         {
-            string stateName = P_0.getStateName();
-            StateRep stateRep = this.getStateRep(stateName);
+            var name = theStateRep.StateName;
+            var stateRep = GetStateRep(name);
             if (stateRep != null)
             {
-                if (stateRep != P_0)
+                if (stateRep != theStateRep)
                 {
-                    string str = new StringBuffer().append("Redefinition of state (").append(stateName).append(")")
-                        .ToString();
-                    this.setError();
-                    this.error(P_0.getSyntaxLocation(), str);
+                    var errorStatement = $"Redefinition of state ({name})";
+                    SetError();
+                    Error(theStateRep.SyntaxLocation, errorStatement);
                 }
             }
             else
             {
-                this.itsCurrentState = stateName;
-                this.itsStateReps.put(stateName, P_0);
-                this.itsStates.add(stateName);
+                this.itsCurrentState = name;
+                this.itsStateReps.Add(name, theStateRep);
+                this.itsStates.Add(name);
             }
         }
 
-        private void addBuiltState(State P_0)
+        private void AddBuiltState(State state)
         {
-            this.itsStateDictionary.put(P_0.getName(), P_0);
-            this.itsStateMap.addOrderedState(P_0);
+            this.itsStateDictionary.Add(state.Name, state);
+            this.itsStateMap.AddOrderedState(state);
         }
 
-        private void buildStateMap()
+        private void BuildStateMap()
         {
-            this.setEntryAndExitActions();
-            this.setTransitions();
-            this.setInitialState();
+            SetEntryAndExitActions();
+            SetTransitions();
+            SetInitialState();
         }
 
-        private void setEntryAndExitActions()
+        private void SetInitialState()
         {
-            Iterator iterator = this.itsStates.iterator();
-            while (true)
+            var csfound = GetBuiltConcreteState(this.itsInitialState);
+            if (csfound != null)
             {
-                if (!iterator.hasNext())
-                {
-                    break;
-                }
-                string str = (string)iterator.next();
-                StateRep stateRep = this.getStateRep(str);
-                if (stateRep != null)
-                {
-                    State state = stateRep.build(this);
-                    if (state != null)
-                    {
-                        state.setEntryActions(stateRep.getEntryActions());
-                        state.setExitActions(stateRep.getExitActions());
-                    }
-                }
+                this.itsStateMap.InitialState = csfound;
+            }
+            else
+            {
+                var errorStatement = $"Initial state ({this.itsInitialState}) is not concrete.";
+                SetError();
+                Error(errorStatement);
             }
         }
 
-        private void setTransitions()
+        private void SetTransitions()
         {
-            int num = 0;
-            while (true)
+            foreach (var transitionRep in this.itsTransitions)
             {
-                if (num == this.itsTransitions.size())
-                {
-                    break;
-                }
-                TransitionRep transitionRep = (TransitionRep)this.itsTransitions.get(num);
-                string startingState = transitionRep.getStartingState();
-                string @event = transitionRep.getEvent();
-                string endingState = transitionRep.getEndingState();
-                StateRep stateRep = this.getStateRep(startingState);
+                var stateName = transitionRep.StartingState;
+                var eventName = transitionRep.EventName;
+                var endingStateName = transitionRep.EndingState;
+
+                var stateRep = GetStateRep(stateName);
                 if (stateRep != null)
                 {
-                    if (!stateRep.isEventBuilt(@event))
+                    if (!stateRep.IsEventBuilt(eventName))
                     {
-                        stateRep.addBuiltEvent(@event);
-                        ConcreteState builtConcreteState = this.getBuiltConcreteState(endingState);
-                        if (builtConcreteState != null || (object)endingState == "")
+                        stateRep.AddBuiltEvent(eventName);
+
+                        var concreteState = GetBuiltConcreteState(endingStateName);
+                        if ((concreteState != null) || endingStateName == "")
                         {
-                            State builtState = this.getBuiltState(startingState);
-                            if (builtState != null)
+                            var state = GetBuiltState(stateName);
+                            if (state != null)
                             {
-                                Transition transition = ((object)endingState == "") ? ((Transition)new InternalTransition(@event, builtState)) : ((Transition)new ExternalTransition(@event, builtState, builtConcreteState));
-                                this.itsStateMap.addTransition(builtState, transition);
-                                Vector actions = transitionRep.getActions();
-                                Iterator iterator = actions.iterator();
-                                while (true)
+                                var transition = (endingStateName != "")
+                                    ? new ExternalTransition(eventName, state, concreteState)
+                                    : (Transition)new InternalTransition(eventName, state);
+
+                                this.itsStateMap.AddTransition(state, transition);
+
+                                var actions = transitionRep.Actions;
+                                foreach (var action in actions)
                                 {
-                                    if (!iterator.hasNext())
-                                    {
-                                        break;
-                                    }
-                                    transition.addAction((string)iterator.next());
+                                    transition.AddAction(action);
                                 }
                             }
                             else
                             {
-                                string str = new StringBuffer().append("Cannot build transitions for ").append(startingState).append(" due to previous errors.")
-                                    .ToString();
-                                this.error(str);
+                                var errorStatement = $"Cannot build transitions for {stateName} due to previous errors.";
+                                Error(errorStatement);
                             }
                         }
                         else
                         {
-                            this.callError(new StringBuffer().append("Ending state (").append(endingState).append(") is not a concrete state.")
-                                .ToString(), transitionRep);
+                            CallError($"Ending state ({endingStateName}) is not a concrete state.", transitionRep);
                         }
                     }
                     else
                     {
-                        this.callError(new StringBuffer().append("Event (").append(@event).append(") already defined for state (")
-                            .append(startingState)
-                            .append(").")
-                            .ToString(), transitionRep);
+                        CallError($"Event ({eventName}) already defined for state ({stateName}).", transitionRep);
                     }
                 }
                 else
                 {
-                    this.callError(new StringBuffer().append("State (").append(startingState).append(") not declared.")
-                        .ToString(), transitionRep);
+                    CallError($"State ({stateName}) not declared.", transitionRep);
                 }
-                num++;
             }
         }
 
-        private void setInitialState()
+        private void CallError(string errorStatement, TransitionRep transitionRep)
         {
-            ConcreteState builtConcreteState = this.getBuiltConcreteState(this.itsInitialState);
-            if (builtConcreteState != null)
-            {
-                this.itsStateMap.setInitialState(builtConcreteState);
-            }
-            else
-            {
-                string str = new StringBuffer().append("Initial state (").append(this.itsInitialState).append(") is not concrete.")
-                    .ToString();
-                this.setError();
-                this.error(str);
-            }
+            SetError();
+            Error(transitionRep.SyntaxLocation, errorStatement);
         }
 
-        private void callError(string P_0, TransitionRep P_1)
+        private void SetEntryAndExitActions()
         {
-            this.setError();
-            this.error(P_1.getSyntaxLocation(), P_0);
+            foreach (var stateName in this.itsStates)
+            {
+                var stateRep = GetStateRep(stateName);
+
+                if (stateRep != null)
+                {
+                    var state = stateRep.Build(this);
+                    if (state != null)
+                    {
+                        state.EntryActions = stateRep.EntryActions;
+                        state.ExitActions = stateRep.ExitActions;
+                    }
+                }
+            }
         }
 
+        #endregion
     }
 }

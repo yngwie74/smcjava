@@ -1,17 +1,17 @@
-﻿namespace smc.generator.csharp.CSharpCodeGenerators
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
     using System.Text;
 
-    using smc.generator.csharp;
+    using SMC.Generator.CSharp;
 
     public class UsingStatements : CSharpCodeGenerator
     {
-        public override string generateCode(SMCSharpGenerator smcsg)
+        public override string GenerateCode(SMCSharpGenerator smcsg)
         {
             var buff = new StringBuilder();
-            if (smcsg.hasUsing())
+            if (smcsg.HasUsing)
             {
-                foreach(var item in smcsg.getItsUsing())
+                foreach(var item in smcsg.Usings)
                 {
                     buff.AppendFormat("using {0};\n", item);
                 }

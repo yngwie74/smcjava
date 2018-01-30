@@ -1,12 +1,10 @@
-﻿namespace smc
+﻿namespace SMC
 {
     using System.Collections.Generic;
 
-    using java.io;
-
-    using smc.builder;
-    using smc.generator;
-    using smc.parser;
+    using SMC.Builder;
+    using SMC.Generator;
+    using SMC.parser;
 
     public class Smc
     {
@@ -25,12 +23,12 @@
         {
             var existingFiles = new List<string>();
             var overwrite = true;
-            foreach(var ofName in files)
+            foreach (var ofName in files)
             {
                 try
                 {
-                    var ofile = new File(ofName);
-                    if (ofile.canRead())
+                    var ofile = new System.IO.FileInfo(ofName);
+                    if (ofile.Exists)
                     {
                         existingFiles.Add(ofName);
                     }
@@ -44,7 +42,7 @@
             if (existingFiles.Count > 0)
             {
                 System.Console.WriteLine("The following files will be overwritten if you choose to continue:");
-                foreach(var ofName in existingFiles)
+                foreach (var ofName in existingFiles)
                 {
                     System.Console.WriteLine($"   {ofName}");
                 }
@@ -145,12 +143,20 @@
             parseCommandLine(args);
             if (itsInputFile.Length > 0)
             {
-                var iFile = new File(itsInputFile);
-                if (iFile.canRead())
+                var couldRead = false;
+                var iFile = new System.IO.FileInfo(itsInputFile);
+                if (iFile.Exists)
                 {
-                    hasInputFile();
+                    try
+                    {
+                        hasInputFile();
+                        couldRead = true;
+                    }
+                    catch (System.IO.IOException)
+                    { }
                 }
-                else
+
+                if (!couldRead)
                 {
                     System.Console.WriteLine("Cannot read state machine definition file: " + itsInputFile);
                     System.Console.WriteLine("Aborting due to invalid state machine file.");
@@ -180,7 +186,7 @@
 
         private void generateCode(FSMRepresentationBuilder fsmbld, FSMParser parser)
         {
-            var sm = fsmbld.getStateMap();
+            var sm = fsmbld.StateMap;
 
             if (itsFSMGeneratorName.Length == 0)
             {
@@ -188,7 +194,7 @@
                 if (itsFSMGeneratorName.Length == 0)
                 {
                     System.Console.WriteLine("Using default C# Generator.");
-                    itsFSMGeneratorName = "smc.generator.csharp.SMCSharpGenerator";
+                    itsFSMGeneratorName = "smc.Generator.CSharp.SMCSharpGenerator";
                 }
             }
 
@@ -200,15 +206,15 @@
                 bool overwrite = itsForceOverwrite;
                 if (overwrite == false)
                 {
-                    overwrite = checkForOverwrite(generator.getGeneratedFileNames());
+                    overwrite = checkForOverwrite(generator.GeneratedFileNames);
                 }
 
                 if (overwrite == true)
                 {
                     try
                     {
-                        generator.initialize();
-                        generator.generate();
+                        generator.Initialize();
+                        generator.Generate();
                     }
                     catch (System.IO.IOException e)
                     {
