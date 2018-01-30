@@ -1,14 +1,7 @@
-package smc.fsmrep;
-
-//----------------------------------
-// Name
-//  SubState
-//
-// Description
-//  This interface represents a state
-//  which inherits some transitions from a super state.
-//
-public interface SubState extends State
+﻿namespace smc.fsmrep
 {
-    public abstract SuperState getSuperState();
-};
+    public interface SubState : State
+    {
+        SuperState getSuperState();
+    }
+}

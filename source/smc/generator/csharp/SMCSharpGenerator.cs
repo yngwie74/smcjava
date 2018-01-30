@@ -1,148 +1,174 @@
-package smc.generator.csharp;
-
-import smc.generator.FSMGenerator;
-import smc.generator.csharp.CSharpCodeGenerators.*;
-import smc.fsmrep.*;
-import java.io.*;
-import java.util.*;
-
-public class SMCSharpGenerator  extends FSMGenerator
+﻿namespace smc.generator.csharp
 {
-    private boolean hasNamespace,hasUsing;
-    private String itsNamespace;
-    private List itsUsing;
-    private ConcreteState   itsSourceState;
-    private HashSet itsOverriddenEvents;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
 
-    public SMCSharpGenerator()
-    {
-        itsOverriddenEvents = new HashSet();
-        hasNamespace = hasUsing = false;
-        itsUsing = new Vector();
-    }
-    public void initialize() throws IOException
-    {
-        initNamespaceAndUsingStatementes();
-    }
+    using smc.fsmrep;
+    using smc.generator.csharp.CSharpCodeGenerators;
 
-    public boolean usesExceptions(StateMap map)
+    public class SMCSharpGenerator : FSMGenerator
     {
-        if( map.getExceptionName().length() > 0 )
-            return  true;
-        return  false;
-    }
-    public void generate()  throws Exception
-    {
-        writeToStream();
-    }
+        #region Fields
 
-    private void writeToStream() throws IOException
-    {
-        PrintWriter itsStream;
-        try
+        private bool itHasNamespace;
+        private bool itHasUsing;
+        private string itsNamespace;
+        private List<string> itsUsing;
+        private ConcreteState itsSourceState;
+        private ISet<string> itsOverriddenEvents;
+
+        #endregion
+
+        #region Constructors & Destructors
+
+        public SMCSharpGenerator()
         {
-            FileOutputStream fout = new FileOutputStream(createOutputFileName());
-            itsStream = new PrintWriter(new OutputStreamWriter(fout, "UTF-8"), true);
+            itsOverriddenEvents = new HashSet<string>();
+            itHasNamespace = itHasUsing = false;
+            itsUsing = new List<string>();
         }
-        catch( IOException e )
-        {
-            System.out.println( "Error: could not create output file" );
-            throw( e );
-        }
-        itsStream.print(generateStringForCode());
-        itsStream.close();
-    }
 
-    public String generateStringForCode()
-    {
-        StringBuffer buff = new StringBuffer();
-        try
-        {
-            List generators = CSharpCodeGeneratorBuilder.cSharpCode.cSharpInstances();
-            for(int i = 0 ; i !=generators.size();i++)
-            {
-                CSharpCodeGenerator code = (CSharpCodeGenerator)generators.get(i);
-                buff.append(code.generateCode(this));
-            }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        buff.append("\n}\n");
-        return buff.toString();
-    }
-    private void initNamespaceAndUsingStatementes()
-    {
-        String usingString = "Using";
-        int useLen = usingString.length();
-        String nspString = "Namespace";
-        int nspLen = nspString.length();
+        #endregion
 
-        Vector pragmas = getStateMap().getPragma();
-        Iterator ip = pragmas.iterator();
-        while( ip.hasNext() )
+        #region Public Methods
+
+        public override void initialize()
+        {
+            initNamespaceAndUsingStatementes();
+        }
+
+        public bool usesExceptions(StateMap sm)
+        {
+            return (sm.getExceptionName().Length > 0);
+        }
+
+        public override void generate()
         {
             try
             {
-                String p = (String)ip.next();
-                if( p.regionMatches(true,0,usingString,0,useLen) )
-                {
-                    String value = p.substring( useLen );
-                    itsUsing.add( value.trim() );
-                    hasUsing=true;
-                }
-                else if( p.regionMatches(true,0,nspString,0,nspLen) )
-                {
-                    String value = p.substring( nspLen );
-                    itsNamespace = value.trim();
-                    hasNamespace = true;
-                }
+                File.WriteAllText(
+                    path: createOutputFileName(),
+                    contents: generateStringForCode(),
+                    encoding: Encoding.UTF8);
             }
-            catch( StringIndexOutOfBoundsException e )
-            {}
+            catch (IOException)
+            {
+                Console.WriteLine("Error: could not create output file");
+                throw;
+            }
         }
-    }
-    public boolean hasNamespace()
-    {
-        return hasNamespace;
-    }
-    public boolean hasUsing()
-    {
-        return hasUsing;
-    }
-    private String createOutputFileName()
-    {
-        return getDirectory() + getStateMap().getName() + ".cs";
-    }
-    public Vector getGeneratedFileNames()
-    {
-        Vector names = new Vector();
-        names.addElement( createOutputFileName() );
-        return names;
-    }
-    public  ConcreteState getItsSourceState()
-    {
-        return itsSourceState;
-    }
-    public void clearItsOverRiddenEvents()
-    {
-        itsOverriddenEvents.clear();
-    }
-    public void setItsSourceState(ConcreteState value)
-    {
-        itsSourceState = value;
-    }
-    public HashSet getItsOverriddenEvents()
-    {
-        return itsOverriddenEvents;
-    }
-    public String getNamespace()
-    {
-        return itsNamespace;
-    }
-    public List getItsUsing()
-    {
-        return itsUsing;
+
+        public string generateStringForCode()
+        {
+            var buff = new StringBuilder();
+
+            try
+            {
+                var builder = CSharpCodeGeneratorBuilder.Instance;
+                CSharpCodeGenerator.AddFromGenerators(this, buff, builder.TopLevelGenerators)
+                    .AppendLine("}")
+                    .AppendLine();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+
+            return buff.ToString();
+        }
+
+        public bool hasNamespace()
+        {
+            return itHasNamespace;
+        }
+
+        public bool hasUsing()
+        {
+            return itHasUsing;
+        }
+
+        public override IEnumerable<string> getGeneratedFileNames()
+        {
+            return new string[] { createOutputFileName() };
+        }
+
+        public ConcreteState getItsSourceState()
+        {
+            return itsSourceState;
+        }
+
+        public void clearItsOverRiddenEvents()
+        {
+            itsOverriddenEvents.Clear();
+        }
+
+        public void setItsSourceState(ConcreteState value)
+        {
+            itsSourceState = value;
+        }
+
+        public ISet<string> getItsOverriddenEvents()
+        {
+            return itsOverriddenEvents;
+        }
+
+        public string getNamespace()
+        {
+            return itsNamespace;
+        }
+
+        public List<string> getItsUsing()
+        {
+            return itsUsing;
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void initNamespaceAndUsingStatementes()
+        {
+            const string usingString = "Using";
+            const string nspString = "Namespace";
+
+            var useLen = usingString.Length;
+            var nspLen = nspString.Length;
+
+            var pragmas = getStateMap().getPragma();
+            foreach (var p in pragmas)
+            {
+                try
+                {
+                    if (p.StartsWith(usingString, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var value = p.Substring(useLen);
+                        itsUsing.Add(value.Trim());
+                        itHasUsing = true;
+                    }
+                    else if (p.StartsWith(nspString, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var value = p.Substring(nspLen);
+                        itsNamespace = value.Trim();
+                        itHasNamespace = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Warning: Unknown pragma: {p}");
+                    }
+                }
+                catch (Exception)
+                { }
+            }
+        }
+
+        private string createOutputFileName()
+        {
+            return $"{getDirectory()}{getStateMap().getName()}.cs";
+        }
+
+        #endregion
     }
 }

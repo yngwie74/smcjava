@@ -1,56 +1,69 @@
-package smc.fsmrep;
-
-import java.util.Vector;
-import java.util.HashSet;
-
-//----------------------------------
-// Name
-//  StateImpl
-//
-// Description
-//  This is the abstract base class which represents
-//  a state in the finite state machine.
-//
-public abstract class StateImpl implements State
+﻿namespace smc.fsmrep
 {
-    private String itsName;
-    private HashSet itsTransitions;         // holds Transitions
-    private Vector itsEntryActions;         // holds Strings
-    private Vector itsExitActions;          // holds Strings
+    using System.Collections.Generic;
+    //using java.lang;
+    //using java.util;
 
-    public StateImpl( String theName)
+    public abstract class StateImpl : State
     {
-        itsName = theName;
-        itsTransitions = new HashSet();
-        itsEntryActions = new Vector();
-        itsExitActions = new Vector();
+        #region Fields
+
+        private IList<string> itsEntryActions;
+        private IList<string> itsExitActions;
+        private string itsName;
+        private ISet<Transition> itsTransitions;
+
+        #endregion
+
+        #region Constructors & Destructors
+
+        public StateImpl(string str)
+        {
+            this.itsName = str;
+            this.itsTransitions = new HashSet<Transition>();
+            this.itsEntryActions = new List<string>();
+            this.itsExitActions = new List<string>();
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public virtual void addTransition(Transition t)
+        {
+            this.itsTransitions.Add(t);
+        }
+
+        public virtual IList<string> getEntryActions()
+        {
+            return this.itsEntryActions;
+        }
+
+        public virtual IList<string> getExitActions()
+        {
+            return this.itsExitActions;
+        }
+
+        public virtual string getName()
+        {
+            return this.itsName;
+        }
+
+        public virtual ISet<Transition> getTransitions()
+        {
+            return this.itsTransitions;
+        }
+
+        public virtual void setEntryActions(IList<string> v)
+        {
+            this.itsEntryActions = v;
+        }
+
+        public virtual void setExitActions(IList<string> v)
+        {
+            this.itsExitActions = v;
+        }
+
+        #endregion
     }
-    public String getName()
-	{
-	    return itsName;
-	}
-    public HashSet getTransitions()  
-	{
-	    return itsTransitions;
-	}
-    public Vector getEntryActions() 
-	{
-	    return itsEntryActions;
-    }
-    public Vector getExitActions() 
-    {
-        return itsExitActions;
-    }
-    public void addTransition(Transition t)
-    {
-        itsTransitions.add(t);
-    }
-    public void setEntryActions(Vector theActions)
-    {
-        itsEntryActions = theActions;
-    }
-    public void setExitActions(Vector theActions)
-    {
-        itsExitActions = theActions;
-    }
-};
+}

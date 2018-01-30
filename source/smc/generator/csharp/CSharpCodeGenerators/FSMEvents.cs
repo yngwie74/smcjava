@@ -1,32 +1,29 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.generator.csharp.SMCSharpGenerator;
-
-import java.util.HashSet;
-import java.util.Iterator;
-
-public class FSMEvents  extends CSharpCodeGenerator
+﻿namespace smc.generator.csharp.CSharpCodeGenerators
 {
-    public String generateCode(SMCSharpGenerator gen)
+    using System.Text;
+
+    using smc.generator.csharp;
+
+    public class FSMEvents : CSharpCodeGenerator
     {
-        StringBuffer buff = new StringBuffer();
-
-        buff.append("    #region Event Methods - forward to the current State\n");
-        buff.append("\n");
-
-        HashSet events = gen.getStateMap().getEvents();
-        Iterator evi = events.iterator();
-
-        while( evi.hasNext() )
+        public override string generateCode(SMCSharpGenerator smcsg)
         {
-            String evName = (String)evi.next();
-            buff.append("    public void " + createMethodName(evName) + "() => this.currentState." + createMethodName(evName)   + "(this);\n");
-            buff.append("\n");
+            var buff = new StringBuilder()
+                .AppendLine("    #region Event Methods - forward to the current State")
+                .AppendLine();
+
+            var events = smcsg.getStateMap().getEvents();
+            foreach (var evi in events)
+            {
+                var evName = createMethodName(evi);
+                buff.Append($"    public void {evName}() ")
+                    .AppendLine($"=> this.currentState.{evName}(this);")
+                    .AppendLine();
+            }
+
+            buff.AppendLine("    #endregion");
+
+            return buff.ToString();
         }
-
-        buff.append("    #endregion\n");
-        //buff.append("\n");
-
-        return buff.toString();
     }
 }

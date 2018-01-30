@@ -1,142 +1,155 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.generator.csharp.SMCSharpGenerator;
-import smc.fsmrep.*;
-import java.util.*;
-
-public class FSMStateClasses extends CSharpCodeGenerator
+﻿namespace smc.generator.csharp.CSharpCodeGenerators
 {
-    private SMCSharpGenerator gen;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
-    public String generateCode(SMCSharpGenerator gen)
+    using smc.fsmrep;
+    using smc.generator.csharp;
+
+    public class FSMStateClasses : CSharpCodeGenerator
     {
-        this.gen=gen;
-        StringBuffer buff = new StringBuffer();
-        List states = gen.getConcreteStates();
+        #region Constants
 
-        for(int i=0;i!=states.size();i++)
+        private const string ArgName = "name";
+
+        #endregion
+
+        #region Fields
+
+        private SMCSharpGenerator gen;
+
+        #endregion
+
+        #region Public Methods
+
+        public override string generateCode(SMCSharpGenerator gen)
         {
-            ConcreteState cs = (ConcreteState)states.get(i);
+            this.gen = gen;
+            var buff = new StringBuilder();
+            var concreteStates = gen.getConcreteStates();
 
-            buff.append(printSeparator(1));
-            buff.append("/// <summary>\n");
-            buff.append("/// Handles the " + cs.getName() + " State and its events\n" );
-            buff.append("/// </summary>\n");
-
-            buff.append("public class " + classNameFor(cs) + " : State\n" );
-            buff.append("{\n");
-            buff.append("    public override string Name => \"" + cs.getName() + "\";\n");
-
-            gen.setItsSourceState(cs);
-            gen.clearItsOverRiddenEvents();
-
-            buff.append(generateTransitions(cs));
-
-            buff.append("}\n");
-            buff.append("\n");
-        }
-        return buff.toString();
-    }
-
-    private String generateTransitions(State s)
-    {
-        StringBuffer buff = new StringBuffer();
-        HashSet transitions = s.getTransitions();
-        Iterator ti = transitions.iterator();
-
-        while( ti.hasNext() )
-        {
-            Transition t = (Transition)ti.next();
-            String event = t.getEvent();
-
-            if( gen.getItsOverriddenEvents().contains( event ) == false )
+            foreach (var cs in concreteStates)
             {
-                gen.getItsOverriddenEvents().add( event );
-                boolean noResponse = true;
+                buff.AppendLine("/// <summary>")
+                    .AppendLine($"/// Handles the {cs.getName()} State and its events")
+                    .AppendLine("/// </summary>")
+                    .AppendLine($"public class {classNameFor(cs)} : State")
+                    .AppendLine("{")
+                    .AppendLine($"    public override string Name => \"{cs.getName()}\";");
 
-                buff.append("\n");
-                buff.append( "    public override void " + createMethodName(event) + "(" + gen.getStateMap().getName() + " name)\n");
-                buff.append( "    {\n" );
+                gen.setItsSourceState(cs);
+                gen.clearItsOverRiddenEvents();
 
-                List actions = t.getActions();
-                if( actions.size() > 0 )
-                {
-                    noResponse = false;
-                }
-
-                Iterator ai = actions.iterator();
-                while( ai.hasNext() )
-                {
-                    String aName = (String)ai.next();
-                    buff.append( "        name." + aName + "();\n" );
-                }
-
-                if( t instanceof ExternalTransition )
-                {
-                    ExternalTransition et = (ExternalTransition)t;
-                    buff.append("\n");
-                    noResponse = false;
-                    buff.append(generateStateChange(et));
-                }
-                if( noResponse == true )
-                    buff.append("}\n");
-                else
-                    buff.append( "    }\n" );
+                buff.Append(generateTransitions(cs))
+                    .AppendLine("}")
+                    .AppendLine();
             }
+
+            return buff.ToString();
         }
-        if( s instanceof SubState )
+
+        #endregion
+
+        #region Methods
+
+        private string generateTransitions(State s)
         {
-            SubState ss = (SubState)s;
-            buff.append(generateTransitions(ss.getSuperState()));
-        }
-        return buff.toString();
-    }
-     private String generateStateChange(ExternalTransition et)
-    {
-        StringBuffer buff = new StringBuffer();
-        buff.append( "        // change the state\n" );
-        buff.append( "        name.CurrentState = State." + createMethodName(et.getNextState()) + ";\n");
-
-        Vector oldHierarchy = new Vector();
-        Vector newHierarchy = new Vector();
-
-        gen.getUnsharedHierarchy( oldHierarchy, newHierarchy, gen.getItsSourceState(), et.getNextState() );
-
-        int n = oldHierarchy.size();
-        for (n--; n >= 0; n--)
-        {
-            State exitState = (State)(oldHierarchy.elementAt(n));
-            Vector eactions = exitState.getExitActions();
-            if( eactions.isEmpty() == false )
+            var buff = new StringBuilder();
+            var transitions = s.getTransitions();
+            foreach (var t in transitions)
             {
-                buff.append("\n");
-                buff.append( "  // Exit functions for: " + exitState.getName()  + "\n");
-                Iterator eai = eactions.iterator();
-                while( eai.hasNext() )
+                var _event = t.getEvent();
+                if (this.gen.getItsOverriddenEvents().Contains(_event) == false)
                 {
-                    String action = (String)eai.next();
-                    buff.append( "      name." + action + "();" );
+                    this.gen.getItsOverriddenEvents().Add(_event);
+                    var noResponse = true;
+
+                    buff.AppendLine();
+                    buff.AppendLine($"    public override void {createMethodName(_event)}({this.gen.getStateMap().getName()} {ArgName})");
+                    buff.AppendLine("    {");
+
+                    var actions = t.getActions();
+                    if (actions.Count > 0)
+                    {
+                        noResponse = false;
+                    }
+
+                    foreach (var aName in actions)
+                    {
+                        buff.AppendLine($"        {ArgName}.{aName}();");
+                    }
+
+                    if (t is ExternalTransition)
+                    {
+                        var et = (ExternalTransition)t;
+                        buff.AppendLine();
+                        noResponse = false;
+                        buff.Append(generateStateChange(et));
+                    }
+
+                    if (noResponse == true)
+                    {
+                        buff.AppendLine("}");
+                    }
+                    else
+                    {
+                        buff.AppendLine("    }");
+                    }
                 }
             }
+
+            if (s is SubState)
+            {
+                var ss = (SubState)s;
+                buff.Append(generateTransitions(ss.getSuperState()));
+            }
+
+            return buff.ToString();
         }
 
-        Iterator nsi = newHierarchy.iterator();
-        while( nsi.hasNext() )
+        private string generateStateChange(ExternalTransition et)
         {
-            State newState = (State)nsi.next();
-            Vector eactions = newState.getEntryActions();
-            if( eactions.isEmpty() == false )
+            var buff = new StringBuilder()
+                .AppendLine("        // change the state")
+                .AppendLine($"        {ArgName}.CurrentState = State.{createMethodName(et.getNextState())};");
+
+            var oldHierarchy = new List<State>();
+            var newHierarchy = new List<State>();
+
+            this.gen.getUnsharedHierarchy(oldHierarchy, newHierarchy, this.gen.getItsSourceState(), et.getNextState());
+
+            var n = oldHierarchy.Count;
+            for (n--; n >= 0; n--)
             {
-                buff.append("\n");
-                buff.append( "  // Entry functions for: "+ newState.getName() + "\n" );
-                Iterator eai = eactions.iterator();
-                while( eai.hasNext() )
-                {
-                    String action = (String)eai.next();
-                    buff.append( "      name." + action + "();" );
-                }
+                AddStateActions("Exit", oldHierarchy[n], buff);
+            }
+
+            foreach (var newState in newHierarchy)
+            {
+                AddStateActions("Entry", newState, buff);
+            }
+
+            return buff.ToString();
+        }
+
+        private static void AddStateActions(string qualifier, State state, StringBuilder buff)
+        {
+            var actions = state.getExitActions();
+            if (actions.Any() == false)
+            {
+                return;
+            }
+
+            buff.AppendLine()
+                .AppendLine($"  // {qualifier} functions for: {state.getName()}");
+
+            foreach (var action in actions)
+            {
+                buff.AppendLine($"      {ArgName}.{action}();");
             }
         }
-        return buff.toString();
+
+        #endregion
     }
 }

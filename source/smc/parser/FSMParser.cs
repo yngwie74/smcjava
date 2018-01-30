@@ -1,141 +1,141 @@
-package smc.parser;
-
-import smc.parser.generated.SMParser;
-import smc.parser.generated.ParseException;
-import java.io.*;
-import smc.builder.FSMBuilder;
-import smc.parser.iface.SMParserInterface;
-
-public class FSMParser implements SMParserInterface
+namespace smc.parser
 {
-    private FSMBuilder itsBuilder;
-    private String     itsFSMGeneratorName;
-    private String     itsFileName;
-    private ParserErrorManager itsErrorManager = new ParserErrorManager();
+    using System.IO;
+    using smc.builder;
+    using smc.parser.iface;
 
-    public FSMParser(FSMBuilder theBuilder, String theFileName)
+
+    public class FSMParser : SMParserInterface
     {
-        itsBuilder = theBuilder;
-        itsFileName = theFileName;
-        itsFSMGeneratorName = "";
-        itsBuilder.setErrorManager( itsErrorManager );
-    }
-	    		
-    public void setFSMGenerator(String s)
-        { itsFSMGeneratorName = s; }
-    
-    public String getFSMGeneratorName()
-        { return itsFSMGeneratorName; }
- 
-    public void setFSMName(String s )
-        { itsBuilder.setName( s ); }
+        private FSMBuilder itsBuilder;
+        private string itsFSMGeneratorName;
+        private string itsFileName;
+        private ParserErrorManager itsErrorManager = new ParserErrorManager();
 
-    public void setContextName(String s)
+        public FSMParser(FSMBuilder theBuilder, string theFileName)
+        {
+            itsBuilder = theBuilder;
+            itsFileName = theFileName;
+            itsFSMGeneratorName = "";
+            itsBuilder.setErrorManager(itsErrorManager);
+        }
+
+        public void setFSMGenerator(string s)
+        { itsFSMGeneratorName = s; }
+
+        public string getFSMGeneratorName()
+        { return itsFSMGeneratorName; }
+
+        public void setFSMName(string s)
+        { itsBuilder.setName(s); }
+
+        public void setContextName(string s)
         { itsBuilder.setContextName(s); }
 
-    public void setException(String s)
+        public void setException(string s)
         { itsBuilder.setException(s); }
 
-    public void setInitialState(String s)
-        { itsBuilder.setInitialState( s ); }
+        public void setInitialState(string s)
+        { itsBuilder.setInitialState(s); }
 
-    public void setVersion(String s)
-        { itsBuilder.setVersion( s ); }
+        public void setVersion(string s)
+        { itsBuilder.setVersion(s); }
 
-    public void addPragma(String s)
+        public void addPragma(string s)
         { itsBuilder.addPragma(s); }
 
-    public void addSuperSubState(String theName, String theSuperState, int theLineNumber)
-    {
-        ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-        itsBuilder.addSuperSubState(theName, theSuperState, l);
-    }
+        public void addSuperSubState(string theName, string theSuperState, int theLineNumber)
+        {
+            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
+            itsBuilder.addSuperSubState(theName, theSuperState, l);
+        }
 
-    public void addSuperState(String theName, int theLineNumber)
-    {
-        ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-        itsBuilder.addSuperState(theName, l);
-    }
+        public void addSuperState(string theName, int theLineNumber)
+        {
+            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
+            itsBuilder.addSuperState(theName, l);
+        }
 
-    public void addSubState(String theName, String theSuperState, int theLineNumber)
-    {
-        ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-        itsBuilder.addSubState(theName, theSuperState, l);
-    }
+        public void addSubState(string theName, string theSuperState, int theLineNumber)
+        {
+            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
+            itsBuilder.addSubState(theName, theSuperState, l);
+        }
 
-    public void addState(String theName, int theLineNumber)
-    {
-        ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-        itsBuilder.addState(theName, l);
-    }
+        public void addState(string theName, int theLineNumber)
+        {
+            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
+            itsBuilder.addState(theName, l);
+        }
 
-    public void addTransition(String theEvent, String theNextState, int theLineNumber)
-    {
-        ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-        itsBuilder.addTransition(theEvent, theNextState, l);
-    }
+        public void addTransition(string theEvent, string theNextState, int theLineNumber)
+        {
+            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
+            itsBuilder.addTransition(theEvent, theNextState, l);
+        }
 
-    public void addInternalTransition(String theEvent, int theLineNumber)
-    {
-        ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-        itsBuilder.addInternalTransition(theEvent, l);
-    }
+        public void addInternalTransition(string theEvent, int theLineNumber)
+        {
+            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
+            itsBuilder.addInternalTransition(theEvent, l);
+        }
 
-    public void addAction(String theAction, int theLineNumber)
+        public void addAction(string theAction, int theLineNumber)
         { itsBuilder.addAction(theAction); }
 
-    public void addEntryAction(String theAction, int theLineNumber)
+        public void addEntryAction(string theAction, int theLineNumber)
         { itsBuilder.addEntryAction(theAction); }
 
-    public void addExitAction(String theAction, int theLineNumber)
+        public void addExitAction(string theAction, int theLineNumber)
         { itsBuilder.addExitAction(theAction); }
 
-    public void syntaxError(int theLineNumber, String theMessage)
-    {
-        ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
-        itsErrorManager.error(l, theMessage);
-    }
-
-    public void processFSM()
-    {}
-
-    public boolean parse() 
-    {
-        boolean status = false;
-        try
+        public void syntaxError(int theLineNumber, string theMessage)
         {
-            FileInputStream ifile = new FileInputStream(itsFileName);
-            SMParser parser = new SMParser(ifile);
+            ParserSyntaxLocation l = new ParserSyntaxLocation(itsFileName, theLineNumber);
+            itsErrorManager.error(l, theMessage);
+        }
+
+        public void processFSM()
+        { }
+
+        public bool parse()
+        {
+            bool status = false;
             try
             {
-                parser.parseFSM(this);
-                status = itsBuilder.build();
+                FileStream ifile = new FileStream(itsFileName, FileMode.Open);
+                SMParser parser = new SMParser(ifile);
+                try
+                {
+                    parser.parseFSM(this);
+                    status = itsBuilder.build();
+                }
+                catch (ParseException pe)
+                {
+                    printSyntaxError(pe);
+                    System.Console.WriteLine("Aborting due to syntax errors.");
+                }
             }
-            catch( ParseException pe )
+            catch (FileNotFoundException fe)
             {
-                printSyntaxError( pe );               
-                System.out.println("Aborting due to syntax errors.");
+                System.Console.WriteLine("Could not open input file: " + itsFileName);
             }
+            return status;
         }
-        catch( FileNotFoundException fe)
+
+        private void printSyntaxError(ParseException pe)
         {
-            System.out.println( "Could not open input file: " + itsFileName); 
+            int prevLine = pe.currentToken.beginLine;
+            int errLine = pe.currentToken.next.beginLine;
+
+            System.Console.WriteLine("Syntax Error: " + itsFileName + " line " + errLine);
+
+            if (prevLine != errLine)
+                System.Console.WriteLine("   Unknown field \"" +
+                                pe.currentToken.next.image + "\" in header");
+            else
+                System.Console.WriteLine("   Field \"" + pe.currentToken.image +
+                  "\" has invalid value \"" + pe.currentToken.next.image + "\"");
         }
-        return status;
-    }
-
-    private void printSyntaxError( ParseException pe )
-    {
-        int prevLine = pe.currentToken.beginLine;
-        int errLine = pe.currentToken.next.beginLine;
-
-        System.out.println("Syntax Error: " + itsFileName + " line " + errLine);
-
-        if( prevLine != errLine )
-            System.out.println("   Unknown field \"" + 
-                            pe.currentToken.next.image + "\" in header" );
-        else
-            System.out.println("   Field \"" + pe.currentToken.image +
-              "\" has invalid value \"" + pe.currentToken.next.image + "\"");
     }
 }

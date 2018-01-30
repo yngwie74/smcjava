@@ -1,44 +1,50 @@
-package smc.fsmrep;
-
-import java.util.Vector;
-//import java.util.Vector; // jdk 1.2
-
-//-------------------------------
-// Name
-//  Transition
-//
-// Description
-//  This class represents a transition from one state to another or
-//  a transition into the same state based upon some event.
-//
-
-public abstract class Transition
+﻿namespace smc.fsmrep
 {
-    private State  itsSourceState;
-    private String  itsEvent;
-    private Vector itsActions;
+    using System.Collections.Generic;
 
-    public Transition(String theEvent, State theSourceState)
+    public abstract class Transition
     {
-        itsEvent = theEvent;
-        itsSourceState = theSourceState;
-        itsActions = new Vector();
-    }
+        #region Fields
 
-    public String getEvent()
-	{
-	    return itsEvent;
-	}
-    public State getSourceState()
-	{
-	    return itsSourceState;
-	}
-    public Vector getActions()
-	{
-	    return itsActions;
-	}
-    public void addAction(String a)
-    {
-        itsActions.addElement( a );
+        private IList<string> itsActions;
+        private string itsEvent;
+        private State itsSourceState;
+
+        #endregion
+
+        #region Constructors & Destructors
+
+        public Transition(string str, State s)
+        {
+            this.itsEvent = str;
+            this.itsSourceState = s;
+            this.itsActions = new List<string>();
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public virtual void addAction(string str)
+        {
+            this.itsActions.Add(str);
+        }
+
+        public virtual IList<string> getActions()
+        {
+            return this.itsActions;
+        }
+
+        public virtual string getEvent()
+        {
+            return this.itsEvent;
+        }
+
+        public virtual State getSourceState()
+        {
+            return this.itsSourceState;
+        }
+
+        #endregion
     }
 }

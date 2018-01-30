@@ -1,34 +1,55 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.generator.csharp.SMCSharpGenerator;
-import smc.fsmrep.State;
-
-public abstract class CSharpCodeGenerator
+﻿namespace smc.generator.csharp.CSharpCodeGenerators
 {
-    public abstract String generateCode(SMCSharpGenerator gen);
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
 
-    public  String printSeparator( int level )
-    {
-        return  "";
-    }
+    using smc.fsmrep;
+    using smc.generator.csharp;
 
-    public String classNameFor( State s )
+    public abstract class CSharpCodeGenerator
     {
-        StringBuffer buff = new StringBuffer( createMethodName( s ) );
-		buff.append("State");
-        return buff.toString();
-    }
+        public abstract string generateCode(SMCSharpGenerator gen);
 
-    public String createMethodName( State s )
-    {
-        return createMethodName( s.getName() );
-    }
+        public virtual string printSeparator(int i)
+        {
+            return string.Empty;
+        }
 
-    public String createMethodName( String event )
-    {
-        StringBuffer buff = new StringBuffer( event );
-        if( buff.length() > 0 )
-            buff.setCharAt(0, Character.toUpperCase( buff.charAt(0) ));
-        return( buff.toString() );
+        public string classNameFor(State s)
+        {
+            return $"{createMethodName(s)}State";
+        }
+
+        public string createMethodName(State s)
+        {
+            return createMethodName(s.getName());
+        }
+
+        public string createMethodName(string @event)
+        {
+            var length = @event.Length;
+            var buff = new StringBuilder(length);
+            if (length > 0)
+            {
+                buff.Append(char.ToLowerInvariant(@event[0]));
+                if (length > 1)
+                {
+                    buff.Append(@event.Substring(1));
+                }
+            }
+
+            return buff.ToString();
+        }
+
+        public static StringBuilder AddFromGenerators(SMCSharpGenerator gen, StringBuilder buff, Func<IEnumerable<CSharpCodeGenerator>> generatorFactory)
+        {
+            var generators = generatorFactory.Invoke();
+            foreach (var code in generators)
+            {
+                buff.Append(code.generateCode(gen));
+            }
+            return buff;
+        }
     }
 }

@@ -1,66 +1,87 @@
-package smc.builder.stateRep;
-
-import smc.builder.*;
-import smc.fsmrep.*;
-
-public class SubStateRep extends StateRep
+﻿namespace smc.builder.stateRep
 {
-    private String itsSuperStateName;
+    using java.lang;
 
-    public SubStateRep( String theName, String theSuper, SyntaxLocation loc)
+    using smc.builder;
+    using smc.fsmrep;
+
+    public class SubStateRep : StateRep
     {
-        super(theName, loc);
-        itsSuperStateName = theSuper;
-    }
+        #region Fields
 
-    public String getSuperStateName()
-    { return itsSuperStateName; }
+        private string itsSuperStateName;
 
-    public State build(FSMRepresentationBuilder fb)
-    {
-        ConcreteSubStateImpl retval = null;
-        StateRep sr = fb.getStateRep(getSuperStateName());
+        #endregion
 
-        if( sr != null)
+        #region Constructors & Destructors
+
+        public SubStateRep(string str1, string str2, SyntaxLocation sl)
+            : base(str1, sl)
         {
-            sr.build(fb);
-            SuperState superState = fb.getBuiltSuperState(getSuperStateName());
-            if( superState != null)
+            this.itsSuperStateName = str2;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public virtual string getSuperStateName()
+        {
+            return this.itsSuperStateName;
+        }
+
+        public override State build(FSMRepresentationBuilder fsmrb)
+        {
+            ConcreteSubStateImpl concreteSubStateImpl = null;
+            StateRep stateRep = fsmrb.getStateRep(this.getSuperStateName());
+            if (stateRep != null)
             {
-                retval = new ConcreteSubStateImpl(getStateName(),superState);
-                fb.addBuiltConcreteState(retval);
+            stateRep.build(fsmrb);
+            SuperState builtSuperState = fsmrb.getBuiltSuperState(this.getSuperStateName());
+            if (builtSuperState != null)
+            {
+                concreteSubStateImpl = new ConcreteSubStateImpl(this.getStateName(), builtSuperState);
+                fsmrb.addBuiltConcreteState(concreteSubStateImpl);
             }
             else
             {
-                String e = "Could not build sub state (" + getStateName() +
-                        ") because super state (" + getSuperStateName() + ") had an error.";
-                fb.setError();
-                fb.error( sr.getSyntaxLocation(), e );
+                string str = new StringBuffer().append("Could not build sub state (").append(this.getStateName()).append(") because super state (")
+                    .append(this.getSuperStateName())
+                    .append(") had an error.")
+                    .ToString();
+                fsmrb.setError();
+                fsmrb.error(stateRep.getSyntaxLocation(), str);
             }
+            }
+            else
+            {
+            string str2 = new StringBuffer().append("Super state (").append(this.getSuperStateName()).append(") was not declared.")
+                .ToString();
+            fsmrb.setError();
+            fsmrb.error(null, str2);
+            }
+            return concreteSubStateImpl;
         }
-        else
-        {
-            String e = "Super state (" + getSuperStateName() + ") was not declared.";
-            fb.setError();
-            fb.error(null, e );
-        }
-        return retval;
-    }
 
-    public boolean equals(StateRep s )
-    {
-        if( s.getStateName() == getStateName() &&(s instanceof SubStateRep))
+        public override bool equals(StateRep sr)
         {
-            SubStateRep sr = (SubStateRep)s;
-            if( sr.getSuperStateName() == getSuperStateName() )
+            if ((object)sr.getStateName() == this.getStateName() && sr is SubStateRep)
+            {
+            SubStateRep subStateRep = (SubStateRep)sr;
+            if ((object)subStateRep.getSuperStateName() == this.getSuperStateName())
+            {
                 return true;
+            }
+            }
+            return false;
         }
-        return false;
-    }
 
-    public String toString()
-    {
-        String buf = getStateName() + ":" + getSuperStateName();
-        return buf;
+        public override string ToString()
+        {
+            return new StringBuffer().append(this.getStateName()).append(":").append(this.getSuperStateName())
+            .ToString();
+        }
+
+        #endregion
     }
 }

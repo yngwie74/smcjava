@@ -1,31 +1,34 @@
-package smc.builder.stateRep;
-
-import smc.builder.SyntaxLocation;
-import smc.builder.FSMRepresentationBuilder;
-import smc.fsmrep.State;
-import smc.fsmrep.ConcreteStateImpl;
-
-public class NormalStateRep extends StateRep
+﻿namespace smc.builder.stateRep
 {
-    public NormalStateRep( String theName,  SyntaxLocation loc)
+
+    using smc.builder;
+    using smc.fsmrep;
+
+    public class NormalStateRep : StateRep
     {
-        super(theName, loc);
-    }
-    public State build(FSMRepresentationBuilder fb)
-    {
-        ConcreteStateImpl retval = new ConcreteStateImpl(getStateName());
-        fb.addBuiltConcreteState(retval);
-        return retval;
-    }
-    public boolean equals(StateRep s )
-    {
-        if( s.getStateName() == getStateName() && (s instanceof NormalStateRep) )
-            return true;
-        else
-            return false;
-    }
-    public String toString()
-    {
-        return getStateName();
+        public NormalStateRep(string theName, SyntaxLocation loc)
+          : base(theName, loc)
+        {
+        }
+
+        public override State build(FSMRepresentationBuilder fb)
+        {
+            ConcreteStateImpl retval = new ConcreteStateImpl(getStateName());
+            fb.addBuiltConcreteState(retval);
+            return retval;
+        }
+
+        public override bool equals(StateRep s)
+        {
+            if (s.getStateName() == getStateName() && s is NormalStateRep)
+                return true;
+            else
+                return false;
+        }
+
+        public override string ToString()
+        {
+            return getStateName();
+        }
     }
 }

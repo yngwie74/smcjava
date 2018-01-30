@@ -1,53 +1,50 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.generator.csharp.SMCSharpGenerator;
-import smc.fsmrep.ConcreteState;
-import smc.fsmrep.State;
-
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.List;
-
-public class FSMConstructor extends CSharpCodeGenerator
+﻿namespace smc.generator.csharp.CSharpCodeGenerators
 {
-    public String generateCode(SMCSharpGenerator gen)
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
+    using smc.fsmrep;
+    using smc.generator.csharp;
+
+    public class FSMConstructor : CSharpCodeGenerator
     {
-        StringBuffer buff = new StringBuffer();
-        buff.append("    #region Constructors & Destructors\n");
-        buff.append("\n");
-        buff.append("    public " + gen.getStateMap().getName() + "()\n");
-        buff.append("    {\n");
-
-        String iName = createMethodName(gen.getStateMap().getInitialState());
-        buff.append("        this.currentState = State." + iName + ";\n") ;
-
-        Vector initialHierarchy = new Vector();
-        gen.getStateHierarchy( initialHierarchy,gen.getStateMap().getInitialState());
-
-        Iterator i = initialHierarchy.iterator();
-        while( i.hasNext() )
+        public override string generateCode(SMCSharpGenerator gen)
         {
-            State newState = (State)i.next();
-            Vector eactions = newState.getEntryActions();
-            Iterator eai = eactions.iterator();
+            var buff = new StringBuilder()
+                .AppendLine("    #region Constructors & Destructors")
+                .AppendLine()
+                .AppendLine($"    public {gen.getStateMap().getName()}()")
+                .AppendLine("    {");
 
-            if( eai.hasNext() )
+            var iName = createMethodName(gen.getStateMap().getInitialState());
+
+            buff.Append($"        currentState = State.{iName};");
+
+            var initialHierarchy = new List<State>();
+            gen.getStateHierarchy(initialHierarchy, gen.getStateMap().getInitialState());
+
+            foreach (var newState in initialHierarchy)
             {
-                buff.append("\n");
-                buff.append( "        // Entry functions for: " + newState.getName() + "\n");
+                var eactions = newState.getEntryActions();
+                if (eactions.Any())
+                {
+                    buff.AppendLine()
+                        .AppendLine($"        // Entry functions for: {newState.getName()}");
+                }
+
+                foreach (var action in eactions)
+                {
+                    buff.AppendLine($"        {action}();");
+                }
             }
 
-            while( eai.hasNext() )
-            {
-                String action = (String)eai.next();
-                buff.append( "        " + action + "();\n" );
-            }
+            buff.AppendLine("    }")
+                .AppendLine()
+                .AppendLine("    #endregion")
+                .AppendLine();
+
+            return buff.ToString();
         }
-        buff.append("    }\n");
-        buff.append("\n");
-        buff.append("    #endregion\n");
-        buff.append("\n");
-
-        return buff.toString();
     }
 }

@@ -1,54 +1,69 @@
-package smc.builder.stateRep;
-
-import smc.builder.SyntaxLocation;
-import smc.builder.FSMRepresentationBuilder;
-import smc.fsmrep.State;
-import smc.fsmrep.SuperState;
-import smc.fsmrep.SuperStateImpl;
-
-public class SuperStateRep extends StateRep
+﻿namespace smc.builder.stateRep
 {
-    public SuperStateRep( String theName,  SyntaxLocation loc)
-    {
-        super(theName, loc);
-    }
-    public State build(FSMRepresentationBuilder fb)
-    {
-        // Many other states may depend upon super states.  Thus there may
-        // be many requests for them to be built.  Thus we have to check to
-        // see if its has already been built, and ignore any subsequent
-        // requests.
-        //
-        // Also, since super states do not depend upon anyone, they can be
-        // built as soon as they are seen.
+    using java.lang;
 
-        SuperState retval;
-        if (fb.isStateBuilt(getStateName()) == false)
+    using smc.builder;
+    using smc.fsmrep;
+
+    public class SuperStateRep : StateRep
+    {
+        #region Constructors & Destructors
+
+        public SuperStateRep(string str, SyntaxLocation sl)
+            : base(str, sl)
         {
-            SuperStateImpl ss = new SuperStateImpl( getStateName() );
-            fb.addBuiltSuperState( ss );
-            retval = (SuperState)ss;
-        }
-        else
-        {
-            retval = fb.getBuiltSuperState( getStateName());
         }
 
-        State s = (State)retval;
-        return s;
-    }
+        #endregion
 
-    public boolean equals(StateRep s )
-    {
-        if( s.getStateName() == getStateName() && (s instanceof SuperStateRep) )
+        #region Public Methods
+
+        public override State build(FSMRepresentationBuilder fsmrb)
+        {
+            object obj;
+            if (!fsmrb.isStateBuilt(this.getStateName()))
+            {
+            SuperStateImpl superStateImpl = new SuperStateImpl(this.getStateName());
+            fsmrb.addBuiltSuperState(superStateImpl);
+            obj = superStateImpl;
+            }
+            else
+            {
+            obj = fsmrb.getBuiltSuperState(this.getStateName());
+            }
+            object obj2 = obj;
+            object obj3 = obj2;
+            object obj4;
+            if (obj3 != null)
+            {
+            obj4 = (obj3 as State);
+            if (obj4 == null)
+            {
+                throw new java.lang.IncompatibleClassChangeError();
+            }
+            }
+            else
+            {
+            obj4 = null;
+            }
+            return (State)obj4;
+        }
+
+        public override bool equals(StateRep sr)
+        {
+            if ((object)sr.getStateName() == this.getStateName() && sr is SuperStateRep)
+            {
             return true;
-        else
+            }
             return false;
-    }
+        }
 
-    public String toString()
-    {
-        String buf = "(" + getStateName() + ")";
-        return buf;
+        public override string ToString()
+        {
+            return new StringBuffer().append("(").append(this.getStateName()).append(")")
+            .ToString();
+        }
+
+        #endregion
     }
 }

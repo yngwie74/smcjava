@@ -1,62 +1,72 @@
-package smc.parser.iface;
-
-public abstract interface SMParserInterface
+﻿namespace smc.parser.iface
 {
+    public interface SMParserInterface
+    {
+        /// <summary>Set the name of the Finite State Machine</summary>
+        void setFSMName(string s);
 
-    public abstract void setFSMName(String s);      
-    // Set the name of the Finite State Machine
+        /// <summary>
+        /// Set the name of the Context class that the finite state machine
+        /// will inherit from
+        /// </summary>
+        void setContextName(string s);
 
-    public abstract void setContextName(String s);  
-    // Set the name of the Context class that the finite state machine 
-    // will inherit from
+        /// <summary>
+        /// Set the name of the Exception class that is used by the finite state machine
+        /// </summary>
+        void setException(string s);
 
-    public abstract void setException(String s);  
-    // Set the name of the Exception class that is used by the finite
-    // state machine
+        /// <summary>Set the initial state of the FSM</summary>
+        void setInitialState(string s);
 
-    public abstract void setInitialState(String s);
-    // Set the initial state of the FSM
+        /// <summary>Set the version string</summary>
+        void setVersion(string s);
 
-    public abstract void setVersion(String s);      
-    // Set the version string;
+        /// <summary>
+        /// Set the name of the class that represents the FSM code generator
+        /// </summary>
+        void setFSMGenerator(string s);
 
-    public abstract void setFSMGenerator(String s );
-    // Set the name of the class that represents the FSM code generator
+        /// <summary>Add a pragma statement for the FSM code generator</summary>
+        void addPragma(string s);
 
-    public abstract void addPragma(String s );
-    // add a pragma statement for the FSM code generator
+        /// <summary>
+        /// The FSM data structures are built, so do whatever needs to be
+        /// done to process them.
+        /// </summary>
+        void processFSM();
 
-    public abstract void processFSM();           
-    // The FSM data structures are built, so do whatever needs to be 
-    // done to process them.
+        /// <summary>Add a SuperSubState to the FSM</summary>
+        void addSuperSubState(string name, string sup, int lNum);
 
-    public abstract void addSuperSubState(String name, String sup, int lNum);
-    // Add a SuperSubState to the FSM
+        /// <summary>Add A SuperState to the FSM</summary>
+        void addSuperState(string name, int lNum);
 
-    public abstract void addSuperState(String name, int lNum);
-    // Add A SuperState to the FSM
+        /// <summary>Add A SubState to the FSM</summary>
+        void addSubState(string name, string sup, int lNum);
 
-    public abstract void addSubState(String name, String sup, int lNum);
-    // Add A SubState to the FSM
+        /// <summary>Add a regular state to the FSM</summary>
+        void addState(string name, int lNum);
 
-    public abstract void addState(String name, int lNum);   
-    // Add a regular state to the FSM
+        /// <summary>Add a transition to the FSM</summary>
+        void addTransition(string _event, string nextState, int lNum);
 
-    public abstract void addTransition(String event, 
-                                    String nextState, int lNum);
-    // Add a transition to the FSM
+        /// <summary>Add an internal transition to the FSM</summary>
+        void addInternalTransition(string _event, int lNum);
 
-    public abstract void addInternalTransition(String event, int lNum);
-    // Add an internal transition to the FSM
+        /// <summary>
+        /// Add an action to the last transition that was added to the FSM
+        /// </summary>
+        void addAction(string action, int lNum);
 
-    public abstract void addAction(String action, int lNum);
-    // Add an action to the last transition that was added to the FSM
+        /// <summary>
+        /// Add an action to the list of entry actions for the current state.
+        /// </summary>
+        void addEntryAction(string action, int lNum);
 
-    public abstract void addEntryAction(String action, int lNum); 
-    // Add an action to the list of entry actions for the current state.
-
-    public abstract void addExitAction(String action, int lNum); 
-    // Add an action to the list of exit actions for the current state.
+        /// <summary>
+        /// Add an action to the list of exit actions for the current state.
+        /// </summary>
+        void addExitAction(string action, int lNum);
+    }
 }
-
-

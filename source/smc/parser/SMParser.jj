@@ -1,6 +1,8 @@
 PARSER_BEGIN(SMParser)
 
-import smc.parser.iface.SMParserInterface;
+using System;
+
+using smc.parser.iface;
 
 public class SMParser
 {
@@ -75,26 +77,26 @@ void parseHeader() :
     }
   | t=<VERSION>
     {
-        String v = t.image;	
+        string v = t.image;	
         try
         {
-            v = v.substring(7);
-            v = v.trim();
+            v = v.Substring(7);
+            v = v.Trim();
             pi.setVersion( v );
         }
-        catch (StringIndexOutOfBoundsException e)
+        catch (System.IndexOutOfRangeException e)
         { pi.setVersion(""); }
     }
   | t=<PRAGMA>
     {
-        String p = t.image;
+        string p = t.image;
         try
         {
-            p = p.substring(6);
-            p = p.trim();
+            p = p.Substring(6);
+            p = p.Trim();
             pi.addPragma( p );
         }
-        catch (StringIndexOutOfBoundsException e)
+        catch (System.IndexOutOfRangeException e)
         {}
     }
   )*
@@ -138,18 +140,18 @@ void transitionSet() :
 
 void transition() :
 {
-  Token event;
+  Token _event;
   Token state;
 }
 {
    ( LOOKAHEAD(2) 
-    event=<ID> state=<ID>
+    _event=<ID> state=<ID>
     {
-        pi.addTransition( event.image, state.image, event.beginLine );
+        pi.addTransition( _event.image, state.image, _event.beginLine );
     }
-  | event=<ID> "*"
+  | _event=<ID> "*"
     {
-        pi.addInternalTransition( event.image, event.beginLine );
+        pi.addInternalTransition( _event.image, _event.beginLine );
     })
   {
       actionSet(transactionAction);

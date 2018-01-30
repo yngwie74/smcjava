@@ -1,30 +1,26 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.generator.csharp.SMCSharpGenerator;
-
-import java.util.List;
-
-public class FSMAccessors extends CSharpCodeGenerator
+﻿namespace smc.generator.csharp.CSharpCodeGenerators
 {
-    public String generateCode(SMCSharpGenerator gen)
+    using System.Text;
+
+    using smc.generator.csharp;
+
+    public class FSMAccessors : CSharpCodeGenerator
     {
-        StringBuffer buff = new StringBuffer();
-
-        buff.append("    #region Public Properties\n");
-        buff.append("\n");
-        buff.append("    public string Version => version;\n");
-        buff.append("\n");
-        buff.append("    public string CurrentStateName => this.currentState.Name;\n");
-        buff.append("\n");
-        buff.append("    public State CurrentState\n");
-        buff.append("    {\n");
-        buff.append("        get { return this.currentState; }\n");
-        buff.append("        set { this.currentState = value; }\n");
-        buff.append("    }\n");
-        buff.append("\n");
-        buff.append("    #endregion\n");
-        buff.append("\n");
-
-        return buff.toString();
+        public override string generateCode(SMCSharpGenerator smcsg)
+        {
+            return new StringBuilder()
+                .AppendLine()
+                .AppendLine("    public string Version => version;")
+                .AppendLine()
+                .AppendLine("    public string CurrentStateName => this.currentState.Name;")
+                .AppendLine()
+                .AppendLine("    public State CurrentState")
+                .AppendLine("    {")
+                .AppendLine("        get { return this.currentState; }")
+                .AppendLine("        set { this.currentState = value; }")
+                .AppendLine("    }")
+                .AppendLine()
+                .ToString();
+        }
     }
 }

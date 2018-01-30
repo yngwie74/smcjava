@@ -1,11 +1,9 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.generator.csharp.SMCSharpGenerator;
-
-public class FSMMutators extends CSharpCodeGenerator
+﻿namespace smc.generator.csharp.CSharpCodeGenerators
 {
-    public String generateCode(SMCSharpGenerator gen)
+    using smc.generator.csharp;
+
+    public class FSMMutators : CSharpCodeGenerator
     {
-		return "";
+        public override string generateCode(SMCSharpGenerator smcsg) => string.Empty;
     }
 }

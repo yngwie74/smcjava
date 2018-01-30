@@ -1,298 +1,347 @@
-package smc.builder;
-
-import smc.fsmrep.*;
-import smc.builder.stateRep.*;
-
-import java.util.*;
-
-//----------------------------------
-// Name
-//  FSMRepresentationBuilder
-//
-// Description
-//  This is the class derived from FSMBuilder which stores the
-//  parsed FSM into the intermediate representation and builds
-//  the final State machine representation
-//
-public class FSMRepresentationBuilder extends FSMBuilder
+﻿namespace smc.builder
 {
-    private boolean itsError;
-    private MutableStateMap itsStateMap;
-    private String itsInitialState;
-    private List itsTransitions;
-    private TransitionRep itsCurrentTransition;
-    private String itsCurrentState;
-    private HashSet itsStates;
-    private HashMap itsStateReps;
-    private HashMap itsSuperStateDictionary;
-    private HashMap itsConcreteStateDictionary;
-    private HashMap itsStateDictionary;
+    using java.lang;
+    using java.util;
 
-    public FSMRepresentationBuilder()
-    {
-        itsStateMap = new MutableStateMap(); 
-        itsTransitions = new ArrayList();
-        itsStates = new HashSet();
-        itsStateReps = new HashMap();
-        itsSuperStateDictionary = new HashMap();
-        itsConcreteStateDictionary = new HashMap();
-        itsStateDictionary = new HashMap();
+    using smc.builder.stateRep;
+    using smc.fsmrep;
 
-        itsError = false;
+    public class FSMRepresentationBuilder : FSMBuilder
+    {
 
-        itsStateMap.setName( "FSMName" );
-        itsStateMap.setContextName( "FSMContext" );
-        itsStateMap.setExceptionName( "" );
-        itsStateMap.setErrorFunctionName("FSMError");
-        itsStateMap.setVersion( "" );
-    }
+        private bool itsError;
+        private MutableStateMap itsStateMap;
+        private string itsInitialState;
+        private List itsTransitions;
+        private TransitionRep itsCurrentTransition;
+        private string itsCurrentState;
+        private HashSet itsStates;
+        private HashMap itsStateReps;
+        private HashMap itsSuperStateDictionary;
+        private HashMap itsConcreteStateDictionary;
+        private HashMap itsStateDictionary;
 
-    public StateMap getStateMap()
-    { return itsStateMap; }
-    public List getTransitions()
-    { return itsTransitions; }
-    public HashSet getStates()
-    { return itsStates; }
 
-    public void setInitialState( String theName)
-    { itsInitialState = theName; }
 
-    public void setName( String theName)
-    { itsStateMap.setName(theName); }
-    public void setContextName( String theName)
-    { itsStateMap.setContextName(theName); }
-    public void setException( String e)
-    { itsStateMap.setExceptionName(e); }
-    public void setVersion( String theVersion)
-    { itsStateMap.setVersion( theVersion); }
-    public void addPragma( String theName)
-    { itsStateMap.addPragma(theName); }
-
-    public void addSuperSubState( String theName, String theSuperState, SyntaxLocation loc)
-    { 
-        addStateRep(new SuperSubStateRep(theName, theSuperState, loc));
-    }
-    public void addSubState( String theName, String theSuperState, SyntaxLocation loc)
-    {    
-        addStateRep(new SubStateRep(theName, theSuperState, loc));
-    }
-    public void addSuperState( String theName,  SyntaxLocation loc)
-    { 
-        addStateRep(new SuperStateRep(theName, loc));
-    }
-    public void addState( String theName,  SyntaxLocation  loc)
-    {
-        addStateRep(new NormalStateRep(theName, loc));
-    }
-    public void addTransition( String theEvent, String theNextState, SyntaxLocation loc)
-    {
-        itsCurrentTransition = new TransitionRep( itsCurrentState,theEvent, theNextState, loc);
-        itsTransitions.add(itsCurrentTransition);
-    }
-    public void addInternalTransition( String theEvent, SyntaxLocation loc)
-    {
-        // An internal transition is simply a transition which stays inside
-        // its current state.  We are modeling it here as a regular transition
-        // whose "theNextState" field is blank.
-
-        addTransition( theEvent, "", loc);
-    }
-    public void addAction( String theAction)
-    {
-        itsCurrentTransition.addAction( theAction );
-    }
-    public void addEntryAction( String theAction)
-    {
-        StateRep sr = getStateRep( itsCurrentState );
-        sr.addEntryAction(theAction);
-    }
-    public void addExitAction( String theAction)
-    {
-        StateRep sr = getStateRep( itsCurrentState );
-        sr.addExitAction(theAction);
-    }
-    public void addBuiltSuperState(SuperState s)
-    {
-        itsSuperStateDictionary.put( s.getName(), s);
-        addBuiltState((State)s);
-    }
-    public void addBuiltConcreteState(ConcreteState s)
-    {
-        itsConcreteStateDictionary.put( s.getName(), s);
-        addBuiltState(s);
-    }
-    public StateRep getStateRep( String stateName)
-    {
-        return (StateRep)(itsStateReps.get( stateName ));
-    }
-    public boolean isStateBuilt( String stateName)
-    {
-        return( itsStateDictionary.containsKey( stateName ) );
-    }
-    public State getBuiltState( String stateName )
-    {
-        return (State)(itsStateDictionary.get( stateName ));
-    }
-    public SuperState getBuiltSuperState( String stateName)
-    {
-        return (SuperState)( itsSuperStateDictionary.get( stateName ) );
-    }
-    public ConcreteState getBuiltConcreteState( String stateName)
-    {
-        return (ConcreteState)(itsConcreteStateDictionary.get( stateName ));
-    }
-    public boolean build()
-    {
-        if (itsError == false )
+        public FSMRepresentationBuilder()
         {
-            buildStateMap();
-            if (itsError == true)
-            {
-                error("Aborting due to inconsistent input.");
-                return false;
-            }
+            this.itsStateMap = new MutableStateMap();
+            this.itsTransitions = new ArrayList();
+            this.itsStates = new HashSet();
+            this.itsStateReps = new HashMap();
+            this.itsSuperStateDictionary = new HashMap();
+            this.itsConcreteStateDictionary = new HashMap();
+            this.itsStateDictionary = new HashMap();
+            this.itsError = false;
+            this.itsStateMap.setName("FSMName");
+            this.itsStateMap.setContextName("FSMContext");
+            this.itsStateMap.setExceptionName("");
+            this.itsStateMap.setErrorFunctionName("FSMError");
+            this.itsStateMap.setVersion("");
         }
-        else
+
+
+
+        public virtual StateMap getStateMap()
         {
-            error("Aborting due to semantic errors");
+            return this.itsStateMap;
+        }
+
+        public override void addTransition(string str1, string str2, SyntaxLocation sl)
+        {
+            this.itsCurrentTransition = new TransitionRep(this.itsCurrentState, str1, str2, sl);
+            this.itsTransitions.add(this.itsCurrentTransition);
+        }
+
+        public virtual StateRep getStateRep(string str)
+        {
+            return (StateRep)this.itsStateReps.get(str);
+        }
+
+        public virtual void setError()
+        {
+            this.itsError = true;
+        }
+
+        public virtual ConcreteState getBuiltConcreteState(string str)
+        {
+            return (ConcreteState)this.itsConcreteStateDictionary.get(str);
+        }
+
+        public virtual State getBuiltState(string str)
+        {
+            return (State)this.itsStateDictionary.get(str);
+        }
+
+        public virtual List getTransitions()
+        {
+            return this.itsTransitions;
+        }
+
+        public virtual HashSet getStates()
+        {
+            return this.itsStates;
+        }
+
+        public override void setInitialState(string str)
+        {
+            this.itsInitialState = str;
+        }
+
+        public override void setName(string str)
+        {
+            this.itsStateMap.setName(str);
+        }
+
+        public override void setContextName(string str)
+        {
+            this.itsStateMap.setContextName(str);
+        }
+
+        public override void setException(string str)
+        {
+            this.itsStateMap.setExceptionName(str);
+        }
+
+        public override void setVersion(string str)
+        {
+            this.itsStateMap.setVersion(str);
+        }
+
+        public override void addPragma(string str)
+        {
+            this.itsStateMap.addPragma(str);
+        }
+
+        public override void addSuperSubState(string str1, string str2, SyntaxLocation sl)
+        {
+            this.addStateRep(new SuperSubStateRep(str1, str2, sl));
+        }
+
+        public override void addSubState(string str1, string str2, SyntaxLocation sl)
+        {
+            this.addStateRep(new SubStateRep(str1, str2, sl));
+        }
+
+        public override void addSuperState(string str, SyntaxLocation sl)
+        {
+            this.addStateRep(new SuperStateRep(str, sl));
+        }
+
+        public override void addState(string str, SyntaxLocation sl)
+        {
+            this.addStateRep(new NormalStateRep(str, sl));
+        }
+
+        public override void addInternalTransition(string str, SyntaxLocation sl)
+        {
+            this.addTransition(str, "", sl);
+        }
+
+        public override void addAction(string str)
+        {
+            this.itsCurrentTransition.addAction(str);
+        }
+
+        public override void addEntryAction(string str)
+        {
+            StateRep stateRep = this.getStateRep(this.itsCurrentState);
+            stateRep.addEntryAction(str);
+        }
+
+        public override void addExitAction(string str)
+        {
+            StateRep stateRep = this.getStateRep(this.itsCurrentState);
+            stateRep.addExitAction(str);
+        }
+
+        public virtual void addBuiltSuperState(SuperState ss)
+        {
+            this.itsSuperStateDictionary.put(ss.getName(), ss);
+            this.addBuiltState(ss);
+        }
+
+        public virtual void addBuiltConcreteState(ConcreteState cs)
+        {
+            this.itsConcreteStateDictionary.put(cs.getName(), cs);
+            this.addBuiltState(cs);
+        }
+
+        public virtual bool isStateBuilt(string str)
+        {
+            return this.itsStateDictionary.containsKey(str);
+        }
+
+        public virtual SuperState getBuiltSuperState(string str)
+        {
+            return (SuperState)this.itsSuperStateDictionary.get(str);
+        }
+
+        public override bool build()
+        {
+            if (!this.itsError)
+            {
+                this.buildStateMap();
+                if (this.itsError)
+                {
+                    this.error("Aborting due to inconsistent input.");
+                    return false;
+                }
+                return true;
+            }
+            this.error("Aborting due to semantic errors");
             return false;
         }
-        return true;
-    }
-    public void setError() 
-    { itsError = true; }
 
-    private void addStateRep(StateRep theStateRep)
-    {
-        String name = theStateRep.getStateName();
-        StateRep stateRep = getStateRep(name);
 
-        if( stateRep != null )
+
+        private void addStateRep(StateRep P_0)
         {
-            if( stateRep != theStateRep)
+            string stateName = P_0.getStateName();
+            StateRep stateRep = this.getStateRep(stateName);
+            if (stateRep != null)
             {
-                String errorStatement = "Redefinition of state (" + name + ")";
-                setError();
-                error( theStateRep.getSyntaxLocation(), errorStatement );
-            }
-        }
-        else
-        {
-            itsCurrentState = name;
-            itsStateReps.put( name, theStateRep );
-            itsStates.add(name);
-        }
-    }
-    private void addBuiltState(State state)
-    {
-        itsStateDictionary.put(state.getName(), state);
-        itsStateMap.addOrderedState(state);
-    }
-    private void buildStateMap()
-    {
-        setEntryAndExitActions();
-        setTransitions();
-        setInitialState();
-    }
-    private void setInitialState()
-    {
-        ConcreteState csfound = getBuiltConcreteState(itsInitialState);
-
-        if (csfound != null)
-        {
-            itsStateMap.setInitialState(csfound);
-        }
-        else
-        {
-            String errorStatement = "Initial state (" + itsInitialState + ") is not concrete.";
-            setError();
-            error(errorStatement);
-        }
-    }
-    private void setTransitions()
-    {
-        for(int i=0;i!=itsTransitions.size();i++)
-        {
-            TransitionRep transitionRep = (TransitionRep)itsTransitions.get(i);
-            String stateName = transitionRep.getStartingState();
-            String eventName = transitionRep.getEvent();
-            String endingStateName = transitionRep.getEndingState();
-
-            StateRep stateRep = getStateRep(stateName);
-            if( stateRep != null )
-            {
-                if (stateRep.isEventBuilt(eventName) == false )
+                if (stateRep != P_0)
                 {
-                    stateRep.addBuiltEvent(eventName);
-
-                    ConcreteState concreteState = getBuiltConcreteState(endingStateName);
-                    if( (concreteState != null) || endingStateName == "")
-                    {
-                        State state = getBuiltState( stateName );
-                        if ( state != null )
-                        {
-                            Transition transition = null;
-
-                            if (endingStateName != "")
-                                transition = new ExternalTransition(eventName, state, concreteState);
-                            else
-                                transition = new InternalTransition(eventName, state);
-
-                            itsStateMap.addTransition(state, transition);
-
-                            Vector actions = transitionRep.getActions();
-                            Iterator ai = actions.iterator();
-
-                            while( ai.hasNext() )
-                                transition.addAction( (String)ai.next() );
-                        }
-                        else
-                        {
-                            String errorStatement = "Cannot build transitions for " + stateName + " due to previous errors.";
-                            error(errorStatement);
-                        }
-                    }
-                    else
-                    {
-                        callError("Ending state (" + endingStateName +   ") is not a concrete state.",transitionRep);
-                    }
-                }
-                else
-                {
-                    callError("Event (" + eventName +   ") already defined for state (" + stateName + ").",transitionRep);
+                    string str = new StringBuffer().append("Redefinition of state (").append(stateName).append(")")
+                        .ToString();
+                    this.setError();
+                    this.error(P_0.getSyntaxLocation(), str);
                 }
             }
             else
             {
-                callError("State (" + stateName + ") not declared." , transitionRep);
+                this.itsCurrentState = stateName;
+                this.itsStateReps.put(stateName, P_0);
+                this.itsStates.add(stateName);
             }
         }
-    }
-    private void callError(String errorStatement,TransitionRep transitionRep)
-    {
-        setError();
-        error(transitionRep.getSyntaxLocation(),errorStatement);
-    }
 
-    private void setEntryAndExitActions()
-    {
-        Iterator sri = itsStates.iterator();
-        while( sri.hasNext() )
+        private void addBuiltState(State P_0)
         {
-            String stateName = (String)sri.next();
-            StateRep stateRep = getStateRep(stateName);
+            this.itsStateDictionary.put(P_0.getName(), P_0);
+            this.itsStateMap.addOrderedState(P_0);
+        }
 
-            if( stateRep != null )
+        private void buildStateMap()
+        {
+            this.setEntryAndExitActions();
+            this.setTransitions();
+            this.setInitialState();
+        }
+
+        private void setEntryAndExitActions()
+        {
+            Iterator iterator = this.itsStates.iterator();
+            while (true)
             {
-                State state = stateRep.build(this);
-                if (state != null)
+                if (!iterator.hasNext())
                 {
-                    state.setEntryActions(stateRep.getEntryActions());
-                    state.setExitActions(stateRep.getExitActions());
+                    break;
+                }
+                string str = (string)iterator.next();
+                StateRep stateRep = this.getStateRep(str);
+                if (stateRep != null)
+                {
+                    State state = stateRep.build(this);
+                    if (state != null)
+                    {
+                        state.setEntryActions(stateRep.getEntryActions());
+                        state.setExitActions(stateRep.getExitActions());
+                    }
                 }
             }
         }
+
+        private void setTransitions()
+        {
+            int num = 0;
+            while (true)
+            {
+                if (num == this.itsTransitions.size())
+                {
+                    break;
+                }
+                TransitionRep transitionRep = (TransitionRep)this.itsTransitions.get(num);
+                string startingState = transitionRep.getStartingState();
+                string @event = transitionRep.getEvent();
+                string endingState = transitionRep.getEndingState();
+                StateRep stateRep = this.getStateRep(startingState);
+                if (stateRep != null)
+                {
+                    if (!stateRep.isEventBuilt(@event))
+                    {
+                        stateRep.addBuiltEvent(@event);
+                        ConcreteState builtConcreteState = this.getBuiltConcreteState(endingState);
+                        if (builtConcreteState != null || (object)endingState == "")
+                        {
+                            State builtState = this.getBuiltState(startingState);
+                            if (builtState != null)
+                            {
+                                Transition transition = ((object)endingState == "") ? ((Transition)new InternalTransition(@event, builtState)) : ((Transition)new ExternalTransition(@event, builtState, builtConcreteState));
+                                this.itsStateMap.addTransition(builtState, transition);
+                                Vector actions = transitionRep.getActions();
+                                Iterator iterator = actions.iterator();
+                                while (true)
+                                {
+                                    if (!iterator.hasNext())
+                                    {
+                                        break;
+                                    }
+                                    transition.addAction((string)iterator.next());
+                                }
+                            }
+                            else
+                            {
+                                string str = new StringBuffer().append("Cannot build transitions for ").append(startingState).append(" due to previous errors.")
+                                    .ToString();
+                                this.error(str);
+                            }
+                        }
+                        else
+                        {
+                            this.callError(new StringBuffer().append("Ending state (").append(endingState).append(") is not a concrete state.")
+                                .ToString(), transitionRep);
+                        }
+                    }
+                    else
+                    {
+                        this.callError(new StringBuffer().append("Event (").append(@event).append(") already defined for state (")
+                            .append(startingState)
+                            .append(").")
+                            .ToString(), transitionRep);
+                    }
+                }
+                else
+                {
+                    this.callError(new StringBuffer().append("State (").append(startingState).append(") not declared.")
+                        .ToString(), transitionRep);
+                }
+                num++;
+            }
+        }
+
+        private void setInitialState()
+        {
+            ConcreteState builtConcreteState = this.getBuiltConcreteState(this.itsInitialState);
+            if (builtConcreteState != null)
+            {
+                this.itsStateMap.setInitialState(builtConcreteState);
+            }
+            else
+            {
+                string str = new StringBuffer().append("Initial state (").append(this.itsInitialState).append(") is not concrete.")
+                    .ToString();
+                this.setError();
+                this.error(str);
+            }
+        }
+
+        private void callError(string P_0, TransitionRep P_1)
+        {
+            this.setError();
+            this.error(P_1.getSyntaxLocation(), P_0);
+        }
+
     }
-
-
 }

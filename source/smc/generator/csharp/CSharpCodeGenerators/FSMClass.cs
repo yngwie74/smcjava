@@ -1,60 +1,83 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.generator.csharp.SMCSharpGenerator;
-import smc.generator.csharp.CSharpCodeGeneratorBuilder;
-
-import java.util.List;
-
-public class FSMClass extends CSharpCodeGenerator
+﻿namespace smc.generator.csharp.CSharpCodeGenerators
 {
-    public String generateCode(SMCSharpGenerator gen)
+    using System.Text;
+
+    using smc.generator.csharp;
+
+    public class FSMClass : CSharpCodeGenerator
     {
-        StringBuffer buff = new StringBuffer();
-        String fsmName = gen.getStateMap().getName();
-        buff.append(printSeparator(0));
-        buff.append("/// <summary>\n");
-        buff.append("/// This is the Finite State Machine class\n");
-        buff.append("/// <summary>\n");
-        buff.append("public class " + fsmName + " : " + gen.getStateMap().getContextName() + "\n");
-        buff.append("{\n");
+        #region Public Methods
 
-        buff.append("    #region Fields\n");
-        buff.append("\n");
-        buff.append("    private static string version = \"" + gen.getStateMap().getVersion() + "\";\n");
-        buff.append("\n");
-        buff.append("    private State currentState;\n");
-        buff.append("\n");
-        buff.append("    #endregion\n");
-        buff.append("\n");
-
-        try
+        public override string generateCode(SMCSharpGenerator gen)
         {
-            List generators = CSharpCodeGeneratorBuilder.cSharpCode.cSharpFSMInstances();
-            for(int i = 0; i !=generators.size(); i++)
-            {
-				System.out.println(generators.get(i).getClass());
-                CSharpCodeGenerator code = (CSharpCodeGenerator)generators.get(i);
-                buff.append(code.generateCode(gen));
-            }
-        }
-        catch(Exception e )
-        {}
+            var stateMap = gen.getStateMap();
+            var buff = new StringBuilder();
 
-        buff.append("}\n");
-        buff.append("\n");
-        
-        try
+            AddClassHeader(buff);
+            BeginClassDeclaration(buff, stateMap);
+            AddFields(buff, stateMap);
+            AddClassMembers(gen, buff);
+            CloseClassDeclaration(buff);
+
+            AddStateClasses(gen, buff);
+
+            return buff.ToString();
+        }
+
+        #endregion
+
+        #region Methods
+
+        private static void AddClassHeader(StringBuilder buff)
         {
-            List generators = CSharpCodeGeneratorBuilder.cSharpCode.cSharpFSMClassesInstances();
-            for(int i = 0 ; i !=generators.size();i++)
-            {
-                CSharpCodeGenerator code = (CSharpCodeGenerator)generators.get(i);
-                buff.append(code.generateCode(gen));
-            }
+            buff.AppendLine("/// <summary>")
+                .AppendLine("/// This is the Finite State Machine class")
+                .AppendLine("/// <summary>");
         }
-        catch(Exception e )
-        {}
 
-        return buff.toString();
+        private static void BeginClassDeclaration(StringBuilder buff, fsmrep.StateMap stateMap)
+        {
+            var className = stateMap.getName();
+            var superClassName = stateMap.getContextName();
+
+            buff.AppendLine($"public class {className} : {superClassName}")
+                .AppendLine("{");
+        }
+
+        private static void AddFields(StringBuilder buff, fsmrep.StateMap stateMap)
+        {
+            buff.AppendLine($"    private static string version = \"{stateMap.getVersion()}\";")
+                .AppendLine()
+                .AppendLine("    private State currentState;")
+                .AppendLine();
+        }
+
+        private static void AddClassMembers(SMCSharpGenerator gen, StringBuilder buff)
+        {
+            try
+            {
+                AddFromGenerators(gen, buff, CSharpCodeGeneratorBuilder.Instance.StateMachineGenerators);
+            }
+            catch (System.Exception)
+            { }
+        }
+
+        private static void CloseClassDeclaration(StringBuilder buff)
+        {
+            buff.AppendLine("}")
+                .AppendLine();
+        }
+
+        private static void AddStateClasses(SMCSharpGenerator gen, StringBuilder buff)
+        {
+            try
+            {
+                AddFromGenerators(gen, buff, CSharpCodeGeneratorBuilder.Instance.StateGenerators);
+            }
+            catch (System.Exception)
+            { }
+        }
+
+        #endregion
     }
 }

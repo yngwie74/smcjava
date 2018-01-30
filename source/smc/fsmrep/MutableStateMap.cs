@@ -1,93 +1,80 @@
-package smc.fsmrep;
-
-import java.util.Vector;
-import java.util.HashSet;
-import java.util.Iterator;
-
-// in jdk 1.2
-//import java.util.Vector;
-//import java.util.HashSet;
-//import java.util.Iterator;
-
-//-----------------------------------------------------
-// Name
-//  MutableStateMap
-//
-// Description
-//  This class represents the structure which holds the
-//  representation of states and transitions.  
-//
-
-public class MutableStateMap implements StateMap
+﻿namespace smc.fsmrep
 {
-    ConcreteState itsInitialState;
-    Vector itsOrderedStates;		// holds States
-    HashSet itsEvents;              // holds Strings
-    HashSet itsActions;             // holds Strings
-    String itsName;
-    String itsContextName;
-    String itsExceptionName;
-    String itsErrorFunctionName;
-    String itsVersion;
-    Vector itsPragma;              // holds Strings
-
-    public MutableStateMap()
+    using System.Collections.Generic;
+    //-----------------------------------------------------
+    // Name
+    //  MutableStateMap
+    //
+    // Description
+    //  This class represents the structure which holds the
+    //  representation of states and transitions.  
+    //
+    public class MutableStateMap : StateMap
     {
-        itsOrderedStates = new Vector();
-        itsEvents = new HashSet();
-        itsActions = new HashSet();
-        itsPragma = new Vector();
-    }
-    public void setInitialState(ConcreteState s)         
+        private ConcreteState itsInitialState;
+        private List<State> itsOrderedStates;
+        private ISet<string> itsEvents;
+        private ISet<string> itsActions;
+        private string itsName;
+        private string itsContextName;
+        private string itsExceptionName;
+        private string itsErrorFunctionName;
+        private string itsVersion;
+        private List<string> itsPragma;
+        public MutableStateMap()
+        {
+            itsOrderedStates = new List<State>();
+            itsEvents = new HashSet<string>();
+            itsActions = new HashSet<string>();
+            itsPragma = new List<string>();
+        }
+        public void setInitialState(ConcreteState s)
         { itsInitialState = s; }
-    public void setName(String theName)
+        public void setName(string theName)
         { itsName = theName; }
-    public void setContextName(String theName)     
+        public void setContextName(string theName)
         { itsContextName = theName; }
-    public void setExceptionName( String theName )
+        public void setExceptionName(string theName)
         { itsExceptionName = theName; }
-    public void setErrorFunctionName( String theName )
+        public void setErrorFunctionName(string theName)
         { itsErrorFunctionName = theName; }
-    public void addPragma(String theName)
-        { itsPragma.addElement(theName); }
-    public void setVersion(String theVersion)      
+        public void addPragma(string theName)
+            { itsPragma.Add(theName); }
+        public void setVersion(string theVersion)
         { itsVersion = theVersion; }
 
-    public void addOrderedState(State s)
-    {
-        // if the state isn't already in itsOrderedStates, add it at the end
-        if( itsOrderedStates.contains(s) == false )
-            itsOrderedStates.addElement(s);
-    }
-    public void addTransition(State s, Transition t)
-    {
-        s.addTransition(t);
-        itsEvents.add(t.getEvent());
+        public void addOrderedState(State s)
+        {
+            // if the state isn't already in itsOrderedStates, add it at the end
+            if (!itsOrderedStates.Contains(s) == false)
+                itsOrderedStates.Add(s);
+        }
+        public void addTransition(State s, Transition t)
+        {
+            s.addTransition(t);
+            itsEvents.Add(t.getEvent());
+            foreach (var action in t.getActions())
+                itsActions.Add(action);
+        }
 
-	  Vector actions = t.getActions();
-	  Iterator i = actions.iterator();
-	  while( i.hasNext() )
-            itsActions.add( i.next() );
+        public ConcreteState getInitialState()
+            { return itsInitialState; }
+        public IList<State> getOrderedStates()
+            { return itsOrderedStates; }
+        public ISet<string> getEvents()
+            { return itsEvents; }
+        public ISet<string> Actions => itsActions;
+        public string getName()
+            { return itsName; }
+        public string getContextName()
+            { return itsContextName; }
+        public IList<string> getPragma()
+            { return itsPragma; }
+        public string getVersion()
+            { return itsVersion; }
+        public string getExceptionName()
+            { return itsExceptionName; }
+        public string getErrorFunctionName()
+            { return itsErrorFunctionName; }
     }
-
-    public ConcreteState getInitialState()
-        { return itsInitialState; }
-    public Vector getOrderedStates()
-        { return (itsOrderedStates); }
-    public HashSet getEvents() 
-        { return (itsEvents); }
-    public HashSet getActions() 
-        { return (itsActions); }
-    public String getName() 
-        { return itsName; }
-    public String getContextName() 
-        { return itsContextName; }
-    public Vector getPragma() 
-        { return itsPragma; }
-    public String getVersion() 
-        { return itsVersion; }
-    public String getExceptionName()
-        { return itsExceptionName; }
-    public String getErrorFunctionName()
-        { return itsErrorFunctionName; }
-};
+}

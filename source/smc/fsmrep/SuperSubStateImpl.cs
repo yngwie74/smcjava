@@ -1,26 +1,30 @@
-package smc.fsmrep;
-
-//----------------------------------
-// Name
-//  SuperSubStateImpl
-//
-// Description
-//  This class represents a superstate which is both a super
-//  state and a sub state. Thus it can not be the target of a transition.
-//
-public class SuperSubStateImpl extends StateImpl 
-                               implements SubState, SuperState
+﻿namespace smc.fsmrep
 {
-    private SuperState itsSuperState;
-
-    public SuperSubStateImpl(String theName, SuperState ss)
-    { 
-        super( theName );  
-        itsSuperState = ss; 
-    }
-
-    public SuperState getSuperState()
+    public class SuperSubStateImpl : StateImpl, SubState, State, SuperState
     {
-        return itsSuperState;
+        #region Fields
+
+        private SuperState itsSuperState;
+
+        #endregion
+
+        #region Constructors & Destructors
+
+        public SuperSubStateImpl(string str, SuperState ss)
+            : base(str)
+        {
+            this.itsSuperState = ss;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public virtual SuperState getSuperState()
+        {
+            return this.itsSuperState;
+        }
+
+        #endregion
     }
-};
+}

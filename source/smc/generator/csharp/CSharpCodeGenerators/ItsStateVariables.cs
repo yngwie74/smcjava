@@ -1,13 +1,9 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.generator.csharp.SMCSharpGenerator;
-import smc.fsmrep.ConcreteState;
-import java.util.List;
-
-public class ItsStateVariables extends CSharpCodeGenerator
+﻿namespace smc.generator.csharp.CSharpCodeGenerators
 {
-    public String generateCode(SMCSharpGenerator gen)
+    using smc.generator.csharp;
+
+    public class ItsStateVariables : CSharpCodeGenerator
     {
-        return "";
+        public override string generateCode(SMCSharpGenerator smcsg) => string.Empty;
     }
 }

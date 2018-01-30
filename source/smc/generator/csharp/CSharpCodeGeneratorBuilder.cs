@@ -1,58 +1,76 @@
-package smc.generator.csharp;
-
-import smc.generator.csharp.CSharpCodeGenerators.*;
-
-
-import java.util.List;
-import java.util.ArrayList;
-
-public class CSharpCodeGeneratorBuilder
+﻿namespace smc.generator.csharp
 {
-    private static Class[] cSharpCodeGenerators = new Class[]
-    {
-        InitialComments.class,
-        NamespaceStatement.class,
-        UsingStatements.class,
-        FSMClass.class
-    };
-    private static Class[] csharpFSMCodeGenerators = new Class[]
-    {
-        ItsStateVariables.class,
-        FSMConstructor.class,
-        FSMAccessors.class,
-        FSMMutators.class,
-        FSMEvents.class
-    };
-    private static Class[] csharpFSMClassesCodeGenerators = new Class[]
-    {
-        FSMBaseState.class,
-    };
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    public static CSharpCodeGeneratorBuilder cSharpCode = new CSharpCodeGeneratorBuilder();
+    using smc.generator.csharp.CSharpCodeGenerators;
 
-    public List cSharpFSMInstances()
+    public class CSharpCodeGeneratorBuilder
     {
-        return instances(csharpFSMCodeGenerators);
-    }
-    public List cSharpFSMClassesInstances()
-    {
-        return instances(csharpFSMClassesCodeGenerators);
-    }
-    public List cSharpInstances()
-    {
-        return instances(cSharpCodeGenerators);
-    }
-    private List instances(Class[] c)
-    {
-        List instances = null;
-        try
+        #region Fields
+
+        private static Type[] CSharpCodeGenerators = new Type[]
         {
-            instances = new ArrayList();
-            for(int i = 0; i != c.length;i++)
-                instances.add(c[i].newInstance());
+            typeof(InitialComments),
+            typeof(NamespaceStatement),
+            typeof(UsingStatements),
+            typeof(FSMClass)
+        };
+
+        private static Type[] CSharpFSMCodeGenerators = new Type[]
+        {
+            typeof(ItsStateVariables),
+            typeof(FSMConstructor),
+            typeof(FSMAccessors),
+            typeof(FSMMutators),
+            typeof(FSMEvents)
+        };
+
+        private static Type[] CSharpFSMClassesCodeGenerators = new Type[]
+        {
+            typeof(FSMBaseState)
+        };
+
+        public static readonly CSharpCodeGeneratorBuilder Instance = new CSharpCodeGeneratorBuilder();
+
+        #endregion
+
+        #region Constructors & Destructors
+
+        private CSharpCodeGeneratorBuilder()
+        {
         }
-        catch(Exception e)
-        {}
-        return instances;
+
+        #endregion
+
+        #region Public Methods
+
+        public IEnumerable<CSharpCodeGenerator> StateMachineGenerators() => Instantiate(CSharpFSMCodeGenerators);
+
+        public IEnumerable<CSharpCodeGenerator> StateGenerators() => Instantiate(CSharpFSMClassesCodeGenerators);
+
+        public IEnumerable<CSharpCodeGenerator> TopLevelGenerators() => Instantiate(CSharpCodeGenerators);
+
+        #endregion
+
+        #region Methods
+
+        private IEnumerable<CSharpCodeGenerator> Instantiate(Type[] types)
+        {
+            try
+            {
+                return types
+                    .Select(Activator.CreateInstance)
+                    .Cast<CSharpCodeGenerator>()
+                    .ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        #endregion
     }
 }

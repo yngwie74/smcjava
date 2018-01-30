@@ -1,6 +1,5 @@
-package smc.fsmrep;
-
-import java.util.Vector;
+﻿namespace smc.fsmrep
+{
 
 //-------------------------------
 // Name
@@ -10,24 +9,25 @@ import java.util.Vector;
 //  This class represents a transition from one state to another and
 //  the event that causes this to happen.
 //
-public class ExternalTransition extends Transition
-{
-    private ConcreteState itsNextState;
-
-    public ExternalTransition(String theEvent, 
-                   State theSourceState, ConcreteState nextState)
+    public class ExternalTransition : Transition
     {
-        super(theEvent, theSourceState);
-        itsNextState = nextState;
-    }
+        private ConcreteState itsNextState;
 
-    public void setNextState( ConcreteState nextState )
-    {
-        itsNextState = nextState;
-    }
+        public ExternalTransition(string theEvent,
+                State theSourceState, ConcreteState nextState)
+          : base(theEvent, theSourceState)
+        {
+            itsNextState = nextState;
+        }
 
-    public ConcreteState getNextState()
-    {
-        return itsNextState;
+        public void setNextState(ConcreteState nextState)
+        {
+            itsNextState = nextState;
+        }
+
+        public ConcreteState getNextState()
+        {
+            return itsNextState;
+        }
     }
-};
+}

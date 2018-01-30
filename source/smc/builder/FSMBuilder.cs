@@ -1,49 +1,72 @@
-package smc.builder;
-
-//----------------------------------------------
-// Name
-//  FSMBuilder
-//
-// Description
-//  This class provides the interface that the FSMParser uses
-//  to declare errors.  The parsing agent is expected to derive its own
-//  implementation of this class.
-//
-public abstract class FSMBuilder
+﻿namespace smc.builder
 {
-    private FSMBuilderErrorManager itsErrorManager;
+    using java.lang;
 
-    public abstract void setName(String theName);
-    public abstract void setContextName(String theName);
-    public abstract void setException(String e);
-    public abstract void setInitialState(String theName);
-    public abstract void setVersion(String theVersion);
-    public abstract void addPragma(String theHeader);
-
-    public abstract void addSuperSubState(String theName, String theSuperState, SyntaxLocation loc);
-    public abstract void addSuperState(String theName,SyntaxLocation loc);
-    public abstract void addSubState(String theName,String theSuperState,SyntaxLocation loc);
-    public abstract void addState(String theName, SyntaxLocation loc);
-    public abstract void addTransition(String theEvent,String theNextState,SyntaxLocation loc );
-    public abstract void addInternalTransition(String theEvent,SyntaxLocation loc);
-    public abstract void addAction(String theAction);
-    public abstract void addEntryAction(String theAction);
-    public abstract void addExitAction(String theAction);
-    public abstract boolean build();
-
-    public void setErrorManager(FSMBuilderErrorManager m)
-    {itsErrorManager = m;}
-
-    public void error(String theString)
+    public abstract class FSMBuilder : Object
     {
-        if( itsErrorManager != null )
-            itsErrorManager.error(theString);
-    }
 
-    public void error(SyntaxLocation loc, String theString)
-    {
-        if( itsErrorManager != null )
-            itsErrorManager.error(loc, theString);
+        private FSMBuilderErrorManager itsErrorManager;
+
+
+
+        public FSMBuilder()
+        {
+        }
+
+
+
+        public abstract void setName(string str);
+
+        public abstract void setContextName(string str);
+
+        public abstract void setException(string str);
+
+        public abstract void setInitialState(string str);
+
+        public abstract void setVersion(string str);
+
+        public abstract void addPragma(string str);
+
+        public abstract void addSuperSubState(string str1, string str2, SyntaxLocation sl);
+
+        public abstract void addSuperState(string str, SyntaxLocation sl);
+
+        public abstract void addSubState(string str1, string str2, SyntaxLocation sl);
+
+        public abstract void addState(string str, SyntaxLocation sl);
+
+        public abstract void addTransition(string str1, string str2, SyntaxLocation sl);
+
+        public abstract void addInternalTransition(string str, SyntaxLocation sl);
+
+        public abstract void addAction(string str);
+
+        public abstract void addEntryAction(string str);
+
+        public abstract void addExitAction(string str);
+
+        public abstract bool build();
+
+        public virtual void setErrorManager(FSMBuilderErrorManager fsmbem)
+        {
+            this.itsErrorManager = fsmbem;
+        }
+
+        public virtual void error(string str)
+        {
+            if (this.itsErrorManager != null)
+            {
+                this.itsErrorManager.error(str);
+            }
+        }
+
+        public virtual void error(SyntaxLocation sl, string str)
+        {
+            if (this.itsErrorManager != null)
+            {
+                this.itsErrorManager.error(sl, str);
+            }
+        }
+
     }
 }
-

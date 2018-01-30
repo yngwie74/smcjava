@@ -1,7 +1,5 @@
-package smc.fsmrep;
-
-import java.util.Vector;
-
+﻿namespace smc.fsmrep
+{
 //-------------------------------
 // Name
 //  InternalTransition
@@ -10,10 +8,11 @@ import java.util.Vector;
 //  This class represents a transition based upon some event, where
 //  the end result is to stay in the original state.
 //
-public class InternalTransition extends Transition
-{
-    public InternalTransition(String theEvent, State theSourceState)
+    public class InternalTransition : Transition
     {
-        super(theEvent, theSourceState);
+        public InternalTransition(string theEvent, State theSourceState)
+          : base(theEvent, theSourceState)
+        {
+        }
     }
-};
+}

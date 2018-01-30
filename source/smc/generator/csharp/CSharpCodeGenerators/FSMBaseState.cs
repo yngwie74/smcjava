@@ -1,81 +1,124 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.generator.csharp.SMCSharpGenerator;
-import smc.fsmrep.ConcreteState;
-
-import java.util.*;
-
-public class FSMBaseState   extends  CSharpCodeGenerator
+﻿namespace smc.generator.csharp.CSharpCodeGenerators
 {
-    public String generateCode(SMCSharpGenerator gen)
-    {
-        StringBuffer buff = new StringBuffer();
-        buff.append(printSeparator(1));
-        buff.append("/// <summary>\n");
-        buff.append("/// This is the base State class\n");
-        buff.append("/// </summary>\n");
-        buff.append("public abstract class State\n");
-        buff.append("{\n");
-        buff.append("    #region Static Properties For Each State\n");
-        buff.append("\n");
+    using System.Text;
 
-        List states = gen.getConcreteStates();
-        for(int i=0; i != states.size(); i++)
+    using smc.generator.csharp;
+
+    public class FSMBaseState : CSharpCodeGenerator
+    {
+        #region Constants
+
+        private const string ArgName = "name";
+
+        #endregion
+
+        #region Public Methods
+
+        public override string generateCode(SMCSharpGenerator gen)
         {
-            ConcreteState cs = (ConcreteState)states.get(i);
-            buff.append("    public static State ");
-            buff.append(createMethodName( cs ));
-            buff.append(" { get; } = new ");
-            buff.append(classNameFor( cs ));
-            buff.append("();\n");
+            var buff = new StringBuilder();
+
+            AddClassHeader(buff);
+            AddOpeningClassDeclaration(buff);
+
+            AddConcreteStates(gen, buff);
+            AddPublicProperties(buff);
+            AddEventMethods(gen, buff);
+            AddNestedStateClasses(gen, buff);
+
+            AddClosingClassDeclaration(buff);
+
+            return buff.ToString();
         }
 
-        buff.append("\n");
-        buff.append("    #endregion\n");
-        buff.append("\n");
+        #endregion
 
-        buff.append("    #region Public Properties\n");
-        buff.append("\n") ;
-        buff.append("    public abstract string Name { get; }\n");
-        buff.append("\n") ;
-        buff.append("    #endregion\n");
-        buff.append("\n") ;
+        #region Methods
 
-        buff.append("    #region Default Event Functions\n");
-        buff.append("\n") ;
+        private static void AddClassHeader(StringBuilder buff) => buff
+            .AppendLine("/// <summary>")
+            .AppendLine("/// This is the base State class")
+            .AppendLine("/// </summary>");
 
-        HashSet events = gen.getStateMap().getEvents();
-        Iterator evi = events.iterator();
-        while( evi.hasNext() )
+        private static void AddOpeningClassDeclaration(StringBuilder buff) => buff
+            .AppendLine("public abstract class State")
+            .AppendLine("{");
+
+        private void AddConcreteStates(SMCSharpGenerator gen, StringBuilder buff)
         {
-            String evName = (String)evi.next();
-
-            buff.append("    /// <summary>\n");
-            buff.append("    /// Responds to " + evName + " event\n");
-            buff.append("    /// </summary>\n");
-            buff.append("    public virtual void " + createMethodName(evName) + "(" +gen.getStateMap().getName() + " name)\n");
-			buff.append("    {\n");
-            if(gen.usesExceptions(gen.getStateMap()) )
+            foreach (var cs in gen.getConcreteStates())
             {
-                buff.append("        throw new " + gen.getStateMap().getExceptionName() + "(\"" +
-                        evName + "\", name.CurrentStateName);\n" );
+                buff.Append($"    public static State {createMethodName(cs)} ")
+                    .AppendLine($"{{ get; }} = new {classNameFor(cs)}();");
+            }
+
+            buff.AppendLine();
+        }
+
+        private static void AddPublicProperties(StringBuilder buff) => buff
+            .AppendLine("    public abstract string Name { get; }")
+            .AppendLine();
+
+        private void AddEventMethods(SMCSharpGenerator gen, StringBuilder buff)
+        {
+            var events = gen.getStateMap().getEvents();
+            foreach (var evName in events)
+            {
+                AddEventHeader(evName, buff);
+                AddOpenEventDeclaration(gen, evName, buff);
+                AddEventBody(gen, evName, buff);
+                AddCloseEventDeclaration(buff);
+            }
+        }
+
+        private static void AddEventHeader(string evName, StringBuilder buff) => buff
+            .AppendLine("    /// <summary>")
+            .AppendLine($"    /// Responds to {evName} event")
+            .AppendLine("    /// </summary>");
+
+        private void AddOpenEventDeclaration(SMCSharpGenerator gen, string evName, StringBuilder buff)
+        {
+            var stateMachineClass = gen.getStateMap().getName();
+            var methodName = this.createMethodName(evName);
+            buff.AppendLine($"    public virtual void {methodName}({stateMachineClass} {ArgName})")
+                .AppendLine("    {");
+        }
+
+        private static void AddEventBody(SMCSharpGenerator gen, string evName, StringBuilder buff)
+        {
+            if (gen.usesExceptions(gen.getStateMap()))
+            {
+                AddThrowException(gen, evName, buff);
             }
             else
             {
-                buff.append("        name." + gen.getStateMap().getErrorFunctionName() + "(\"" +
-                        evName + "\", name.CurrentState);\n" );
+                AddErrorFuncCall(gen, evName, buff);
             }
-			buff.append("    }\n" );
-            buff.append("\n");
         }
 
-        buff.append("    #endregion\n");
-        buff.append("\n");
+        private static void AddThrowException(SMCSharpGenerator gen, string evName, StringBuilder buff)
+        {
+            var exceptionName = gen.getStateMap().getExceptionName();
+            buff.Append($"        throw new {exceptionName}")
+                .AppendLine($"(\"{evName}\", {ArgName}.CurrentStateName);");
+        }
 
-		buff.append(new FSMStateClasses().generateCode(gen));
+        private static void AddErrorFuncCall(SMCSharpGenerator gen, string evName, StringBuilder buff)
+        {
+            var errorFunctionName = gen.getStateMap().getErrorFunctionName();
+            buff.Append($"        {ArgName}.{errorFunctionName}")
+                .AppendLine($"(\"{evName}\", {ArgName}.CurrentState);");
+        }
 
-        buff.append("}\n");
-        // buff.append("\n");
-        return buff.toString();
+        private static void AddCloseEventDeclaration(StringBuilder buff)
+            => buff.AppendLine("    }").AppendLine();
+
+        private static void AddNestedStateClasses(SMCSharpGenerator gen, StringBuilder buff)
+            => buff.Append(new FSMStateClasses().generateCode(gen));
+
+        private static void AddClosingClassDeclaration(StringBuilder buff)
+            => buff.AppendLine("}");
+
+        #endregion
     }
 }

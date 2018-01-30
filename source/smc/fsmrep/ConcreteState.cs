@@ -1,5 +1,5 @@
-package smc.fsmrep;
-
+﻿namespace smc.fsmrep
+{
 //----------------------------------
 // Name
 //  ConcreteState
@@ -9,5 +9,6 @@ package smc.fsmrep;
 //  state machine.  A concrete state can be the target of
 //  a transition.
 //
-public interface ConcreteState extends State
-{};
+    public interface ConcreteState : State
+    {}
+}

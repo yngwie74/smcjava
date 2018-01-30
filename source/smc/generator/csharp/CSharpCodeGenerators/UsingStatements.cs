@@ -1,23 +1,25 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.generator.csharp.SMCSharpGenerator;
-
-import java.util.Iterator;
-
-public class UsingStatements extends CSharpCodeGenerator
+﻿namespace smc.generator.csharp.CSharpCodeGenerators
 {
-    public String generateCode(SMCSharpGenerator gen)
+    using System.Text;
+
+    using smc.generator.csharp;
+
+    public class UsingStatements : CSharpCodeGenerator
     {
-        StringBuffer buff = new StringBuffer();
-        if(gen.hasUsing())
+        public override string generateCode(SMCSharpGenerator smcsg)
         {
-            Iterator iu = gen.getItsUsing().iterator();
+            var buff = new StringBuilder();
+            if (smcsg.hasUsing())
+            {
+                foreach(var item in smcsg.getItsUsing())
+                {
+                    buff.AppendFormat("using {0};\n", item);
+                }
 
-            while( iu.hasNext())
-                buff.append("using " + (String)iu.next() + ";\n");
+                return buff.ToString();
+            }
 
-            return buff.toString();
+            return string.Empty;
         }
-        return "";
     }
 }

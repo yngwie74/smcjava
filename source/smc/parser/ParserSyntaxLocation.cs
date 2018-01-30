@@ -1,28 +1,30 @@
-package smc.parser;
-
-//--------------------------------------------
-// Parser Syntax Location Class
-//  This class is used to represent the location of a syntactic element
-//  of the state machine being built.
-//
-
-import smc.builder.SyntaxLocation;
-
-public class ParserSyntaxLocation implements SyntaxLocation
+namespace smc.parser
 {
-    private String itsFileName;
-    private int itsLineNumber;
 
-    public ParserSyntaxLocation(String theFileName, int theLineNumber)
-    {
-        itsFileName = theFileName;
-        itsLineNumber = theLineNumber;
-    }
+    //--------------------------------------------
+    // Parser Syntax Location Class
+    //  This class is used to represent the location of a syntactic element
+    //  of the state machine being built.
+    //
 
-    public String toString()
+    using smc.builder;
+
+    public class ParserSyntaxLocation : SyntaxLocation
     {
-        String s =  itsFileName + " line " + itsLineNumber + ":";
-        return s;
+        private string itsFileName;
+        private int itsLineNumber;
+
+        public ParserSyntaxLocation(string theFileName, int theLineNumber)
+        {
+            itsFileName = theFileName;
+            itsLineNumber = theLineNumber;
+        }
+
+        public override string ToString()
+        {
+            string s = itsFileName + " line " + itsLineNumber + ":";
+            return s;
+        }
     }
 }
 

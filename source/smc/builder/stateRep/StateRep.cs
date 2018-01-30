@@ -1,46 +1,80 @@
-package smc.builder.stateRep;
-
-import smc.builder.SyntaxLocation;
-import smc.builder.FSMRepresentationBuilder;
-import smc.fsmrep.State;
-import java.util.*;
-
-public abstract class StateRep
+﻿namespace smc.builder.stateRep
 {
-    private String itsName;
-    private SyntaxLocation itsSyntaxLocation;
-    private HashSet itsBuiltEvents;
-    private Vector itsEntryActions;
-    private Vector itsExitActions;
+    using System.Collections.Generic;
+    using java.lang;
+    using java.util;
 
-    public StateRep( String theName,  SyntaxLocation loc)
+    using smc.builder;
+    using smc.fsmrep;
+
+    public abstract class StateRep
     {
-        itsName = theName;
-        itsSyntaxLocation = loc;
-        itsBuiltEvents = new HashSet();
-        itsEntryActions = new Vector();
-        itsExitActions = new Vector();
+        #region Fields
+
+        private string itsName;
+        private SyntaxLocation itsSyntaxLocation;
+        private HashSet itsBuiltEvents;
+        private IList<string> itsEntryActions;
+        private IList<string> itsExitActions;
+
+        #endregion
+
+        #region Constructors & Destructors
+
+        public StateRep(string str, SyntaxLocation sl)
+        {
+            this.itsName = str;
+            this.itsSyntaxLocation = sl;
+            this.itsBuiltEvents = new HashSet();
+            this.itsEntryActions = new List<string>();
+            this.itsExitActions = new List<string>();
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public virtual void addEntryAction(string str)
+        {
+            this.itsEntryActions.Add(str);
+        }
+
+        public virtual void addExitAction(string str)
+        {
+            this.itsExitActions.Add(str);
+        }
+
+        public virtual string getStateName()
+        {
+            return this.itsName;
+        }
+
+        public virtual SyntaxLocation getSyntaxLocation()
+        {
+            return this.itsSyntaxLocation;
+        }
+
+        public virtual bool isEventBuilt(string str)
+        {
+            return this.itsBuiltEvents.contains(str);
+        }
+
+        public virtual void addBuiltEvent(string str)
+        {
+            this.itsBuiltEvents.add(str);
+        }
+
+        public abstract State build(FSMRepresentationBuilder fsmrb);
+
+        public virtual IList<string> getEntryActions() => this.itsEntryActions;
+
+        public virtual IList<string> getExitActions()
+        {
+            return this.itsExitActions;
+        }
+
+        public abstract bool equals(StateRep sr);
+
+        #endregion
     }
-    
-    public void addBuiltEvent( String theEvent)
-    { itsBuiltEvents.add(theEvent); }
-    public void addEntryAction( String a)
-    { itsEntryActions.add(a); }
-    public void addExitAction( String a)
-    { itsExitActions.add(a); }
-
-    public String getStateName()
-    { return itsName; }
-    public SyntaxLocation getSyntaxLocation()
-    { return itsSyntaxLocation; }
-    public Vector getEntryActions()
-    { return itsEntryActions; }
-    public Vector getExitActions()
-    { return itsExitActions; }
-
-    public boolean isEventBuilt( String e)
-    { return( itsBuiltEvents.contains(e) ); }
-
-    public abstract State build(FSMRepresentationBuilder fb);
-    public abstract boolean equals(StateRep s );
 }
