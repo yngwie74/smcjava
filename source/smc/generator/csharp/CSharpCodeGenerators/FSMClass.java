@@ -20,8 +20,9 @@ public class FSMClass extends CSharpCodeGenerator
 
         buff.append("    #region Fields\n");
         buff.append("\n");
-        buff.append("    private State currentState;\n");
         buff.append("    private static string version = \"" + gen.getStateMap().getVersion() + "\";\n");
+        buff.append("\n");
+        buff.append("    private State currentState;\n");
         buff.append("\n");
         buff.append("    #endregion\n");
         buff.append("\n");

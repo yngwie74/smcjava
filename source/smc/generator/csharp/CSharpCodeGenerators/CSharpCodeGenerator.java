@@ -12,21 +12,16 @@ public abstract class CSharpCodeGenerator
         return  "";
     }
 
-    public String createStateFieldName( State s )
+    public String classNameFor( State s )
     {
-        StringBuffer buff = new StringBuffer(s.getName());
+        StringBuffer buff = new StringBuffer( createMethodName( s ) );
 		buff.append("State");
-        if( buff.length() > 0 )
-            buff.setCharAt(0, Character.toLowerCase( buff.charAt(0) ));
-        return( buff.toString() );
+        return buff.toString();
     }
 
     public String createMethodName( State s )
     {
-        StringBuffer buff = new StringBuffer( s.getName() );
-        if( buff.length() > 0 )
-            buff.setCharAt(0, Character.toUpperCase( buff.charAt(0) ));
-        return( buff.toString() );
+        return createMethodName( s.getName() );
     }
 
     public String createMethodName( String event )

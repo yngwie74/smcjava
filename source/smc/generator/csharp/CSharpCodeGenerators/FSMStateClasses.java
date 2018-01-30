@@ -23,7 +23,7 @@ public class FSMStateClasses extends CSharpCodeGenerator
             buff.append("/// Handles the " + cs.getName() + " State and its events\n" );
             buff.append("/// </summary>\n");
 
-            buff.append("public class " + createMethodName(cs) + " : State\n" );
+            buff.append("public class " + classNameFor(cs) + " : State\n" );
             buff.append("{\n");
             buff.append("    public override string Name => \"" + cs.getName() + "\";\n");
 
@@ -36,8 +36,8 @@ public class FSMStateClasses extends CSharpCodeGenerator
             buff.append("\n");
         }
         return buff.toString();
-
     }
+
     private String generateTransitions(State s)
     {
         StringBuffer buff = new StringBuffer();
@@ -55,9 +55,6 @@ public class FSMStateClasses extends CSharpCodeGenerator
                 boolean noResponse = true;
 
                 buff.append("\n");
-                buff.append( "    /// <summary>\n");
-                buff.append( "    /// Responds to " + createMethodName(event) + " event\n" );
-                buff.append( "    /// </summary>\n");
                 buff.append( "    public override void " + createMethodName(event) + "(" + gen.getStateMap().getName() + " name)\n");
                 buff.append( "    {\n" );
 
@@ -98,7 +95,7 @@ public class FSMStateClasses extends CSharpCodeGenerator
     {
         StringBuffer buff = new StringBuffer();
         buff.append( "        // change the state\n" );
-        buff.append( "        name.CurrentState = name." + createMethodName(et.getNextState()) + ";\n");
+        buff.append( "        name.CurrentState = State." + createMethodName(et.getNextState()) + ";\n");
 
         Vector oldHierarchy = new Vector();
         Vector newHierarchy = new Vector();

@@ -26,7 +26,6 @@ public class CSharpCodeGeneratorBuilder
     private static Class[] csharpFSMClassesCodeGenerators = new Class[]
     {
         FSMBaseState.class,
-        FSMStateClasses.class
     };
 
     public static CSharpCodeGeneratorBuilder cSharpCode = new CSharpCodeGeneratorBuilder();
@@ -55,7 +54,5 @@ public class CSharpCodeGeneratorBuilder
         catch(Exception e)
         {}
         return instances;
-
     }
-
 }
