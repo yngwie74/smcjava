@@ -1,30 +1,34 @@
-namespace SMC.parser
+﻿namespace SMC.parser
 {
-
-    //--------------------------------------------
-    // Parser Syntax Location Class
-    //  This class is used to represent the location of a syntactic element
-    //  of the state machine being built.
-    //
-
     using SMC.Builder;
 
+    /// <summary>
+    /// This class is used to represent the location of a syntactic element
+    /// of the state machine being built.
+    /// </summary>
     public class ParserSyntaxLocation : SyntaxLocation
     {
-        private string itsFileName;
-        private int itsLineNumber;
+        #region Fields
+
+        private readonly string fileName;
+        private readonly int lineNumber;
+
+        #endregion
+
+        #region Constructors & Destructors
 
         public ParserSyntaxLocation(string theFileName, int theLineNumber)
         {
-            itsFileName = theFileName;
-            itsLineNumber = theLineNumber;
+            this.fileName = theFileName;
+            this.lineNumber = theLineNumber;
         }
 
-        public override string ToString()
-        {
-            string s = itsFileName + " line " + itsLineNumber + ":";
-            return s;
-        }
+        #endregion
+
+        #region Public Methods
+
+        public override string ToString() => $"{this.fileName} line {this.lineNumber}:";
+
+        #endregion
     }
 }
-

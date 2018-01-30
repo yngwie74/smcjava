@@ -61,7 +61,7 @@
         {
             var fsmbld = new FSMRepresentationBuilder();
             var parser = new FSMParser(fsmbld, this.InputFilename);
-            var status = parser.parse();
+            var status = parser.Parse();
             if (status == true)
             {
                 return GenerateCode(fsmbld, parser);
@@ -75,7 +75,7 @@
 
             if (this.FSMGeneratorName.Length == 0)
             {
-                this.FSMGeneratorName = parser.getFSMGeneratorName();
+                this.FSMGeneratorName = parser.FSMGeneratorName;
                 if (this.FSMGeneratorName.Length == 0)
                 {
                     Console.WriteLine("Using default C# Generator.");

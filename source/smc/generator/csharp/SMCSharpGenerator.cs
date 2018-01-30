@@ -2,8 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
     using System.Text;
 
     using SMC.FsmRep;
@@ -49,11 +47,6 @@
         public override void Initialize() => InitNamespaceAndUsingStatementes();
 
         public override string Generate()
-        {
-            return GenerateStringForCode();
-        }
-
-        public string GenerateStringForCode()
         {
             var buff = new StringBuilder();
 

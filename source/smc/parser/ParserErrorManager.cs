@@ -9,37 +9,33 @@
     /// </summary>
     public class ParserErrorManager : FSMBuilderErrorManager
     {
-        private IList<string> errors;
-        private bool isOutputing;
+        #region Fields
+
+        private readonly IList<string> errors;
+
+        #endregion
+
+        #region Constructors & Destructors
+
         public ParserErrorManager()
         {
-            isOutputing=true;
-            errors = new List<string>();
+            this.errors = new List<string>();
         }
-        public ParserErrorManager(bool isOutputing)
-        {
-            this.isOutputing=isOutputing;
-            errors = new List<string>();
-        }
-        public void Error(SyntaxLocation loc, string s)
-        {
-            if( loc is ParserSyntaxLocation )
-            {
-                ParserSyntaxLocation l = (ParserSyntaxLocation)loc;
-                if(isOutputing)
-                    System.Console.WriteLine( l.ToString() + s );
-                errors.Add(s);
-            }
-        }
-        public void Error(string s)
-        {
-            if(isOutputing)
-                System.Console.WriteLine( s );
-            errors.Add(s);
-        }
-        public IList<string> getErrors()
-        {
-            return errors;
-        }
+
+        #endregion
+
+        #region Public Properties
+
+        public IEnumerable<string> Errors => this.errors;
+
+        #endregion
+
+        #region Public Methods
+
+        public void Error(SyntaxLocation loc, string s) => this.errors.Add(s);
+
+        public void Error(string s) => this.errors.Add(s);
+
+        #endregion
     }
 }
