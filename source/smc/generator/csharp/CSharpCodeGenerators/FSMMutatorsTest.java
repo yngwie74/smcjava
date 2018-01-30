@@ -12,7 +12,7 @@ public class FSMMutatorsTest extends TestCase
     public void testFSMConstructor() throws Exception
     {
         FSMRepresentationBuilder fsmbld = TestCSharpCodeGeneratorUtils.initBuilderState();
-        StateMap map = fsmbld.getStateMap() ;
+        StateMap map = fsmbld.getStateMap();
         fsm = new SMCSharpGenerator();
         fsm.FSMInit(map,"fileName","directory");
         fsm.initialize();
@@ -26,10 +26,10 @@ public class FSMMutatorsTest extends TestCase
         StringBuffer buff = new StringBuffer();
         buff.append("  // Mutator functions\n");
         buff.append("\n");
-        buff.append("  public void SetState(State value)\n");
-        buff.append("  {\n");
-        buff.append("    itsState = value;\n");
-        buff.append("  }\n");
+        buff.append("    public void SetState(State value)\n");
+        buff.append("    {\n");
+        buff.append("    _currentState = value;\n");
+        buff.append("    }\n");
         return buff.toString();
     }
 

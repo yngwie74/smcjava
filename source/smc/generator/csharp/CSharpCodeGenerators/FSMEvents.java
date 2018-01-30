@@ -11,7 +11,7 @@ public class FSMEvents  extends CSharpCodeGenerator
     {
         StringBuffer buff = new StringBuffer();
 
-        buff.append("  // event functions - forward to the current State\n");
+        buff.append("    #region Event Methods - forward to the current State\n");
         buff.append("\n");
 
         HashSet events = gen.getStateMap().getEvents();
@@ -20,13 +20,12 @@ public class FSMEvents  extends CSharpCodeGenerator
         while( evi.hasNext() )
         {
             String evName = (String)evi.next();
-            buff.append("  public void " + createMethodName(evName) + "()" );
-            buff.append("\n");
-            buff.append("  {\n");
-            buff.append("    itsState." + createMethodName(evName)   + "(this);\n");
-            buff.append("  }\n" );
+            buff.append("    public void " + createMethodName(evName) + "() => this.currentState." + createMethodName(evName)   + "(this);\n");
             buff.append("\n");
         }
+
+        buff.append("    #endregion\n");
+        //buff.append("\n");
 
         return buff.toString();
     }

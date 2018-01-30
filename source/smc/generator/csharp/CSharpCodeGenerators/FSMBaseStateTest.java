@@ -12,7 +12,7 @@ public class FSMBaseStateTest  extends TestCase
     public void testFSMBaseState()  throws Exception
     {
         FSMRepresentationBuilder fsmbld = TestCSharpCodeGeneratorUtils.initBuilderState();
-        StateMap map = fsmbld.getStateMap() ;
+        StateMap map = fsmbld.getStateMap();
         fsm = new SMCSharpGenerator();
         fsm.FSMInit(map,"fileName","directory");
         fsm.initialize();
@@ -27,12 +27,12 @@ public class FSMBaseStateTest  extends TestCase
         StringBuffer buff = new StringBuffer();
         buff.append("//--------------------------------------------\n");
         buff.append("//\n");
-        buff.append("// public class State\n") ;
+        buff.append("// public class State\n");
         buff.append("//    This is the base State class\n");
         buff.append("//\n");
         buff.append("public abstract class State\n");
         buff.append("{\n");
-        buff.append("  public abstract string StateName();\n");
+        buff.append("    public abstract string Name;\n");
         buff.append("\n");
         buff.append("  // default event functions\n");
         buff.append("\n");

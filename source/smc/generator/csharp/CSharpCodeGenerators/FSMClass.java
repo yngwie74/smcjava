@@ -12,20 +12,26 @@ public class FSMClass extends CSharpCodeGenerator
         StringBuffer buff = new StringBuffer();
         String fsmName = gen.getStateMap().getName();
         buff.append(printSeparator(0));
-        buff.append("//\n");
-        buff.append("// class " +  fsmName+ "\n");
-        buff.append("//    This is the Finite State Machine class\n");
-        buff.append("//\n");
+        buff.append("/// <summary>\n");
+        buff.append("/// This is the Finite State Machine class\n");
+        buff.append("/// <summary>\n");
         buff.append("public class " + fsmName + " : " + gen.getStateMap().getContextName() + "\n");
         buff.append("{\n");
-        buff.append("  private State itsState;\n");
-        buff.append("  private static string itsVersion = \"" + gen.getStateMap().getVersion() + "\";\n\n");
-        buff.append("  // instance variables for each state\n");
+
+        buff.append("    #region Fields\n");
+        buff.append("\n");
+        buff.append("    private State currentState;\n");
+        buff.append("    private static string version = \"" + gen.getStateMap().getVersion() + "\";\n");
+        buff.append("\n");
+        buff.append("    #endregion\n");
+        buff.append("\n");
+
         try
         {
             List generators = CSharpCodeGeneratorBuilder.cSharpCode.cSharpFSMInstances();
-            for(int i = 0 ; i !=generators.size();i++)
+            for(int i = 0; i !=generators.size(); i++)
             {
+				System.out.println(generators.get(i).getClass());
                 CSharpCodeGenerator code = (CSharpCodeGenerator)generators.get(i);
                 buff.append(code.generateCode(gen));
             }
@@ -34,6 +40,7 @@ public class FSMClass extends CSharpCodeGenerator
         {}
 
         buff.append("}\n");
+        buff.append("\n");
         
         try
         {
@@ -46,7 +53,6 @@ public class FSMClass extends CSharpCodeGenerator
         }
         catch(Exception e )
         {}
-
 
         return buff.toString();
     }

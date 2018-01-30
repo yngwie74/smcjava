@@ -12,7 +12,7 @@ public class FSMClassTest extends TestCase
     public void testFSMClass() throws Exception
     {
         FSMRepresentationBuilder fsmbld = TestCSharpCodeGeneratorUtils.initBuilderState();
-        StateMap map = fsmbld.getStateMap() ;
+        StateMap map = fsmbld.getStateMap();
         fsm = new SMCSharpGenerator();
         fsm.FSMInit(map,"fileName","directory");
         fsm.initialize();
@@ -24,8 +24,8 @@ public class FSMClassTest extends TestCase
     public void testFromFile() throws Exception
     {
         String actual = TestFileString.getInstance().getFileContents();
-        assertTrue(actual.indexOf("  private Locked itsLockedState;\n")!=-1);
-        assertTrue(actual.indexOf("  private Unlocked itsUnlockedState;\n")!=-1);
+        assertTrue(actual.indexOf("    private Locked itsLockedState;\n")!=-1);
+        assertTrue(actual.indexOf("    private Unlocked itsUnlockedState;\n")!=-1);
     }
     private String buildFSMClass()
         {
@@ -37,51 +37,51 @@ public class FSMClassTest extends TestCase
             buff.append("//\n")  ;
             buff.append("public class TurnStyle : TurnStyleContext\n");
             buff.append("{\n");
-            buff.append("  private State itsState;\n");
-            buff.append("  private static string itsVersion = \"\";\n\n");
+            buff.append("    private State _currentState;\n");
+            buff.append("    private static string _version = \"\";\n\n");
             buff.append("  // instance variables for each state\n");
-            buff.append("  private Locked itsLockedState;\n");
-            buff.append("  private Unlocked itsUnlockedState;\n");
+            buff.append("    private Locked itsLockedState;\n");
+            buff.append("    private Unlocked itsUnlockedState;\n");
             buff.append("\n");
             buff.append("  // constructor\n");
-            buff.append("  public TurnStyle()\n");
-            buff.append("  {\n");
+            buff.append("    public TurnStyle()\n");
+            buff.append("    {\n");
             buff.append("    itsLockedState = new Locked();\n");
             buff.append("    itsUnlockedState = new Unlocked();\n");
             buff.append("\n");
-            buff.append("    itsState = itsLockedState;\n");
+            buff.append("    _currentState = itsLockedState;\n");
             buff.append("\n");
             buff.append("    // Entry functions for: Locked\n");
-            buff.append("  }\n");
+            buff.append("    }\n");
             buff.append("\n");
             buff.append("  // accessor functions\n");
             buff.append("\n");
-            buff.append("  public string GetVersion()\n");
-            buff.append("  {\n");
-            buff.append("    return itsVersion;\n");
-            buff.append("  }\n");
-            buff.append("  public string GetCurrentStateName()\n");
-            buff.append("  {\n");
-            buff.append("    return itsState.StateName();\n");
-            buff.append("  }\n");
-            buff.append("  public State GetCurrentState()\n");
-            buff.append("  {\n");
-            buff.append("    return itsState;\n");
-            buff.append("  }\n");
-            buff.append("  public State GetItsLockedState()\n");
-            buff.append("  {\n");
+            buff.append("    public string Version()\n");
+            buff.append("    {\n");
+            buff.append("    return _version;\n");
+            buff.append("    }\n");
+            buff.append("    public string GetCurrentName\n");
+            buff.append("    {\n");
+            buff.append("    return _currentState.Name;\n");
+            buff.append("    }\n");
+            buff.append("    public State CurrentState\n");
+            buff.append("    {\n");
+            buff.append("    return _currentState;\n");
+            buff.append("    }\n");
+            buff.append("    public State GetItsLockedState()\n");
+            buff.append("    {\n");
             buff.append("    return itsLockedState;\n");
-            buff.append("  }\n");
-            buff.append("  public State GetItsUnlockedState()\n");
-            buff.append("  {\n");
+            buff.append("    }\n");
+            buff.append("    public State GetItsUnlockedState()\n");
+            buff.append("    {\n");
             buff.append("    return itsUnlockedState;\n");
-            buff.append("  }\n");
+            buff.append("    }\n");
             buff.append("\n");
             buff.append("  // Mutator functions\n\n");
-            buff.append("  public void SetState(State value)\n");
-            buff.append("  {\n");
-            buff.append("    itsState = value;\n");
-            buff.append("  }\n");
+            buff.append("    public void SetState(State value)\n");
+            buff.append("    {\n");
+            buff.append("    _currentState = value;\n");
+            buff.append("    }\n");
             buff.append("  // event functions - forward to the current State\n");
             buff.append("\n");
             buff.append("}\n");

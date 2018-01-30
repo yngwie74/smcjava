@@ -12,7 +12,7 @@ public class UsingStatementsTest extends TestCase
     public void setUp() throws Exception
     {
         FSMRepresentationBuilder fsmbld = TestCSharpCodeGeneratorUtils.initBuildStateWithUsing();
-        StateMap map = fsmbld.getStateMap() ;
+        StateMap map = fsmbld.getStateMap();
         fsm = new SMCSharpGenerator();
         fsm.FSMInit(map,"fileName","directory");
         fsm.initialize();

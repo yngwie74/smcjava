@@ -19,15 +19,13 @@ public class FSMStateClasses extends CSharpCodeGenerator
             ConcreteState cs = (ConcreteState)states.get(i);
 
             buff.append(printSeparator(1));
-            buff.append("//\n");
-            buff.append("// class " + createMethodName(cs) + "\n");
-            buff.append("//    handles the " + cs.getName() + " State and its events\n" );
-            buff.append("//\n");
+            buff.append("/// <summary>\n");
+            buff.append("/// Handles the " + cs.getName() + " State and its events\n" );
+            buff.append("/// </summary>\n");
 
             buff.append("public class " + createMethodName(cs) + " : State\n" );
             buff.append("{\n");
-            buff.append("  public override string StateName()\n");
-            buff.append("    { return \"" + cs.getName() + "\"; }\n");
+            buff.append("    public override string Name => \"" + cs.getName() + "\";\n");
 
             gen.setItsSourceState(cs);
             gen.clearItsOverRiddenEvents();
@@ -51,18 +49,17 @@ public class FSMStateClasses extends CSharpCodeGenerator
             Transition t = (Transition)ti.next();
             String event = t.getEvent();
 
-
             if( gen.getItsOverriddenEvents().contains( event ) == false )
             {
                 gen.getItsOverriddenEvents().add( event );
                 boolean noResponse = true;
 
                 buff.append("\n");
-                buff.append( "  //\n");
-                buff.append( "  // responds to " + createMethodName(event) + " event\n" );
-                buff.append( "  //\n");
-                buff.append( "  public override void " + createMethodName(event) + "(" + gen.getStateMap().getName() + " name)\n");
-                buff.append( "  {\n" );
+                buff.append( "    /// <summary>\n");
+                buff.append( "    /// Responds to " + createMethodName(event) + " event\n" );
+                buff.append( "    /// </summary>\n");
+                buff.append( "    public override void " + createMethodName(event) + "(" + gen.getStateMap().getName() + " name)\n");
+                buff.append( "    {\n" );
 
                 List actions = t.getActions();
                 if( actions.size() > 0 )
@@ -74,7 +71,7 @@ public class FSMStateClasses extends CSharpCodeGenerator
                 while( ai.hasNext() )
                 {
                     String aName = (String)ai.next();
-                    buff.append( "    name." + aName + "();\n" );
+                    buff.append( "        name." + aName + "();\n" );
                 }
 
                 if( t instanceof ExternalTransition )
@@ -87,7 +84,7 @@ public class FSMStateClasses extends CSharpCodeGenerator
                 if( noResponse == true )
                     buff.append("}\n");
                 else
-                    buff.append( "  }\n" );
+                    buff.append( "    }\n" );
             }
         }
         if( s instanceof SubState )
@@ -100,8 +97,8 @@ public class FSMStateClasses extends CSharpCodeGenerator
      private String generateStateChange(ExternalTransition et)
     {
         StringBuffer buff = new StringBuffer();
-        buff.append( "    // change the state\n" );
-        buff.append( "    name.SetState(name.GetIts" + createMethodName(et.getNextState()) + "State());\n" );
+        buff.append( "        // change the state\n" );
+        buff.append( "        name.CurrentState = name." + createMethodName(et.getNextState()) + ";\n");
 
         Vector oldHierarchy = new Vector();
         Vector newHierarchy = new Vector();

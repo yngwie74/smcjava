@@ -29,15 +29,15 @@ public class ItsStateVariablesTest extends TestCase
     public void testFromFile()     throws Exception
     {
         String actual = TestFileString.getInstance().getFileContents();
-        assertTrue(actual.indexOf("  private Locked itsLockedState;\n")!=-1);
-        assertTrue(actual.indexOf("  private Unlocked itsUnlockedState;\n")!=-1);
+        assertTrue(actual.indexOf("    private Locked itsLockedState;\n")!=-1);
+        assertTrue(actual.indexOf("    private Unlocked itsUnlockedState;\n")!=-1);
 
     }
     public String buildItsStateVariables()
     {
         StringBuffer buff = new StringBuffer();
-        buff.append("  private Locked itsLockedState;\n");
-        buff.append("  private Unlocked itsUnlockedState;\n");
+        buff.append("    private Locked itsLockedState;\n");
+        buff.append("    private Unlocked itsUnlockedState;\n");
         buff.append("\n");
         return buff.toString();
     }

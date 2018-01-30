@@ -12,7 +12,7 @@ public class FSMConstructorTest extends TestCase
     public void testFSMConstructor()    throws Exception
     {
         FSMRepresentationBuilder fsmbld = TestCSharpCodeGeneratorUtils.initBuilderState();
-        StateMap map = fsmbld.getStateMap() ;
+        StateMap map = fsmbld.getStateMap();
         fsm = new SMCSharpGenerator();
         fsm.FSMInit(map,"fileName","directory");
         fsm.initialize();
@@ -31,15 +31,15 @@ public class FSMConstructorTest extends TestCase
     {
         StringBuffer buff = new StringBuffer();
         buff.append("  // constructor\n");
-        buff.append("  public TurnStyle()\n");
-        buff.append("  {\n");
+        buff.append("    public TurnStyle()\n");
+        buff.append("    {\n");
         buff.append("    itsLockedState = new Locked();\n");
         buff.append("    itsUnlockedState = new Unlocked();\n");
         buff.append("\n");
-        buff.append("    itsState = itsLockedState;\n");
+        buff.append("    _currentState = itsLockedState;\n");
         buff.append("\n");
         buff.append("    // Entry functions for: Locked\n");
-        buff.append("  }\n\n");
+        buff.append("    }\n\n");
         return buff.toString();
     }
 
