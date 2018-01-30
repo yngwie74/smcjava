@@ -2,14 +2,14 @@ PARSER_BEGIN(SMParser)
 
 using System;
 
-using smc.parser.iface;
+using SMC.parser.iface;
 
 public class SMParser
 {
-    static SMParserInterface pi;
-    static int transactionAction = 1;
-    static int entryAction = 2;
-    static int exitAction = 3;
+    SMParserInterface pi;
+    int transactionAction = 1;
+    int entryAction = 2;
+    int exitAction = 3;
 }
 
 PARSER_END(SMParser)

@@ -720,8 +720,8 @@ private readonly int[] mccrounds = new int[27];
 private readonly int[] mccstateSet = new int[54];
 protected char curChar;
 public SMParserTokenManager(SimpleCharStream stream) {
-   if (input_stream != null)
-      throw new TokenMgrError("ERROR: Second call to constructor of static lexer. You must use ReInit() to initialize the static variables.", TokenMgrError.StaticLexerError);
+   if (SimpleCharStream.staticFlag)
+      throw new System.SystemException("ERROR: Cannot use a static CharStream class with a non-static lexical analyzer.");
    input_stream = stream;
 }
 public SMParserTokenManager(SimpleCharStream stream, int lexState)

@@ -5,27 +5,27 @@
 /// </summary>
 
 public  class SimpleCharStream {
-  public static readonly bool staticFlag = true;
-  static int bufsize;
-  static int available;
-  static int tokenBegin;
-  static public int bufpos = -1;
-  static protected int[] bufline;
-  static protected int[] bufcolumn;
+  public static readonly bool staticFlag = false;
+  int bufsize;
+  int available;
+  int tokenBegin;
+  public int bufpos = -1;
+  protected int[] bufline;
+  protected int[] bufcolumn;
 
-  static protected int column = 0;
-  static protected int line = 1;
+  protected int column = 0;
+  protected int line = 1;
 
-  static protected bool prevCharIsCR = false;
-  static protected bool prevCharIsLF = false;
+  protected bool prevCharIsCR = false;
+  protected bool prevCharIsLF = false;
 
-  static protected System.IO.TextReader inputStream;
+  protected System.IO.TextReader inputStream;
 
-  static protected char[] buffer;
-  static protected int maxNextCharInd = 0;
-  static protected int inBuf = 0;
+  protected char[] buffer;
+  protected int maxNextCharInd = 0;
+  protected int inBuf = 0;
 
-  static protected void ExpandBuff(bool wrapAround)
+  protected void ExpandBuff(bool wrapAround)
   {
      char[] newbuffer = new char[bufsize + 2048];
      int[] newbufline = new int[bufsize + 2048];
@@ -117,7 +117,7 @@ public  class SimpleCharStream {
      }
   }
 
-  static protected void UpdateLineColumn(char c) {
+  protected void UpdateLineColumn(char c) {
      column++;
 
      if (prevCharIsLF) {
@@ -177,7 +177,7 @@ public  class SimpleCharStream {
 
 [System.Obsolete("Deprecated - use EndColumn instead.", false)]
 
-  static public int Column {
+  public int Column {
   get {
        return bufcolumn[bufpos];
     }
@@ -185,7 +185,7 @@ public  class SimpleCharStream {
 
 [System.Obsolete("Deprecated - use EndLine instead.", false)]
 
-  static public int Line {
+  public int Line {
   get {
        return bufline[bufpos];
     }
@@ -224,10 +224,6 @@ public  class SimpleCharStream {
 
   public SimpleCharStream(System.IO.TextReader dstream, int startline,
   int startcolumn, int buffersize) {
-    if (inputStream != null)
-       throw new System.SystemException("\n   ERROR: Second call to the constructor of a static SimpleCharStream.  You must\n" +
-       "       either use ReInit() or set the CSharpCC option STATIC to false\n" +
-       "       during the generation of this class.");
     inputStream = dstream;
     line = startline;
     column = startcolumn - 1;
@@ -305,7 +301,7 @@ public  class SimpleCharStream {
                               new string(buffer, 0, bufpos + 1);
   }
 
-  static public char[] GetSuffix(int len) {
+  public char[] GetSuffix(int len) {
      char[] ret = new char[len];
 
      if ((bufpos + 1) >= len)
@@ -319,7 +315,7 @@ public  class SimpleCharStream {
      return ret;
   }
 
-  static public void Done()
+  public void Done()
   {
      buffer = null;
      bufline = null;
@@ -329,7 +325,7 @@ public  class SimpleCharStream {
   /// <summary>
   /// Method to adjust line and column numbers for the start of a token.
   /// </summary>
-  static public void AdjustBeginLineColumn(int newLine, int newCol) {
+  public void AdjustBeginLineColumn(int newLine, int newCol) {
      int start = tokenBegin;
      int len;
 

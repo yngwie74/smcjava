@@ -4,10 +4,10 @@ using System;
 using SMC.parser.iface;
 
 public class SMParser : SMParserConstants {
-    private SMParserInterface pi;
-    private int transactionAction = 1;
-    private int entryAction = 2;
-    private int exitAction = 3;
+    SMParserInterface pi;
+    int transactionAction = 1;
+    int entryAction = 2;
+    int exitAction = 3;
 
   public void parseFSM(SMParserInterface s) {
       pi = s;
@@ -294,17 +294,16 @@ public class SMParser : SMParserConstants {
     return false;
   }
 
-  static private bool mcc_initialized_once = false;
   public SMParserTokenManager token_source;
-  static SimpleCharStream mcc_input_stream;
+  SimpleCharStream mcc_input_stream;
   public Token token, mcc_nt;
-  static private int mcc_ntk;
-  static private Token mcc_scanpos, mcc_lastpos;
-  static private int mcc_la;
+  private int mcc_ntk;
+  private Token mcc_scanpos, mcc_lastpos;
+  private int mcc_la;
   public bool lookingAhead = false;
-  static private bool mcc_semLA;
-  static private int mcc_gen;
-  static private int[] mcc_la1 = new int[13];
+  private bool mcc_semLA;
+  private int mcc_gen;
+  private int[] mcc_la1 = new int[13];
   static private int[] mcc_la1_0;
   static SMParser() {
       mcc_gla1_0();
@@ -312,18 +311,11 @@ public class SMParser : SMParserConstants {
    private static void mcc_gla1_0() {
       mcc_la1_0 = new int[] {16256,49152,16256,278528,12582912,1048576,1048576,278528,16384,16384,12582912,16384,81920,};
    }
-  static private MccCalls[] mcc_2_rtns = new MccCalls[1];
-  static private bool mcc_rescan = false;
-  static private int mcc_gc = 0;
+  private MccCalls[] mcc_2_rtns = new MccCalls[1];
+  private bool mcc_rescan = false;
+  private int mcc_gc = 0;
 
   public SMParser(System.IO.Stream stream) {
-    if (mcc_initialized_once) {
-      Console.Out.WriteLine("ERROR: Second call to constructor of static parser.  You must");
-      Console.Out.WriteLine("       either use ReInit() or set the CSharpCC option STATIC to false");
-      Console.Out.WriteLine("       during parser generation.");
-      throw new Exception();
-    }
-    mcc_initialized_once = true;
     mcc_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new SMParserTokenManager(mcc_input_stream);
     token = new Token();
@@ -344,13 +336,6 @@ public class SMParser : SMParserConstants {
   }
 
   public SMParser(System.IO.TextReader stream) {
-    if (mcc_initialized_once) {
-      Console.Out.WriteLine("ERROR: Second call to constructor of static parser.  You must");
-      Console.Out.WriteLine("       either use ReInit() or set the CSharpCC option STATIC to false");
-      Console.Out.WriteLine("       during parser generation.");
-      throw new Exception();
-    }
-    mcc_initialized_once = true;
     mcc_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new SMParserTokenManager(mcc_input_stream);
     token = new Token();
@@ -371,13 +356,6 @@ public class SMParser : SMParserConstants {
   }
 
   public SMParser(SMParserTokenManager tm) {
-    if (mcc_initialized_once) {
-      Console.Out.WriteLine("ERROR: Second call to constructor of static parser.  You must");
-      Console.Out.WriteLine("       either use ReInit() or set the CSharpCC option STATIC to false");
-      Console.Out.WriteLine("       during parser generation.");
-      throw new Exception();
-    }
-    mcc_initialized_once = true;
     token_source = tm;
     token = new Token();
     mcc_ntk = -1;
@@ -395,7 +373,7 @@ public class SMParser : SMParserConstants {
     for (int i = 0; i < mcc_2_rtns.Length; i++) mcc_2_rtns[i] = new MccCalls();
   }
 
-  private Token mcc_consume_token(int kind) {
+   private Token mcc_consume_token(int kind) {
     Token oldToken = null;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.GetNextToken();
@@ -420,7 +398,7 @@ public class SMParser : SMParserConstants {
   }
 
   private class LookaheadSuccess : System.Exception { }
-  static private LookaheadSuccess mcc_ls = new LookaheadSuccess();
+  private LookaheadSuccess mcc_ls = new LookaheadSuccess();
   private bool mcc_scan_token(int kind) {
     if (mcc_scanpos == mcc_lastpos) {
       mcc_la--;
@@ -466,13 +444,13 @@ public class SMParser : SMParserConstants {
       return (mcc_ntk = mcc_nt.kind);
   }
 
-  static private System.Collections.ArrayList mcc_expentries = new System.Collections.ArrayList();
-  static private int[] mcc_expentry;
-  static private int mcc_kind = -1;
-  static private int[] mcc_lasttokens = new int[100];
-  static private int mcc_endpos;
+  private System.Collections.ArrayList mcc_expentries = new System.Collections.ArrayList();
+  private int[] mcc_expentry;
+  private int mcc_kind = -1;
+  private int[] mcc_lasttokens = new int[100];
+  private int mcc_endpos;
 
-  static private void mcc_add_error_token(int kind, int pos) {
+  private void mcc_add_error_token(int kind, int pos) {
     if (pos >= 100) return;
     if (pos == mcc_endpos + 1) {
       mcc_lasttokens[mcc_endpos++] = kind;
