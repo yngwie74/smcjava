@@ -41,8 +41,8 @@ public class SMCSharpGenerator  extends FSMGenerator
         PrintWriter itsStream;
         try
         {
-            FileOutputStream fout = new FileOutputStream(createOutputFileName() );
-            itsStream = new PrintWriter( fout, true );
+            FileOutputStream fout = new FileOutputStream(createOutputFileName());
+            itsStream = new PrintWriter(new OutputStreamWriter(fout, "UTF-8"), true);
         }
         catch( IOException e )
         {
