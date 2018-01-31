@@ -58,28 +58,17 @@
 
         private static void AddClassMembers(SMCSharpGenerator gen, StringBuilder buff)
         {
-            //try
-            //{
-                AddFromGenerators(gen, buff, CSharpCodeGeneratorBuilder.Instance.StateMachineGenerators);
-            //}
-            //catch (System.Exception)
-            //{ }
+            AddFromGenerators(gen, CSharpCodeGeneratorBuilder.Instance.StateMachineGenerators, buff);
         }
 
         private static void CloseClassDeclaration(StringBuilder buff)
         {
-            buff.AppendLine("}")
-                .AppendLine();
+            buff.AppendLine("}").AppendLine();
         }
 
         private static void AddStateClasses(SMCSharpGenerator gen, StringBuilder buff)
         {
-            //try
-            //{
-                AddFromGenerators(gen, buff, CSharpCodeGeneratorBuilder.Instance.StateGenerators);
-            //}
-            //catch (System.Exception)
-            //{ }
+            AddFromGenerators(gen, CSharpCodeGeneratorBuilder.Instance.StateGenerators, buff);
         }
 
         #endregion

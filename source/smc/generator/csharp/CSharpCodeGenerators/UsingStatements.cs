@@ -6,20 +6,22 @@
 
     public class UsingStatements : CSharpCodeGenerator
     {
-        public override string GenerateCode(SMCSharpGenerator smcsg)
+        public override string GenerateCode(SMCSharpGenerator gen)
+            => GenerateCode(gen, new StringBuilder());
+
+        public string GenerateCode(SMCSharpGenerator gen, StringBuilder buff)
         {
-            var buff = new StringBuilder();
-            if (smcsg.HasUsing)
+            if (gen.HasUsing)
             {
-                foreach(var item in smcsg.Usings)
+                foreach (var item in gen.Usings)
                 {
-                    buff.AppendFormat("using {0};\n", item);
+                    buff.AppendLine($"using {item};");
                 }
 
-                return buff.ToString();
+                buff.AppendLine();
             }
 
-            return string.Empty;
+            return buff.ToString();
         }
     }
 }

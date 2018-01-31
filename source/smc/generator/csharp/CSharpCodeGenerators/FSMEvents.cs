@@ -6,13 +6,13 @@
 
     public class FSMEvents : CSharpCodeGenerator
     {
-        public override string GenerateCode(SMCSharpGenerator smcsg)
+        public override string GenerateCode(SMCSharpGenerator gen)
         {
             var buff = new StringBuilder()
                 .AppendLine("    #region Event Methods - forward to the current State")
                 .AppendLine();
 
-            var events = smcsg.StateMap.Events;
+            var events = gen.StateMap.Events;
             foreach (var evi in events)
             {
                 var evName = CreateMethodName(evi);

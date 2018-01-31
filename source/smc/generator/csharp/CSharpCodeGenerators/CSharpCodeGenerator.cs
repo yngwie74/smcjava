@@ -33,7 +33,10 @@
             return buff.ToString();
         }
 
-        public static StringBuilder AddFromGenerators(SMCSharpGenerator gen, StringBuilder buff, Func<IEnumerable<CSharpCodeGenerator>> generatorFactory)
+        public static StringBuilder AddFromGenerators(SMCSharpGenerator gen, Func<IEnumerable<CSharpCodeGenerator>> generatorFactory)
+            => AddFromGenerators(gen, generatorFactory, new StringBuilder());
+
+        public static StringBuilder AddFromGenerators(SMCSharpGenerator gen, Func<IEnumerable<CSharpCodeGenerator>> generatorFactory, StringBuilder buff)
         {
             var generators = generatorFactory.Invoke();
             foreach (var code in generators)

@@ -48,14 +48,13 @@
 
         public override string Generate()
         {
-            var buff = new StringBuilder();
-
             var builder = CSharpCodeGeneratorBuilder.Instance;
-            CSharpCodeGenerator.AddFromGenerators(this, buff, builder.TopLevelGenerators)
-                .AppendLine("}")
-                .AppendLine();
 
-            return buff.ToString();
+            return CSharpCodeGenerator
+                .AddFromGenerators(this, builder.TopLevelGenerators)
+                .AppendLine("}")
+                .AppendLine()
+                .ToString();
         }
 
         public void ClearOverRiddenEvents() => this.overriddenEvents.Clear();

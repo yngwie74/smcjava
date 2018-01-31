@@ -6,7 +6,7 @@
 
     public class FSMAccessors : CSharpCodeGenerator
     {
-        public override string GenerateCode(SMCSharpGenerator smcsg)
+        public override string GenerateCode(SMCSharpGenerator gen)
         {
             return new StringBuilder()
                 .AppendLine("    #region Public Properties")
