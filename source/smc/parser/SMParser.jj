@@ -2,7 +2,7 @@ PARSER_BEGIN(SMParser)
 
 using System;
 
-using SMC.parser.iface;
+using SMC.Parser.Iface;
 
 public class SMParser
 {

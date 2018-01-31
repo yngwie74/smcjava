@@ -1,11 +1,11 @@
-﻿namespace SMC.parser
+﻿namespace SMC.Parser
 {
     using System;
     using System.IO;
     using System.Linq;
     using SMC.Builder;
     using SMC.Generator.CSharp;
-    using SMC.parser.iface;
+    using SMC.Parser.Iface;
 
     public class FSMParser : SMParserInterface
     {

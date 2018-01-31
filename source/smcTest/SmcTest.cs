@@ -1,28 +1,72 @@
-package smc;
-
-import junit.framework.TestCase;
-
-public class SmcTest extends TestCase
+﻿namespace SMC
 {
-    private Smc smc;
-    public void setUp()
-    {
-        smc = new Smc();
-    }
-    public void testParseCommandLine() throws Exception
-    {
-        String[] args = {"Smc","-f", "-ggeneratorName","-oC:\\dir", "file"};
+    using NUnit.Framework;
 
-        smc.parseCommandLine(args);
-        assertTrue(smc.getForcedOverwrite());
-        assertEquals("file",smc.getInputFilename());
-        assertEquals("C:\\dir",smc.getOutputDir());
-        assertEquals("generatorName",smc.getFSMGeneratorName());
-    }
-    public void testParseCommandLineWithoutForcedOverwrite() throws Exception
+    [TestFixture]
+    public class SmcTest
     {
-        String[] args = {"Smc", "-ggeneratorName","-oC:\\dir", "file"};
-        smc.parseCommandLine(args);
-        assertFalse(smc.getForcedOverwrite());
+        #region Constants
+
+        private const string ExpectedFSMGeneratorName = "generatorName";
+        private const string ExpectedInputFilename = "file";
+
+        #endregion
+
+        #region Fields
+
+        private Smc smc;
+
+        #endregion
+
+        #region Public Methods
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.smc = new Smc(ExpectedInputFilename);
+        }
+
+        [Test]
+        public void Ctor_InputFilename_SetsPropertyValue()
+        {
+            Assert.AreEqual(ExpectedInputFilename, this.smc.InputFilename);
+        }
+
+        [Test]
+        public void Ctor_InputFilenameNullOrEmpty_Throws([Values(null, "")]string fileName)
+        {
+            void act() => new Smc(fileName);
+            Assert.That(act, Throws.ArgumentNullException);
+        }
+
+        [Test]
+        public void Ctor_FSMGeneratorNameNotSet_SetsPropertyToEmpty()
+        {
+            Assert.AreEqual("", this.smc.FSMGeneratorName);
+        }
+
+        [Test]
+        public void Ctor_FSMGeneratorNameNull_Throws()
+        {
+            void act() => new Smc(ExpectedInputFilename, null);
+            Assert.That(act, Throws.ArgumentNullException);
+        }
+
+        [Test]
+        public void FSMGeneratorName_SetValue_ReturnsValue(
+            [Values("", ExpectedFSMGeneratorName)]string generatorName)
+        {
+            this.smc.FSMGeneratorName = generatorName;
+            Assert.AreEqual(generatorName, this.smc.FSMGeneratorName);
+        }
+
+        [Test]
+        public void FSMGeneratorName_SetNull_Throws()
+        {
+            void act() => this.smc.FSMGeneratorName = null;
+            Assert.That(act, Throws.ArgumentNullException);
+        }
+
+        #endregion
     }
 }

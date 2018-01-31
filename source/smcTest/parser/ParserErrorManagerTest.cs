@@ -1,43 +1,67 @@
-package smc.parser;
-
-import junit.framework.TestCase;
-
-public class ParserErrorManagerTest extends TestCase
+﻿namespace SMC.Parser
 {
-    private ParserErrorManager manager;
-    public void setUp()
-    {
-        manager = initManager();
-    }
-    public void testErrorManager() throws Exception
-    {
-        assertEquals(6,manager.getErrors().size());
-    }
-    public void testErrors() throws Exception
-    {
-        assertList(0);
-        assertList(1);
-        assertList(2);
-        assertList(3);
-        assertList(4);
-        assertList(5);
-    }
+    using System.Collections.Generic;
+    using System.Linq;
 
-    private void assertList(int num)
-    {
-        String actual = (String)manager.getErrors().get(num);
-        assertEquals("Error" + num,actual);
-    }
+    using NUnit.Framework;
 
-    private ParserErrorManager initManager()
+    [TestFixture]
+    public class ParserErrorManagerTest
     {
-        ParserErrorManager man = new ParserErrorManager(false);
-        man.error("Error0");
-        man.error("Error1");
-        man.error("Error2");
-        man.error("Error3");
-        man.error("Error4");
-        man.error("Error5");
-        return man;
+        #region Fields
+
+        private ParserErrorManager manager;
+
+        #endregion
+
+        #region Public Methods
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.manager = InitManager();
+        }
+
+        [Test]
+        public void ErrorManager()
+        {
+            Assert.AreEqual(6, this.manager.Errors.Count());
+        }
+
+        [Test]
+        public void Errors()
+        {
+            var errorList = this.manager.Errors.ToList();
+            AssertList(errorList, 0);
+            AssertList(errorList, 1);
+            AssertList(errorList, 2);
+            AssertList(errorList, 3);
+            AssertList(errorList, 4);
+            AssertList(errorList, 5);
+        }
+
+        #endregion
+
+        #region Methods
+
+        private static void AssertList(IList<string> errorList, int num)
+        {
+            var actual = errorList[num];
+            Assert.AreEqual("Error" + num, actual);
+        }
+
+        private ParserErrorManager InitManager()
+        {
+            var man = new ParserErrorManager();
+            man.Error("Error0");
+            man.Error("Error1");
+            man.Error("Error2");
+            man.Error("Error3");
+            man.Error("Error4");
+            man.Error("Error5");
+            return man;
+        }
+
+        #endregion
     }
 }

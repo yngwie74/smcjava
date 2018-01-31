@@ -1,4 +1,4 @@
-﻿namespace SMC.parser
+﻿namespace SMC.Parser
 {
     using SMC.Builder;
 

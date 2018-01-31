@@ -7,16 +7,25 @@
     using SMC.FsmRep;
     using SMC.Generator;
     using SMC.Generator.CSharp;
-    using SMC.parser;
+    using SMC.Parser;
 
     public class Smc
     {
+        private string fsmGeneratorName;
         #region Constructors & Destructors
 
         public Smc(string inputFilename)
+            : this(inputFilename, "")
         {
-            this.InputFilename = inputFilename;
-            this.FSMGeneratorName = "";
+        }
+
+        public Smc(string inputFilename, string fsmGeneratorName)
+        {
+            this.InputFilename = !string.IsNullOrEmpty(inputFilename)
+                ? inputFilename
+                : throw new ArgumentNullException(nameof(inputFilename));
+
+            this.FSMGeneratorName = fsmGeneratorName;
         }
 
         #endregion
@@ -25,7 +34,11 @@
 
         public string InputFilename { get; private set; }
 
-        public string FSMGeneratorName { get; set; }
+        public string FSMGeneratorName
+        {
+            get => this.fsmGeneratorName;
+            set => this.fsmGeneratorName = value ?? throw new ArgumentNullException(nameof(value));
+        }
 
         #endregion
 

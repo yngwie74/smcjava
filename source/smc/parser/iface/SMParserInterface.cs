@@ -1,4 +1,4 @@
-﻿namespace SMC.parser.iface
+﻿namespace SMC.Parser.Iface
 {
     public interface SMParserInterface
     {
