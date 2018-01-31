@@ -50,18 +50,10 @@
         {
             var buff = new StringBuilder();
 
-            try
-            {
-                var builder = CSharpCodeGeneratorBuilder.Instance;
-                CSharpCodeGenerator.AddFromGenerators(this, buff, builder.TopLevelGenerators)
-                    .AppendLine("}")
-                    .AppendLine();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
-            }
+            var builder = CSharpCodeGeneratorBuilder.Instance;
+            CSharpCodeGenerator.AddFromGenerators(this, buff, builder.TopLevelGenerators)
+                .AppendLine("}")
+                .AppendLine();
 
             return buff.ToString();
         }
@@ -87,7 +79,7 @@
             var pragmas = this.StateMap.Pragma;
             foreach (var p in pragmas)
             {
-                try
+                //try
                 {
                     if (p.StartsWith(usingString, StringComparison.OrdinalIgnoreCase))
                     {
@@ -104,7 +96,7 @@
                         Console.WriteLine($"Warning: Unknown pragma: {p}");
                     }
                 }
-                catch (Exception)
+                //catch (Exception)
                 { }
             }
         }

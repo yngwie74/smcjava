@@ -20,10 +20,8 @@
 
         private static Type[] CSharpFSMCodeGenerators = new Type[]
         {
-            typeof(ItsStateVariables),
             typeof(FSMConstructor),
             typeof(FSMAccessors),
-            typeof(FSMMutators),
             typeof(FSMEvents)
         };
 
@@ -58,17 +56,10 @@
 
         private IEnumerable<CSharpCodeGenerator> Instantiate(Type[] types)
         {
-            try
-            {
-                return types
-                    .Select(Activator.CreateInstance)
-                    .Cast<CSharpCodeGenerator>()
-                    .ToList();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return types
+                .Select(Activator.CreateInstance)
+                .Cast<CSharpCodeGenerator>()
+                .ToList();
         }
 
         #endregion

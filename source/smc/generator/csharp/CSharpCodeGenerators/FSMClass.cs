@@ -58,12 +58,12 @@
 
         private static void AddClassMembers(SMCSharpGenerator gen, StringBuilder buff)
         {
-            try
-            {
+            //try
+            //{
                 AddFromGenerators(gen, buff, CSharpCodeGeneratorBuilder.Instance.StateMachineGenerators);
-            }
-            catch (System.Exception)
-            { }
+            //}
+            //catch (System.Exception)
+            //{ }
         }
 
         private static void CloseClassDeclaration(StringBuilder buff)
@@ -74,12 +74,12 @@
 
         private static void AddStateClasses(SMCSharpGenerator gen, StringBuilder buff)
         {
-            try
-            {
+            //try
+            //{
                 AddFromGenerators(gen, buff, CSharpCodeGeneratorBuilder.Instance.StateGenerators);
-            }
-            catch (System.Exception)
-            { }
+            //}
+            //catch (System.Exception)
+            //{ }
         }
 
         #endregion

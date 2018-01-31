@@ -67,10 +67,8 @@
     <Compile Include="generator\csharp\CSharpCodeGenerators\FSMClass.cs" />
     <Compile Include="generator\csharp\CSharpCodeGenerators\FSMConstructor.cs" />
     <Compile Include="generator\csharp\CSharpCodeGenerators\FSMEvents.cs" />
-    <Compile Include="generator\csharp\CSharpCodeGenerators\FSMMutators.cs" />
     <Compile Include="generator\csharp\CSharpCodeGenerators\FSMStateClasses.cs" />
     <Compile Include="generator\csharp\CSharpCodeGenerators\InitialComments.cs" />
-    <Compile Include="generator\csharp\CSharpCodeGenerators\ItsStateVariables.cs" />
     <Compile Include="generator\csharp\CSharpCodeGenerators\NamespaceStatement.cs" />
     <Compile Include="generator\csharp\CSharpCodeGenerators\UsingStatements.cs" />
     <Compile Include="generator\csharp\SMCSharpGenerator.cs" />

@@ -4,6 +4,7 @@
     using System.IO;
 
     using SMC.Builder;
+    using SMC.FsmRep;
     using SMC.Generator;
     using SMC.Generator.CSharp;
     using SMC.parser;
@@ -15,7 +16,7 @@
         public Smc(string inputFilename)
         {
             this.InputFilename = inputFilename;
-            this.FSMGeneratorName = string.Empty;
+            this.FSMGeneratorName = "";
         }
 
         #endregion
@@ -71,43 +72,80 @@
 
         private string GenerateCode(FSMRepresentationBuilder fsmbld, FSMParser parser)
         {
-            var sm = fsmbld.StateMap;
+            var generator = TryGetCodeGenerator(parser, fsmbld.StateMap);
+            return TryExecuteGenerator(generator);
+        }
 
-            if (this.FSMGeneratorName.Length == 0)
+        private static string TryExecuteGenerator(FSMGenerator generator)
+        {
+            try
             {
-                this.FSMGeneratorName = parser.FSMGeneratorName;
-                if (this.FSMGeneratorName.Length == 0)
-                {
-                    Console.WriteLine("Using default C# Generator.");
-                    this.FSMGeneratorName = typeof(SMCSharpGenerator).FullName;
-                }
+                return generator.Generate();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Aborting due to invalid generator.", ex);
+            }
+        }
+
+        private FSMGenerator TryGetCodeGenerator(FSMParser parser, StateMap sm)
+        {
+            FSMGenerator retVal;
+
+            var generator = GetRequestedGenerator(parser);
+
+            if (generator.Type == null)
+            {
+                throw new Exception($"{generator} not found");
             }
 
             try
             {
-                var generator = (FSMGenerator)Activator.CreateInstance(Type.GetType(this.FSMGeneratorName));
-                generator.FSMInit(sm, this.InputFilename);
-
-                try
-                {
-                    generator.Initialize();
-                    return generator.Generate();
-                }
-                catch (IOException e)
-                {
-                    Console.WriteLine(e);
-                }
+                retVal = (FSMGenerator)Activator.CreateInstance(generator.Type);
+                retVal.FSMInit(sm, this.InputFilename);
+                retVal.Initialize();
             }
-            catch (Exception cnf)
+            catch (Exception ex)
             {
-                Console.WriteLine($"{this.FSMGeneratorName} is not a valid FSMGenerator");
-                Console.WriteLine("Aborting due to invalid generator.");
-                Console.WriteLine(cnf.StackTrace);
+                throw new Exception($"{generator} is not a valid FSMGenerator", ex);
             }
 
-            return "";
+            return retVal;
         }
 
+        private RequestedGenerator GetRequestedGenerator(FSMParser parser)
+        {
+            if (!string.IsNullOrEmpty(this.FSMGeneratorName))
+            {
+                return new RequestedGenerator(this.FSMGeneratorName, "instance property");
+            }
+
+            if (!string.IsNullOrEmpty(parser.FSMGeneratorName))
+            {
+                return new RequestedGenerator(parser.FSMGeneratorName, this.InputFilename);
+            }
+
+            return new RequestedGenerator(GetDefaultGeneratorName(), "(default)");
+        }
+
+        private static string GetDefaultGeneratorName() => typeof(SMCSharpGenerator).FullName;
+
         #endregion
+
+        private class RequestedGenerator
+        {
+            private readonly string typeName;
+            private readonly string location;
+
+            public RequestedGenerator(string typeName, string location)
+            {
+                this.typeName = typeName;
+                this.location = location;
+            }
+
+            public Type Type => Type.GetType(this.typeName);
+
+            public override string ToString() => $"FSMGenerator '{this.typeName} in {this.location}";
+        }
     }
 }

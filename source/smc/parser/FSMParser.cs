@@ -1,8 +1,10 @@
 ﻿namespace SMC.parser
 {
+    using System;
     using System.IO;
-
+    using System.Linq;
     using SMC.Builder;
+    using SMC.Generator.CSharp;
     using SMC.parser.iface;
 
     public class FSMParser : SMParserInterface
@@ -21,7 +23,7 @@
         {
             this.builder = theBuilder;
             this.fileName = theFileName;
-            this.FSMGeneratorName = "";
+            this.FSMGeneratorName = typeof(SMCSharpGenerator).FullName;
             this.builder.ErrorManager = this.errorManager;
         }
 
@@ -113,8 +115,15 @@
             }
             catch (ParseException pe)
             {
-                throw new ParseException(PrintSyntaxError(pe));
+                throw new Exception(PrintSyntaxError(pe), pe);
             }
+
+            if (this.errorManager.Errors.Any())
+            {
+                throw new Exception(
+                    $"There were errors parsing file {this.fileName}:\n{string.Join("\n\t", this.errorManager.Errors)}");
+            }
+
             return status;
         }
 

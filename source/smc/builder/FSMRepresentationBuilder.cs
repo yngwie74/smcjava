@@ -143,18 +143,20 @@
 
         public override bool Build()
         {
-            if (!this.error)
+            if (this.error)
             {
-                BuildStateMap();
-                if (this.error)
-                {
-                    Error("Aborting due to inconsistent input.");
-                    return false;
-                }
-                return true;
+                Error("Aborting due to semantic errors");
+                return false;
             }
-            Error("Aborting due to semantic errors");
-            return false;
+
+            BuildStateMap();
+            if (this.error)
+            {
+                Error("Aborting due to inconsistent input.");
+                return false;
+            }
+
+            return true;
         }
 
         public void SetError() => this.error = true;
