@@ -15,7 +15,7 @@
                 .AppendLine()
                 .AppendLine("    public string CurrentStateName => this.currentState.Name;")
                 .AppendLine()
-                .AppendLine("    public State CurrentState")
+                .AppendLine("    internal State CurrentState")
                 .AppendLine("    {")
                 .AppendLine("        get { return this.currentState; }")
                 .AppendLine("        set { this.currentState = value; }")

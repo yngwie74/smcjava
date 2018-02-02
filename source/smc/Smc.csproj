@@ -7,7 +7,7 @@
     <ProjectGuid>{43C2B812-26ED-4A98-9EFA-525B6DF3C2F1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>smc</RootNamespace>
+    <RootNamespace>SMC</RootNamespace>
     <AssemblyName>Smc</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

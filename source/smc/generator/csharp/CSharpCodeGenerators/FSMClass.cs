@@ -1,6 +1,7 @@
 ﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
     using System.Text;
+
     using SMC.FsmRep;
     using SMC.Generator.CSharp;
 
@@ -17,9 +18,10 @@
             BeginClassDeclaration(buff, stateMap);
             AddFields(buff, stateMap);
             AddClassMembers(gen, buff);
-            CloseClassDeclaration(buff);
 
             AddStateClasses(gen, buff);
+
+            CloseClassDeclaration(buff);
 
             return buff.ToString();
         }
@@ -56,20 +58,11 @@
                 .AppendLine();
         }
 
-        private static void AddClassMembers(SMCSharpGenerator gen, StringBuilder buff)
-        {
-            AddFromGenerators(gen, CSharpCodeGeneratorBuilder.Instance.StateMachineGenerators, buff);
-        }
+        private static void AddClassMembers(SMCSharpGenerator gen, StringBuilder buff) => AddFromGenerators(gen, CSharpCodeGeneratorBuilder.Instance.StateMachineGenerators, buff);
 
-        private static void CloseClassDeclaration(StringBuilder buff)
-        {
-            buff.AppendLine("}").AppendLine();
-        }
+        private static void CloseClassDeclaration(StringBuilder buff) => buff.AppendLine("}");
 
-        private static void AddStateClasses(SMCSharpGenerator gen, StringBuilder buff)
-        {
-            AddFromGenerators(gen, CSharpCodeGeneratorBuilder.Instance.StateGenerators, buff);
-        }
+        private static void AddStateClasses(SMCSharpGenerator gen, StringBuilder buff) => AddFromGenerators(gen, CSharpCodeGeneratorBuilder.Instance.StateGenerators, buff);
 
         #endregion
     }

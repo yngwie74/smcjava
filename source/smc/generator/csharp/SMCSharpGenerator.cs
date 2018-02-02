@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
 
     using SMC.FsmRep;
     using SMC.Generator.CSharp.CSharpCodeGenerators;

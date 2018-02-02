@@ -27,7 +27,8 @@
 
         private static Type[] CSharpFSMClassesCodeGenerators = new Type[]
         {
-            typeof(FSMBaseState)
+            typeof(FSMBaseState),
+            typeof(FSMStateClasses)
         };
 
         public static readonly CSharpCodeGeneratorBuilder Instance = new CSharpCodeGeneratorBuilder();

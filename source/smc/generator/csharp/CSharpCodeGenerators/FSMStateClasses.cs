@@ -27,23 +27,10 @@
         {
             this.gen = gen;
             var buff = new StringBuilder();
-            var concreteStates = gen.ConcreteStates;
 
-            foreach (var cs in concreteStates)
+            foreach (var cs in this.gen.ConcreteStates)
             {
-                buff.AppendLine("/// <summary>")
-                    .AppendLine($"/// Handles the {cs.Name} State and its events")
-                    .AppendLine("/// </summary>")
-                    .AppendLine($"public class {ClassNameFor(cs)} : State")
-                    .AppendLine("{")
-                    .AppendLine($"    public override string Name => \"{cs.Name}\";");
-
-                gen.SourceState = cs;
-                gen.ClearOverRiddenEvents();
-
-                buff.Append(generateTransitions(cs))
-                    .AppendLine("}")
-                    .AppendLine();
+                GenerateConcreteStateClass(cs, buff);
             }
 
             return buff.ToString();
@@ -53,60 +40,89 @@
 
         #region Methods
 
-        private string generateTransitions(State s)
+        private void GenerateConcreteStateClass(ConcreteState cs, StringBuilder buff)
         {
-            var buff = new StringBuilder();
+            ClassHeader(cs, buff);
+            PublicProperties(cs, buff);
+
+            this.gen.SourceState = cs;
+            this.gen.ClearOverRiddenEvents();
+
+            GenerateTransitionsOf(cs, buff);
+
+            CloseClass(buff);
+        }
+
+        private void ClassHeader(ConcreteState cs, StringBuilder buff)
+        {
+            buff.AppendLine()
+                .AppendLine("/// <summary>")
+                .AppendLine($"/// This class handles the \"{cs.Name}\" state and its events")
+                .AppendLine("/// </summary>")
+                .AppendLine($"internal class {ClassNameFor(cs)} : State")
+                .AppendLine("{");
+        }
+
+        private static void PublicProperties(ConcreteState cs, StringBuilder buff) => buff.AppendLine($"    public override string Name => \"{cs.Name}\";");
+
+        private StringBuilder GenerateTransitionsOf(State s, StringBuilder buff)
+        {
             var transitions = s.Transitions;
             foreach (var t in transitions)
             {
-                var _event = t.Event;
-                if (!this.gen.IsOverRiddenEvent(_event))
+                GenerateTransitionFor(t, buff);
+            }
+
+            if (s is SubState ss)
+            {
+                GenerateTransitionsOf(ss.SuperState, buff);
+            }
+
+            return buff;
+        }
+
+        private void GenerateTransitionFor(Transition t, StringBuilder buff)
+        {
+            var _event = t.Event;
+            if (!this.gen.IsOverRiddenEvent(_event))
+            {
+                this.gen.AddOverRiddenEvent(_event);
+                var noResponse = true;
+
+                buff.AppendLine();
+                buff.AppendLine($"    public override void {CreateMethodName(_event)}({this.gen.StateMap.Name} {ArgName})");
+                buff.AppendLine("    {");
+
+                var actions = t.Actions;
+                if (actions.Any())
                 {
-                    this.gen.AddOverRiddenEvent(_event);
-                    var noResponse = true;
+                    noResponse = false;
+                }
 
+                foreach (var aName in actions)
+                {
+                    buff.AppendLine($"        {ArgName}.{aName}();");
+                }
+
+                if (t is ExternalTransition et)
+                {
                     buff.AppendLine();
-                    buff.AppendLine($"    public override void {CreateMethodName(_event)}({this.gen.StateMap.Name} {ArgName})");
-                    buff.AppendLine("    {");
+                    noResponse = false;
+                    buff.Append(generateStateChange(et));
+                }
 
-                    var actions = t.Actions;
-                    if (actions.Any())
-                    {
-                        noResponse = false;
-                    }
-
-                    foreach (var aName in actions)
-                    {
-                        buff.AppendLine($"        {ArgName}.{aName}();");
-                    }
-
-                    if (t is ExternalTransition)
-                    {
-                        var et = (ExternalTransition)t;
-                        buff.AppendLine();
-                        noResponse = false;
-                        buff.Append(generateStateChange(et));
-                    }
-
-                    if (noResponse == true)
-                    {
-                        buff.AppendLine("}");
-                    }
-                    else
-                    {
-                        buff.AppendLine("    }");
-                    }
+                if (noResponse == true)
+                {
+                    buff.AppendLine("}");
+                }
+                else
+                {
+                    buff.AppendLine("    }");
                 }
             }
-
-            if (s is SubState)
-            {
-                var ss = (SubState)s;
-                buff.Append(generateTransitions(ss.SuperState));
-            }
-
-            return buff.ToString();
         }
+
+        private static void CloseClass(StringBuilder buff) => buff.AppendLine("}");
 
         private string generateStateChange(ExternalTransition et)
         {

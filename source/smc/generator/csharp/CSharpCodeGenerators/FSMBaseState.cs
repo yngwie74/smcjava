@@ -24,7 +24,6 @@
             AddConcreteStates(gen, buff);
             AddPublicProperties(buff);
             AddEventMethods(gen, buff);
-            AddNestedStateClasses(gen, buff);
 
             AddClosingClassDeclaration(buff);
 
@@ -36,12 +35,13 @@
         #region Methods
 
         private static void AddClassHeader(StringBuilder buff) => buff
+            .AppendLine()
             .AppendLine("/// <summary>")
             .AppendLine("/// This is the base State class")
             .AppendLine("/// </summary>");
 
         private static void AddOpeningClassDeclaration(StringBuilder buff) => buff
-            .AppendLine("public abstract class State")
+            .AppendLine("internal abstract class State")
             .AppendLine("{");
 
         private void AddConcreteStates(SMCSharpGenerator gen, StringBuilder buff)
@@ -81,8 +81,7 @@
                 AddCloseEventDeclaration(buff);
             }
 
-            buff.AppendLine("    #endregion")
-                .AppendLine();
+            buff.AppendLine("    #endregion");
         }
 
         private static void AddEventHeader(string evName, StringBuilder buff) => buff
@@ -124,14 +123,9 @@
                 .AppendLine($"(\"{evName}\", {ArgName}.CurrentState);");
         }
 
-        private static void AddCloseEventDeclaration(StringBuilder buff)
-            => buff.AppendLine("    }").AppendLine();
+        private static void AddCloseEventDeclaration(StringBuilder buff) => buff.AppendLine("    }").AppendLine();
 
-        private static void AddNestedStateClasses(SMCSharpGenerator gen, StringBuilder buff)
-            => buff.Append(new FSMStateClasses().GenerateCode(gen));
-
-        private static void AddClosingClassDeclaration(StringBuilder buff)
-            => buff.AppendLine("}");
+        private static void AddClosingClassDeclaration(StringBuilder buff) => buff.AppendLine("}");
 
         #endregion
     }
