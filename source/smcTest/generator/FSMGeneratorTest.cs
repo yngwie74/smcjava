@@ -1,43 +1,53 @@
-package smc.generator;
-
-import junit.framework.TestCase;
-import smc.generator.cpp.SMCppGenerator;
-import smc.generator.csharp.SMCSharpGenerator;
-import smc.fsmrep.*;
-import smc.builder.FSMRepresentationBuilder;
-
-import java.util.Vector;
-
-public class FSMGeneratorTest extends TestCase
+﻿namespace SMC.Generator
 {
-    public void testConcreteStates() throws Exception
+    using System.Linq;
+
+    using NUnit.Framework;
+
+    using SMC.Builder;
+    using SMC.FsmRep;
+    using SMC.Generator.CSharp;
+
+    public class FSMGeneratorTest
     {
-        FSMRepresentationBuilder fsmbld = initBuilderState();
-        StateMap map = fsmbld.getStateMap() ;
-        FSMGenerator fsm = new SMCppGenerator();
-        fsm.FSMInit(map,"TurnStyle","directory");
-        fsm.initialize();
-        assertEquals(2,fsm.getConcreteStates().size());
+        #region Test Methods
+
+        [Test]
+        public void ConcreteStates()
+        {
+            FSMRepresentationBuilder fsmbld = InitBuilderState();
+            StateMap map = fsmbld.StateMap;
+            FSMGenerator fsm = new SMCSharpGenerator();
+            fsm.FSMInit(map, "TurnStyle");
+            fsm.Initialize();
+            Assert.AreEqual(2, fsm.ConcreteStates.Count());
+        }
+
+        [Test]
+        public void Paramaters()
+        {
+            FSMGenerator fsm = new SMCSharpGenerator();
+            fsm.FSMInit(new MutableStateMap(), "TurnStyle");
+            fsm.Initialize();
+            Assert.AreEqual("TurnStyle", fsm.InputFileName);
+            Assert.AreEqual("TurnStyle", fsm.FilePrefix);
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        private FSMRepresentationBuilder InitBuilderState()
+        {
+            var builder = new FSMRepresentationBuilder();
+
+            builder.AddBuiltConcreteState(new ConcreteStateImpl("Locked"));
+            builder.AddBuiltConcreteState(new ConcreteStateImpl("Unlocked"));
+
+            builder.Build();
+            return builder;
+        }
+
+        #endregion
     }
-    public void testParamaters() throws Exception
-    {
-        FSMGenerator fsm = new SMCSharpGenerator();
-        fsm.FSMInit(new MutableStateMap(),"TurnStyle","directory");
-        fsm.initialize();
-        assertEquals("directory",fsm.getDirectory());
-        assertEquals("TurnStyle",fsm.getInputFileName());
-        assertEquals("TurnStyle",fsm.getFilePrefix());
-    }
-    private FSMRepresentationBuilder initBuilderState()
-    {
-        FSMRepresentationBuilder builder = new FSMRepresentationBuilder();
-
-        builder.addBuiltConcreteState(new ConcreteStateImpl("Locked"));
-        builder.addBuiltConcreteState(new ConcreteStateImpl("Unlocked"));
-
-        builder.build();
-        return builder;
-    }
-
-
 }

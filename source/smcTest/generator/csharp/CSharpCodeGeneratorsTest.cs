@@ -1,19 +1,35 @@
-package smc.generator.csharp;
-
-import junit.framework.TestCase;
-
-public class CSharpCodeGeneratorsTest extends TestCase
+﻿namespace SMC.Generator.CSharp
 {
-    public void testBuildCSharpGenerators()
+    using System.Linq;
+
+    using NUnit.Framework;
+
+    [TestFixture]
+    public class CSharpCodeGeneratorsTest
     {
-        assertEquals(4,CSharpCodeGeneratorBuilder.cSharpCode.cSharpInstances().size());
-    }
-    public void testBuildFSMClassGenerators()
-    {
-        assertEquals(5,CSharpCodeGeneratorBuilder.cSharpCode.cSharpFSMInstances().size());
-    }
-    public void testBuildFSMClassesGenerators()
-    {
-        assertEquals(2,CSharpCodeGeneratorBuilder.cSharpCode.cSharpFSMClassesInstances().size());
+        #region Public Methods
+
+        [Test]
+        public void TopLevelGenerators()
+        {
+            var instance = CSharpCodeGeneratorBuilder.Instance;
+            Assert.AreEqual(4, instance.TopLevelGenerators().Count());
+        }
+
+        [Test]
+        public void StateMachineGenerators()
+        {
+            var instance = CSharpCodeGeneratorBuilder.Instance;
+            Assert.AreEqual(3, instance.StateMachineGenerators().Count());
+        }
+
+        [Test]
+        public void StateGenerators()
+        {
+            var instance = CSharpCodeGeneratorBuilder.Instance;
+            Assert.AreEqual(2, instance.StateGenerators().Count());
+        }
+
+        #endregion
     }
 }

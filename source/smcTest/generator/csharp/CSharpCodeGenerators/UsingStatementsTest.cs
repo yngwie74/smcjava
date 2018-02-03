@@ -1,27 +1,32 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import junit.framework.TestCase;
-import smc.generator.csharp.SMCSharpGenerator;
-import smc.builder.FSMRepresentationBuilder;
-import smc.fsmrep.StateMap;
-
-public class UsingStatementsTest extends TestCase
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
-    private SMCSharpGenerator fsm;
+    using NUnit.Framework;
 
-    public void setUp() throws Exception
+    using SMC.Builder;
+
+    using static System.Environment;
+
+    public class UsingStatementsTest : CSharpCodeGeneratorTest<UsingStatements>
     {
-        FSMRepresentationBuilder fsmbld = TestCSharpCodeGeneratorUtils.initBuildStateWithUsing();
-        StateMap map = fsmbld.getStateMap();
-        fsm = new SMCSharpGenerator();
-        fsm.FSMInit(map,"fileName","directory");
-        fsm.initialize();
-    }
-    public void testManyUsingStatements()
-    {
-        UsingStatements use = new UsingStatements();
-        String actual = use.generateCode(fsm);
-        String expected = "using aClass;\nusing bClass;\n";
-        assertEquals(expected,actual);
+        [Test]
+        public void NoUsingPragmas()
+        {
+            var fsmbld = new FSMRepresentationBuilder();
+
+            var actual = GenerateUsing(fsmbld);
+
+            Assert.That(actual, Is.Empty);
+        }
+
+        [Test]
+        public void ManyUsingStatements()
+        {
+            var fsmbld = TestCSharpCodeGeneratorUtils.InitBuildStateWithTwoUsings();
+
+            var actual = GenerateUsing(fsmbld);
+
+            var expected = $"using aClass;{NewLine}using bClass;{NewLine}{NewLine}";
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

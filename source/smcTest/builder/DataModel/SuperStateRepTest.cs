@@ -1,28 +1,55 @@
-package smc.builder.stateRep;
-
-import junit.framework.TestCase;
-
-public class SuperStateRepTest extends TestCase
+﻿namespace SMC.Builder.DataModel
 {
-    private StateRep superState;
-    public void setUp()
+    using NUnit.Framework;
+
+    public class SuperStateRepTest
     {
-        superState = new SuperStateRep("SuperState",null);
-    }
-    public void testToString() throws Exception
-    {
-        assertEquals("(SuperState)",superState.toString());
-    }
-    public void testName() throws Exception
-    {
-        assertEquals("SuperState",superState.getStateName());
-    }
-    public void testEquals() throws Exception
-    {
-        assertTrue(superState.equals(new SuperStateRep("SuperState",null)));
-    }
-    public void testNotEquals() throws Exception
-    {
-        assertFalse(superState.equals(new SuperStateRep("notSameSuperState",null)));
+        #region Constants
+
+        private const string StateName = "SuperState";
+
+        #endregion
+
+        #region Fields
+
+        private StateRep superState;
+
+        #endregion
+
+        #region Test Methods
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.superState = new SuperStateRep(StateName, null);
+        }
+
+        [Test]
+        public void StringRepr()
+        {
+            Assert.AreEqual($"({StateName})", this.superState.ToString());
+        }
+
+        [Test]
+        public void Name()
+        {
+            Assert.AreEqual(StateName, this.superState.StateName);
+        }
+
+        [Test]
+        public void Equality()
+        {
+            StateRep other = new SuperStateRep(StateName, null);
+            Assert.IsTrue(this.superState.Equals(other));
+        }
+
+        [Test]
+        public void NotEquals()
+        {
+            StateRep other = new SuperStateRep("notSameSuperState", null);
+            Assert.IsFalse(this.superState.Equals(other));
+        }
+
+        #endregion
     }
 }

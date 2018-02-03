@@ -208,7 +208,8 @@
             }
             else
             {
-                var errorStatement = $"Initial state ({this.itsInitialState}) is not concrete.";
+                var initialStateName = this.itsInitialState ?? "null";
+                var errorStatement = $"Initial state ({initialStateName}) is not concrete.";
                 SetError();
                 Error(errorStatement);
             }
@@ -296,7 +297,8 @@
 
         private static TVal GetOrDefault<TVal>(IDictionary<string, TVal> source, string key)
         {
-            return (source.TryGetValue(key, out TVal value)) ? value : default(TVal);
+            return (key != null) && source.TryGetValue(key, out TVal result)
+                ? result : default(TVal);
         }
 
         #endregion

@@ -1,53 +1,48 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import smc.builder.FSMRepresentationBuilder;
-import smc.fsmrep.ConcreteStateImpl;
-
-public class TestCSharpCodeGeneratorUtils
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
-    public static FSMRepresentationBuilder initBuilderState()
+    using SMC.Builder;
+    using SMC.FsmRep;
+
+    public class TestCSharpCodeGeneratorUtils
     {
-        return initState(true);
+        public static FSMRepresentationBuilder InitBuildStateWithTwoUsings()
+        {
+            var builder = new FSMRepresentationBuilder();
+            builder.AddPragma("using aClass");
+            builder.AddPragma("using bClass");
+
+            return builder;
+        }
+
+        public static FSMRepresentationBuilder InitBuilderState(
+            bool usesExceptions = true, string version = "")
+        {
+            var builder = new FSMRepresentationBuilder();
+            builder.AddPragma("namespace TurnStyleExample");
+            builder.SetName("TurnStyle");
+            builder.SetContextName("TurnStyleContext");
+            builder.SetVersion(version);
+
+            if (usesExceptions)
+            {
+                builder.SetException("Exception");
+            }
+
+            builder.AddBuiltConcreteState(new ConcreteStateImpl("Locked"));
+            builder.AddBuiltConcreteState(new ConcreteStateImpl("Unlocked"));
+
+            builder.SetInitialState("Locked");
+
+            builder.AddTransition("Coin", "Unlocked", null);
+            builder.AddTransition("Pass", "Locked", null);
+
+            builder.AddAction("Unlock");
+            builder.AddAction("Lock");
+            builder.AddAction("Alarm");
+            builder.AddAction("Thankyou");
+
+            builder.Build();
+            return builder;
+        }
     }
-    public static FSMRepresentationBuilder initBuilderStateWithoutExceptions()
-    {
-        return initState(false);
-    }
-    public static   FSMRepresentationBuilder initBuildStateWithUsing()
-    {
-        FSMRepresentationBuilder builder = new FSMRepresentationBuilder();
-        builder.addPragma("using aClass");
-        builder.addPragma("using bClass");
-
-        return builder;
-    }
-
-    private static FSMRepresentationBuilder initState(boolean usesExceptions)
-    {
-        FSMRepresentationBuilder builder = new FSMRepresentationBuilder();
-        builder.addPragma("namespace TurnStyleExample");
-        builder.setName("TurnStyle");
-        builder.setContextName("TurnStyleContext");
-        builder.setVersion("");
-
-        if(usesExceptions)
-            builder.setException("Exception");
-
-        builder.addBuiltConcreteState(new ConcreteStateImpl("Locked"));
-        builder.addBuiltConcreteState(new ConcreteStateImpl("Unlocked"));
-
-        builder.setInitialState("Locked");
-
-        builder.addTransition("Coin","Unlocked",null);
-        builder.addTransition("Pass","Locked",null);
-
-        builder.addAction("Unlock");
-        builder.addAction("Lock");
-        builder.addAction("Alarm");
-        builder.addAction("Thankyou");
-
-        builder.build();
-        return builder;
-    }
-
 }

@@ -21,7 +21,8 @@
                     .AppendLine();
             }
 
-            buff.AppendLine("    #endregion");
+            buff.AppendLine("    #endregion")
+                .AppendLine();
 
             return buff.ToString();
         }

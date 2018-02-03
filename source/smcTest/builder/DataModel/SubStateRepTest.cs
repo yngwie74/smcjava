@@ -1,40 +1,74 @@
-package smc.builder.stateRep;
-
-import junit.framework.TestCase;
-import smc.builder.FSMRepresentationBuilder;
-
-public class SubStateRepTest extends TestCase
+﻿namespace SMC.Builder.DataModel
 {
-    private StateRep stateRep ;
-    private FSMRepresentationBuilder builder ;
-    public void setUp()
-    {
-        stateRep = new SubStateRep("SubStateName","SuperStateName",null);
-        builder = new FSMRepresentationBuilder();
-    }
-    public void testStateRepName() throws Exception
-    {
-        assertEquals("SubStateName",stateRep.getStateName());
-    }
-    public void testEquals() throws Exception
-    {
-        StateRep rep = new SubStateRep("SubStateName","SuperStateName",null);
-        assertTrue(rep.equals(stateRep));
-    }
-    public void testNotEquals() throws Exception
-    {
-        StateRep rep = new SubStateRep("SubStateName","SuperStateNameIsDifferent",null);
-        assertFalse(rep.equals(stateRep));
-    }
-    public void testErrors() throws Exception
-    {
-        assertNull(stateRep.build(builder));
-    }
-    public void testSuperStateNullErrors() throws Exception
-    {
-        StateRep rep = new SubStateRep("SubState",null,null);
-        assertNull(rep.build(builder));
-    }
+    using NUnit.Framework;
 
+    using SMC.Builder;
 
+    [TestFixture]
+    public class SubStateRepTest
+    {
+        #region Constants
+
+        private const string StateName = "SubStateName";
+        private const string SuperStateName = "SuperStateName";
+
+        #endregion
+
+        #region Fields
+
+        private StateRep stateRep;
+        private FSMRepresentationBuilder builder;
+
+        #endregion
+
+        #region Test Methods
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.stateRep = new SubStateRep(StateName, SuperStateName, null);
+            this.builder = new FSMRepresentationBuilder();
+        }
+
+        [Test]
+        public void StateRepName()
+        {
+            Assert.AreEqual(StateName, this.stateRep.StateName);
+        }
+
+        [Test]
+        public void StringRepr()
+        {
+            Assert.AreEqual($"{StateName}:{SuperStateName}", this.stateRep.ToString());
+        }
+
+        [Test]
+        public void Equality()
+        {
+            StateRep other = new SubStateRep(StateName, SuperStateName, null);
+            Assert.IsTrue(other.Equals(this.stateRep));
+        }
+
+        [Test]
+        public void NotEquals()
+        {
+            StateRep other = new SubStateRep(StateName, "SuperStateNameIsDifferent", null);
+            Assert.IsFalse(other.Equals(this.stateRep));
+        }
+
+        [Test]
+        public void Errors()
+        {
+            Assert.IsNull(this.stateRep.Build(this.builder));
+        }
+
+        [Test]
+        public void SuperStateNullErrors()
+        {
+            StateRep rep = new SubStateRep("SubState", null, null);
+            Assert.IsNull(rep.Build(this.builder));
+        }
+
+        #endregion
+    }
 }

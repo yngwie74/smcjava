@@ -1,28 +1,33 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import junit.framework.TestCase;
-import smc.builder.FSMRepresentationBuilder;
-import smc.fsmrep.StateMap;
-import smc.generator.csharp.SMCSharpGenerator;
-
-public class NamespaceStatementTest extends TestCase
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
-    private SMCSharpGenerator fsm;
+    using NUnit.Framework;
 
-    public void setUp()   throws Exception
-    {
-        FSMRepresentationBuilder fsmbld = TestCSharpCodeGeneratorUtils.initBuilderState();
-        StateMap map = fsmbld.getStateMap();
-        fsm = new SMCSharpGenerator();
-        fsm.FSMInit(map,"fileName","directory");
-        fsm.initialize();
-    }
+    using SMC.Builder;
 
-    public void testNamespaceStatements() throws Exception
+    using static System.Environment;
+
+    [TestFixture]
+    public class NamespaceStatementTest : CSharpCodeGeneratorTest<NamespaceStatement>
     {
-        NamespaceStatement name = new NamespaceStatement();
-        String actual = name.generateCode(fsm);
-        String expected = "namespace TurnStyleExample\n{\n";
-        assertEquals(expected,actual);
+        [Test]
+        public void NoNamespacePragma()
+        {
+            var fsmbld = new FSMRepresentationBuilder();
+
+            var actual = GenerateUsing(fsmbld);
+
+            Assert.That(actual, Is.Empty);
+        }
+
+        [Test]
+        public void NamespaceStatements()
+        {
+            var fsmbld = TestCSharpCodeGeneratorUtils.InitBuilderState();
+
+            var actual = GenerateUsing(fsmbld);
+
+            var expected = $"namespace TurnStyleExample{NewLine}{{{NewLine}";
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

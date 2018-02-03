@@ -1,5 +1,6 @@
 ﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -33,6 +34,9 @@
                 GenerateConcreteStateClass(cs, buff);
             }
 
+            var length = Environment.NewLine.Length;
+            buff.Remove(buff.Length - length - 1, length);
+
             return buff.ToString();
         }
 
@@ -55,8 +59,7 @@
 
         private void ClassHeader(ConcreteState cs, StringBuilder buff)
         {
-            buff.AppendLine()
-                .AppendLine("/// <summary>")
+            buff.AppendLine("/// <summary>")
                 .AppendLine($"/// This class handles the \"{cs.Name}\" state and its events")
                 .AppendLine("/// </summary>")
                 .AppendLine($"internal class {ClassNameFor(cs)} : State")
@@ -122,7 +125,7 @@
             }
         }
 
-        private static void CloseClass(StringBuilder buff) => buff.AppendLine("}");
+        private static void CloseClass(StringBuilder buff) => buff.AppendLine("}").AppendLine();
 
         private string generateStateChange(ExternalTransition et)
         {

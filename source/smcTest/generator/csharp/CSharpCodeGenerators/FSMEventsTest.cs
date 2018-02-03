@@ -1,33 +1,31 @@
-package smc.generator.csharp.CSharpCodeGenerators;
-
-import junit.framework.TestCase;
-import smc.generator.csharp.SMCSharpGenerator;
-import smc.builder.FSMRepresentationBuilder;
-import smc.fsmrep.StateMap;
-
-public class FSMEventsTest extends TestCase
+﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
-    private SMCSharpGenerator fsm;
+    using NUnit.Framework;
 
-    public void setUp() throws Exception
+    using static System.Environment;
+
+    [TestFixture]
+    public class FSMEventsTest : CSharpCodeGeneratorTest<FSMEvents>
     {
-        FSMRepresentationBuilder fsmbld = TestCSharpCodeGeneratorUtils.initBuilderState();
-        StateMap map = fsmbld.getStateMap();
-        fsm = new SMCSharpGenerator();
-        fsm.FSMInit(map,"fileName","directory");
-        fsm.initialize();
-    }
-    public void testEvents()
-    {
-        FSMEvents event = new FSMEvents();
-        String actual = event.generateCode(fsm);
-        String expected = buildFSMEvents();
-        assertEquals(expected,actual);
-    }
-    public String buildFSMEvents()
-    {
-        StringBuffer buff = new StringBuffer();
-        buff.append("  // event functions - forward to the current State\n\n");
-        return buff.toString();
+        #region Fields
+
+        public static readonly string BuildFSMEvents =
+            $"{Indent}#region Event Methods - forward to the current State{NewLine}"+
+            $"{NewLine}" +
+            $"{Indent}#endregion{NewLine}{NewLine}";
+
+        #endregion
+
+        #region Test Methods
+
+        [Test]
+        public void Events()
+        {
+            var fsmbld = TestCSharpCodeGeneratorUtils.InitBuilderState();
+            var actual = GenerateUsing(fsmbld);
+            Assert.AreEqual(BuildFSMEvents, actual);
+        }
+
+        #endregion
     }
 }

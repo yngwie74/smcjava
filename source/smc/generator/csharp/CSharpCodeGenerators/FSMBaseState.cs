@@ -35,7 +35,6 @@
         #region Methods
 
         private static void AddClassHeader(StringBuilder buff) => buff
-            .AppendLine()
             .AppendLine("/// <summary>")
             .AppendLine("/// This is the base State class")
             .AppendLine("/// </summary>");
@@ -69,7 +68,7 @@
 
         private void AddEventMethods(SMCSharpGenerator gen, StringBuilder buff)
         {
-            buff.AppendLine("    #region Default Event Functions")
+            buff.AppendLine("    #region Default Event Methods")
                 .AppendLine();
 
             var events = gen.StateMap.Events;
@@ -125,7 +124,7 @@
 
         private static void AddCloseEventDeclaration(StringBuilder buff) => buff.AppendLine("    }").AppendLine();
 
-        private static void AddClosingClassDeclaration(StringBuilder buff) => buff.AppendLine("}");
+        private static void AddClosingClassDeclaration(StringBuilder buff) => buff.AppendLine("}").AppendLine();
 
         #endregion
     }

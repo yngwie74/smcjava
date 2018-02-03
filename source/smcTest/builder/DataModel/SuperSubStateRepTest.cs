@@ -1,29 +1,55 @@
-package smc.builder.stateRep;
-
-import junit.framework.TestCase;
-
-public class SuperSubStateRepTest extends TestCase
+﻿namespace SMC.Builder.DataModel
 {
-    private StateRep superSubState;
-    public void setUp()
+    using NUnit.Framework;
+
+    public class SuperSubStateRepTest
     {
-        superSubState = new SuperSubStateRep("SuperSubState","SuperState",null);
-    }
-    public void testToString() throws Exception
-    {
-        assertEquals("(SuperSubState) : SuperState",superSubState.toString());
-    }
-    public void testName() throws Exception
-    {
-        assertEquals("SuperSubState",superSubState.getStateName());
-    }
-    public void testEquals() throws Exception
-    {
-        assertTrue(superSubState.equals(new SuperSubStateRep("SuperSubState","SuperState",null)));
-    }
-    public void testNotEquals() throws Exception
-    {
-        assertFalse(superSubState.equals(new SuperSubStateRep("supersubState","SuperState",null)));
-        assertFalse(superSubState.equals(new SuperSubStateRep("SuperSubState","NotSameSuperState",null)));
+        #region Constants
+
+        private const string SuperStateName = "SuperState";
+        private const string StateName = "SuperSubState";
+
+        #endregion
+
+        #region Fields
+
+        private StateRep superSubState;
+
+        #endregion
+
+        #region Test Methods
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.superSubState = new SuperSubStateRep(StateName, SuperStateName, null);
+        }
+
+        [Test]
+        public void StringRepr()
+        {
+            Assert.AreEqual($"({StateName}) : {SuperStateName}", this.superSubState.ToString());
+        }
+
+        [Test]
+        public void Name()
+        {
+            Assert.AreEqual(StateName, this.superSubState.StateName);
+        }
+
+        [Test]
+        public void Equality()
+        {
+            Assert.IsTrue(this.superSubState.Equals(new SuperSubStateRep(StateName, SuperStateName, null)));
+        }
+
+        [Test]
+        public void NotEquals()
+        {
+            Assert.IsFalse(this.superSubState.Equals(new SuperSubStateRep("supersubState", SuperStateName, null)));
+            Assert.IsFalse(this.superSubState.Equals(new SuperSubStateRep(StateName, "NotSameSuperState", null)));
+        }
+
+        #endregion
     }
 }

@@ -44,6 +44,26 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="builder\DataModel\NormalStateRepTest.cs" />
+    <Compile Include="builder\DataModel\SubStateRepTest.cs" />
+    <Compile Include="builder\DataModel\SuperStateRepTest.cs" />
+    <Compile Include="builder\DataModel\SuperSubStateRepTest.cs" />
+    <Compile Include="builder\FSMRepresentationBuilderTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGeneratorsTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\CSharpCodeGeneratorTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\FSMAccessorsTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\FSMBaseStateTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\FSMClassTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\FSMConstructorTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\FSMEventsTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\FSMStateClassesTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\InitialCommentsTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\NamespaceStatementTest.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\TestCSharpCodeGeneratorUtils.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\TestFileString.cs" />
+    <Compile Include="generator\csharp\CSharpCodeGenerators\UsingStatementsTest.cs" />
+    <Compile Include="generator\csharp\SMCSharpGeneratorTest.cs" />
+    <Compile Include="generator\FSMGeneratorTest.cs" />
     <Compile Include="parser\ParserErrorManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SmcTest.cs" />

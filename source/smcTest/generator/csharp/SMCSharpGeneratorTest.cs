@@ -1,11 +1,15 @@
-package smc.generator.csharp;
-
-import junit.framework.TestCase;
-public class SMCSharpGeneratorTest  extends TestCase
+﻿namespace SMC.Generator.CSharp
 {
-    public void testCreation()
+    using NUnit.Framework;
+
+    [TestFixture]
+    public class SMCSharpGeneratorTest
     {
-        SMCSharpGenerator gen = new SMCSharpGenerator();
-        assertNotNull(gen);
+        [Test]
+        public void Creation()
+        {
+            var gen = new SMCSharpGenerator();
+            Assert.IsNotNull(gen);
+        }
     }
 }
