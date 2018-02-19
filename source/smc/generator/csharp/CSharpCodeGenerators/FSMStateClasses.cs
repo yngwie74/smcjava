@@ -154,7 +154,9 @@
 
         private static void AddStateActions(string qualifier, State state, StringBuilder buff)
         {
-            var actions = state.ExitActions;
+            // TODO add unit-test coverage for entry/exit state actions.
+            var actions = GetActions(qualifier, state);
+
             if (actions.Any() == false)
             {
                 return;
@@ -166,6 +168,19 @@
             foreach (var action in actions)
             {
                 buff.AppendLine($"      {ArgName}.{action}();");
+            }
+        }
+
+        private static IEnumerable<string> GetActions(string qualifier, State state)
+        {
+            switch (qualifier)
+            {
+                case "Entry":
+                    return state.EntryActions;
+                case "Exit":
+                    return state.ExitActions;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(qualifier), qualifier, "Solo se permite Entry/Exit");
             }
         }
 
