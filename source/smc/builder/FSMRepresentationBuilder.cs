@@ -39,7 +39,12 @@
             this.itsConcreteStateDictionary = new Dictionary<string, ConcreteState>();
             this.itsStateDictionary = new Dictionary<string, State>();
             this.error = false;
-            this.itsStateMap = new MutableStateMap
+            this.itsStateMap = MakeDefaultBuilder();
+        }
+
+        private static MutableStateMap MakeDefaultBuilder()
+        {
+            return new MutableStateMap
             {
                 Name = "FSMName",
                 ContextName = "FSMContext",
@@ -150,6 +155,7 @@
             }
 
             BuildStateMap();
+
             if (this.error)
             {
                 Error("Aborting due to inconsistent input.");

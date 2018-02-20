@@ -14,7 +14,7 @@
         {
             const string ExpectedErrorHandling = "Err Func:  FSMError";
 
-            var fsmbld = TestCSharpCodeGeneratorUtils.InitBuilderState(usesExceptions: false);
+            var fsmbld = TestCSharpCodeGeneratorUtils.BuildDefaultTestConfig(usesExceptions: false);
 
             var actual = GenerateUsing(fsmbld);
 
@@ -27,7 +27,7 @@
         {
             const string ExpectedErrorHandling = "Exception: Exception";
 
-            var fsmbld = TestCSharpCodeGeneratorUtils.InitBuilderState(usesExceptions: true);
+            var fsmbld = TestCSharpCodeGeneratorUtils.BuildDefaultTestConfig(usesExceptions: true);
 
             var actual = GenerateUsing(fsmbld);
 
@@ -41,7 +41,7 @@
             const string ExpectedErrorHandling = "Exception: Exception";
             const string ExpectedVersion = "1.23.4 build 234";
 
-            var fsmbld = TestCSharpCodeGeneratorUtils.InitBuilderState(usesExceptions: true);
+            var fsmbld = TestCSharpCodeGeneratorUtils.BuildDefaultTestConfig(usesExceptions: true);
             fsmbld.SetVersion(ExpectedVersion);
 
             var actual = GenerateUsing(fsmbld);

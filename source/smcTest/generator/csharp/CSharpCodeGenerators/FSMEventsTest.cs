@@ -21,7 +21,7 @@
         [Test]
         public void Events()
         {
-            var fsmbld = TestCSharpCodeGeneratorUtils.InitBuilderState();
+            var fsmbld = TestCSharpCodeGeneratorUtils.BuildDefaultTestConfig();
             var actual = GenerateUsing(fsmbld);
             Assert.AreEqual(BuildFSMEvents, actual);
         }

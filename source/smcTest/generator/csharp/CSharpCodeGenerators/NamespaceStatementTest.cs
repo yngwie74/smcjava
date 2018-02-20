@@ -22,7 +22,7 @@
         [Test]
         public void NamespaceStatements()
         {
-            var fsmbld = TestCSharpCodeGeneratorUtils.InitBuilderState();
+            var fsmbld = TestCSharpCodeGeneratorUtils.BuildDefaultTestConfig();
 
             var actual = GenerateUsing(fsmbld);
 

@@ -1,5 +1,7 @@
 ﻿namespace SMC.Generator.CSharp.CSharpCodeGenerators
 {
+    using System;
+    using System.Linq;
     using System.Text;
 
     using SMC.FsmRep;
@@ -41,10 +43,15 @@
         {
             var className = stateMap.Name;
             var superClassName = stateMap.ContextName;
+            var qualifier = IsAbstract(stateMap) ? "abstract " : string.Empty;
 
-            buff.AppendLine($"public class {className} : {superClassName}")
-                .AppendLine("{");
+            buff.AppendLine($"public {qualifier}class {className} : {superClassName}")
+                    .AppendLine("{");
         }
+
+        private static bool IsAbstract(StateMap stateMap) => stateMap.Pragma.Any(p => Matches(p.Trim(), "abstract"));
+
+        private static bool Matches(string a, string b) => string.Compare(a, b, StringComparison.OrdinalIgnoreCase) == 0;
 
         private static void AddFields(StringBuilder buff, StateMap stateMap)
         {

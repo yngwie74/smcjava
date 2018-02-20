@@ -51,7 +51,7 @@
         [SetUp]
         public void MySetUp()
         {
-            var fsmbld = TestCSharpCodeGeneratorUtils.InitBuilderState();
+            var fsmbld = TestCSharpCodeGeneratorUtils.BuildDefaultTestConfig();
             this.generatedCode = GenerateUsing(fsmbld);
         }
 

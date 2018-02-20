@@ -14,7 +14,15 @@
             return builder;
         }
 
-        public static FSMRepresentationBuilder InitBuilderState(
+        public static FSMRepresentationBuilder BuildDefaultTestConfig(
+            bool usesExceptions = true, string version = "")
+        {
+            var builder = GetDefaultTestConfig(usesExceptions, version);
+            builder.Build();
+            return builder;
+        }
+
+        public static FSMRepresentationBuilder GetDefaultTestConfig(
             bool usesExceptions = true, string version = "")
         {
             var builder = new FSMRepresentationBuilder();
@@ -41,7 +49,6 @@
             builder.AddAction("Alarm");
             builder.AddAction("Thankyou");
 
-            builder.Build();
             return builder;
         }
     }
